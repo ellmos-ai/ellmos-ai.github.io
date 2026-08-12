@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stack Composer — ellmos module toolkit (public excerpt)</title>
+<style>
+:root{
+  --bg:#f6f7fb; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ec;
+  --text:#1a1d29; --text-muted:#5b6070; --accent:#3a5bd9; --accent-2:#2947b8;
+  --good:#1c8a4c; --warn:#b6790a; --bad:#c23a3a; --chip-bg:#eef0f6;
+  --shadow: 0 1px 2px rgba(20,22,40,.06), 0 6px 20px rgba(20,22,40,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#12131a; --surface:#1b1d29; --surface-2:#22242f; --border:#2e3140;
+    --text:#eef0f6; --text-muted:#a2a6ba; --accent:#7d95ff; --accent-2:#a3b3ff;
+    --good:#4fd08a; --warn:#e0ac4c; --bad:#f0736d; --chip-bg:#262838;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font:15px/1.5 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow-x:hidden;
+}
+a{color:var(--accent)}
+button{font:inherit}
+.wrap{max-width:1400px;margin:0 auto;padding:20px clamp(12px,3vw,32px) 80px}
+
+/* Header */
+header.topbar{
+  display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;
+  padding:18px clamp(12px,3vw,32px);border-bottom:1px solid var(--border);
+  background:var(--surface); position:sticky;top:0;z-index:20;
+}
+header.topbar h1{font-size:1.25rem;margin:0 0 4px}
+header.topbar .sub{color:var(--text-muted);font-size:.85rem;max-width:60ch}
+.badge{
+  display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.02em;
+  padding:2px 8px;border-radius:999px;background:var(--chip-bg);color:var(--text-muted);
+  text-transform:uppercase;
+}
+.badge.variant-public{background:#fde7c8;color:#7a4a02}
+.badge.variant-full{background:#dbe4ff;color:#233a9e}
+@media (prefers-color-scheme: dark){
+  .badge.variant-public{background:#4a3510;color:#f0c987}
+  .badge.variant-full{background:#232d55;color:#b9c7ff}
+}
+.top-meta{display:flex;flex-direction:column;gap:6px;align-items:flex-end;font-size:.78rem;color:var(--text-muted)}
+.lang-toggle{display:flex;gap:4px}
+.lang-toggle button{
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  padding:4px 10px;border-radius:8px;cursor:pointer;font-size:.75rem;font-weight:600;
+}
+.lang-toggle button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.public-banner{
+  background:#fde7c8;color:#7a4a02;padding:8px 16px;border-radius:10px;font-size:.82rem;
+  display:none;margin-top:8px;
+}
+body.variant-public .public-banner{display:block}
+@media (prefers-color-scheme: dark){
+  .public-banner{background:#4a3510;color:#f0c987}
+}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:1fr 340px;gap:24px;margin-top:20px;align-items:start}
+@media (max-width: 900px){ .layout{grid-template-columns:1fr} }
+
+.catalog-col{min-width:0}
+.group{margin-bottom:28px}
+.group-head{margin-bottom:10px}
+.group-head h2{margin:0;font-size:1.02rem}
+.group-head .leitfrage{color:var(--text-muted);font-size:.85rem;font-style:italic}
+.group-head .kicker{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:14px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow);
+  transition:border-color .15s, transform .1s;
+}
+.card.selected{border-color:var(--accent);outline:2px solid color-mix(in srgb, var(--accent) 30%, transparent)}
+.card h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.card .core-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+.card p.blurb{margin:0;color:var(--text-muted);font-size:.82rem;flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:.68rem;padding:2px 7px;border-radius:999px;background:var(--chip-bg);color:var(--text-muted);white-space:nowrap}
+.chip.sens-public{color:var(--good)}
+.chip.sens-application-defined{color:#5b6070}
+.chip.sens-user-local{color:var(--warn)}
+.chip.sens-sensitive{color:var(--bad);font-weight:600}
+.chip.status-released,.chip.status-active{color:var(--good)}
+.chip.status-planned{color:var(--bad)}
+.card-actions{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
+.card-actions .src{font-size:.68rem;color:var(--text-muted)}
+.btn{
+  border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:8px;
+  padding:6px 12px;font-size:.8rem;font-weight:600;cursor:pointer;
+}
+.btn.secondary{background:transparent;color:var(--accent)}
+.btn.ghost{background:transparent;color:var(--text-muted);border-color:var(--border)}
+.btn.danger{background:transparent;color:var(--bad);border-color:var(--bad)}
+.btn:hover{filter:brightness(1.05)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Cart */
+.cart{
+  position:sticky;top:88px;background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:16px;box-shadow:var(--shadow);max-height:calc(100vh - 110px);
+  overflow:auto;
+}
+.cart h2{margin:0 0 4px;font-size:1rem}
+.cart .stack-class{
+  display:inline-block;margin:6px 0 12px;padding:4px 10px;border-radius:999px;
+  background:var(--surface-2);font-size:.78rem;font-weight:700;
+}
+.cart .field label{display:block;font-size:.72rem;color:var(--text-muted);margin-bottom:3px}
+.cart .field input,.cart .field textarea{
+  width:100%;padding:7px 9px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg);color:var(--text);font:inherit;font-size:.85rem;resize:vertical;
+}
+.cart .field{margin-bottom:10px}
+.cart-items{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px}
+.cart-items li{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  background:var(--surface-2);border-radius:8px;padding:6px 8px;font-size:.82rem;
+}
+.cart-items li button{background:none;border:none;color:var(--bad);cursor:pointer;font-size:.9rem}
+.empty-note{color:var(--text-muted);font-size:.82rem;padding:8px 0}
+.sensitivity-line{font-size:.8rem;margin:6px 0}
+.sensitivity-line b{text-transform:uppercase;font-size:.72rem}
+.issues{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.issues li{
+  font-size:.78rem;padding:7px 9px;border-radius:8px;background:#fdeceb;color:#8a2b24;
+}
+@media (prefers-color-scheme: dark){ .issues li{background:#3a201d;color:#f0b3ae} }
+.notes{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.notes li{font-size:.78rem;padding:7px 9px;border-radius:8px;background:var(--surface-2);color:var(--text-muted)}
+/* Manueller Theme-Override — html[data-theme] schlaegt prefers-color-scheme,
+   ohne Attribut gilt weiter die Systemeinstellung (Auto). */
+html[data-theme="dark"]{
+  --bg:#12131a; --surface:#1b1d29; --surface-2:#22242f; --border:#2e3140;
+  --text:#eef0f6; --text-muted:#a2a6ba; --accent:#7d95ff; --accent-2:#a3b3ff;
+  --good:#4fd08a; --warn:#e0ac4c; --bad:#f0736d; --chip-bg:#262838;
+  --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.35);
+}
+html[data-theme="dark"] .badge.variant-public{background:#4a3510;color:#f0c987}
+html[data-theme="dark"] .badge.variant-full{background:#232d55;color:#b9c7ff}
+html[data-theme="dark"] .public-banner{background:#4a3510;color:#f0c987}
+html[data-theme="dark"] .issues li{background:#3a201d;color:#f0b3ae}
+html[data-theme="light"]{
+  --bg:#f6f7fb; --surface:#ffffff; --surface-2:#eef0f6; --border:#dde1ec;
+  --text:#1a1d29; --text-muted:#5b6070; --accent:#3a5bd9; --accent-2:#2947b8;
+  --good:#1c8a4c; --warn:#b6790a; --bad:#c23a3a; --chip-bg:#eef0f6;
+  --shadow: 0 1px 2px rgba(20,22,40,.06), 0 6px 20px rgba(20,22,40,.05);
+}
+html[data-theme="light"] .badge.variant-public{background:#fde7c8;color:#7a4a02}
+html[data-theme="light"] .badge.variant-full{background:#dbe4ff;color:#233a9e}
+html[data-theme="light"] .public-banner{background:#fde7c8;color:#7a4a02}
+html[data-theme="light"] .issues li{background:#fdeceb;color:#8a2b24}
+.theme-btn{border:1px solid var(--border);background:var(--surface);color:var(--text);
+  padding:4px 10px;border-radius:8px;cursor:pointer;font-size:.75rem}
+.export-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.export-row .btn{flex:1;min-width:120px}
+.arch-note{margin-top:14px;padding-top:10px;border-top:1px dashed var(--border);font-size:.72rem;color:var(--text-muted)}
+.final-hint{margin-top:10px;font-size:.75rem;color:var(--text-muted);background:var(--surface-2);padding:8px 9px;border-radius:8px}
+.toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  background:var(--text);color:var(--bg);padding:8px 16px;border-radius:999px;
+  font-size:.82rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:99;
+}
+.toast.show{opacity:1}
+
+/* Start dialog + wizard modal */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(10,11,20,.5);display:flex;align-items:center;
+  justify-content:center;z-index:50;padding:16px;
+}
+.modal-backdrop.hidden{display:none}
+.modal{
+  background:var(--surface);border-radius:16px;padding:22px;max-width:520px;width:100%;
+  box-shadow:var(--shadow);max-height:88vh;overflow:auto;
+}
+.modal h2{margin-top:0}
+.modal .choice-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.modal .choice-row .btn{flex:1;padding:12px}
+.wizard-q{margin-bottom:14px}
+.wizard-q p.qtext{font-weight:600;margin:0 0 8px}
+.wizard-options label{
+  display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:8px;
+  border:1px solid var(--border);margin-bottom:6px;cursor:pointer;font-size:.85rem;
+}
+.wizard-options label:hover{border-color:var(--accent)}
+.wizard-options input{margin-top:3px}
+.wizard-nav{display:flex;justify-content:space-between;margin-top:16px}
+.progress{font-size:.72rem;color:var(--text-muted);margin-bottom:10px}
+footer.page-footer{max-width:1400px;margin:24px auto 0;padding:0 clamp(12px,3vw,32px);color:var(--text-muted);font-size:.75rem}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <h1 data-i18n="title"></h1>
+    <div class="sub" data-i18n="subtitle"></div>
+    <div class="public-banner" data-i18n="publicBanner"></div>
+    <div style="margin-top:6px;font-size:.8rem"><a href="index.html">← ellmos module circuit map</a></div>
+  </div>
+  <div class="top-meta">
+    <span class="badge" id="variant-badge"></span>
+    <span id="catalog-meta"></span>
+    <div class="lang-toggle">
+      <button id="theme-btn" class="theme-btn" type="button" title="hell / dunkel / auto">◐</button>
+      <button id="lang-de" data-lang="de">DE</button>
+      <button id="lang-en" data-lang="en">EN</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <div class="catalog-col" id="catalog-col"></div>
+    <aside class="cart" id="cart"></aside>
+  </div>
+</div>
+
+<footer class="page-footer" data-i18n="footerHint"></footer>
+
+<div class="modal-backdrop" id="start-modal">
+  <div class="modal">
+    <h2 data-i18n="startTitle"></h2>
+    <p data-i18n="startBody"></p>
+    <div class="choice-row">
+      <button class="btn" id="start-manual" data-i18n="startManual"></button>
+      <button class="btn secondary" id="start-wizard" data-i18n="startWizard"></button>
+    </div>
+    <div class="choice-row">
+      <button class="btn ghost" id="start-skip" data-i18n="startSkip" style="width:100%"></button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="wizard-modal">
+  <div class="modal">
+    <div class="progress" id="wizard-progress"></div>
+    <div id="wizard-body"></div>
+    <div class="wizard-nav">
+      <button class="btn ghost" id="wizard-back" data-i18n="wizardBack"></button>
+      <button class="btn" id="wizard-next" data-i18n="wizardNext"></button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script id="catalog-data" type="application/json">{"variant": "public", "default_lang": "en", "generated_at": "2026-08-12 10:47 UTC", "catalog_timestamp": "2026-08-12 03:27 UTC", "module_count_total": 52, "module_count_variant": 35, "filtered_out_count": 17, "filtered_out_ids": ["WORKFLOWHOOKER", "condition-gates", "decision-clicker", "ellmos-agent-bridge", "ellmos-chat", "ellmos-code-tools", "ellmos-core", "ellmos-market-data", "ellmos-unified-gui", "ellmos-voice-io", "foerderplaner", "mac-backup", "mail-connector", "media-editor-core", "memory-hooker", "prompt-evidence-collector", "steuer-suite"], "modules": [{"id": "ai-media-editor", "display_name": "ai-media-editor", "category": "domains", "kind": "stack-candidate", "status": "development", "visibility": "public", "description": "Local-first AI-assisted audio/video preparation with optional remote STT and generative workflows.", "provides": ["domain.media.editing", "workflow.media.pipeline"], "requires": [], "optional": ["tool.stt", "tool.video", "tool.hyperframes"], "boundaries": {"data": "sensitive", "network": "optional", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".DOMAINS/ai-media-editor", "version": "0.2.0"}, {"id": "anonymizer", "display_name": "Anonymizer", "category": "domains", "kind": "service", "status": "released", "visibility": "public", "description": "Fail-closed pseudonymization service for sensitive local documents.", "provides": ["privacy.anonymize", "privacy.pseudonymize"], "requires": [], "optional": [], "boundaries": {"data": "sensitive", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".DOMAINS/anonymizer", "version": "0.2.5"}, {"id": "ApiProber", "display_name": "ApiProber", "category": "tools", "kind": "tool", "status": "released", "visibility": "public", "description": "Provides: tool.api-probe, tool.openapi-discovery", "provides": ["tool.api-probe", "tool.openapi-discovery"], "requires": [], "optional": [], "boundaries": {"data": "application-defined", "network": "listed", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".TOOLS/ApiProber", "version": null}, {"id": "build-your-users-mind", "display_name": "build-your-users-mind", "category": "memory", "kind": "workflow", "status": "development", "visibility": "public", "description": "Local-first, evidence-backed user preference and decision-support workflow with deterministic private-log adapters.", "provides": ["memory.user-model", "decision.preferences"], "requires": [], "optional": ["memory.curated", "memory.organic"], "boundaries": {"data": "sensitive", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".MEMORY/build-your-users-mind", "version": "1.1.0-dev"}, {"id": "claude-desktop-automizer", "display_name": "Claude Desktop Automizer", "category": "orchestration", "kind": "workflow", "status": "development", "visibility": "public-candidate", "description": "Geplante Aufgaben der Claude-Desktop-App zuverlaessig aendern und anlegen - aus der App heraus, von aussen oder bei geschlossener App. Entkoppelt Aenderungswuensche vom Schreibzeitpunkt, weil die laufende App ihre Aufgabenliste aus dem Speicher zurueckschreibt.", "provides": ["desktop-task.read", "desktop-task.change-request", "desktop-task.create", "desktop-task.apply"], "requires": [], "optional": ["claude-desktop-self-administration"], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows"]}, "resolved_source": ".ORCHESTRATION/claude-desktop-automizer", "version": "0.1.0"}, {"id": "clirec", "display_name": "clirec", "category": "tools", "kind": "tool", "status": "development", "visibility": "public", "description": "Provides: tool.demonstration-record, tool.demonstration-replay", "provides": ["tool.demonstration-record", "tool.demonstration-replay"], "requires": [], "optional": ["tool.computer-use"], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".TOOLS/clirec", "version": null}, {"id": "clutch", "display_name": "clutch", "category": "orchestration", "kind": "router", "status": "active", "visibility": "public", "description": "Provides: routing.default, routing.model, routing.pattern", "provides": ["routing.default", "routing.model", "routing.pattern", "swarm.patterns"], "requires": [], "optional": ["runtime.model-provider"], "boundaries": {"data": "application-defined", "network": "optional", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".ORCHESTRATION/clutch", "version": null}, {"id": "coma", "display_name": "COMA", "category": "orchestration", "kind": "runtime", "status": "development", "visibility": "public", "description": "Provider-unabhaengige Orchestrierungs- und Lebenszyklus-Schicht fuer Agentenprozesse. Spawn-Schicht mit verifizierten CLI-Adaptern fuer Claude, Codex und Agy sowie fail-closed Kimi-Geruest, Datei-Protokoll mit einem Schreiber je Datei, Statusschreiber und Poll-Hilfen. COMA ist kein Scheduler, sperrt nichts, verwaltet keine Rechte und haelt kein Gedaechtnis.", "provides": ["agents.lifecycle", "runtime.agent-spawn", "runtime.agent-lifecycle", "orchestration.job-protocol", "orchestration.status-polling"], "requires": [], "optional": ["control.locks"], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".ORCHESTRATION/coma", "version": "0.2.0"}, {"id": "companion-for-agy", "display_name": "companion-for-agy", "category": "connectors", "kind": "adapter", "status": "released", "visibility": "public", "description": "Provides: adapter.agy, provider.gemini.cli", "provides": ["adapter.agy", "provider.gemini.cli"], "requires": [], "optional": [], "boundaries": {"data": "application-defined", "network": "optional", "platforms": ["windows"]}, "resolved_source": ".CONNECTORS/companion-for-agy", "version": null}, {"id": "connectors", "display_name": "connectors", "category": "connectors", "kind": "library", "status": "active", "visibility": "public", "description": "Provides: connector.messaging, connector.webhook", "provides": ["connector.messaging", "connector.webhook"], "requires": [], "optional": [], "boundaries": {"data": "application-defined", "network": "listed", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONNECTORS/connectors", "version": null}, {"id": "ellmos-scheduler", "display_name": "ellmos Scheduler", "category": "control", "kind": "library", "status": "experimental", "visibility": "public", "description": "Eigenstaendiger Zeitgeber, Lease-/Claim-Manager und Run-Recorder fuer ellmos-Stacks mit BACH-Consumer- und Executor-Adaptern.", "provides": ["automation.schedule", "automation.lease", "automation.run-history", "automation.operator-control"], "requires": [], "optional": ["orchestration.execute", "sync.automation-exchange"], "boundaries": {"data": "application-defined", "network": "optional", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONTROL/ellmos-scheduler", "version": "0.1.0"}, {"id": "ellmos-tests", "display_name": "ellmos-tests", "category": "quality", "kind": "testing", "status": "development", "visibility": "public", "description": "Provides: quality.tests, quality.evaluation.boe", "provides": ["quality.tests", "quality.evaluation.boe"], "requires": [], "optional": [], "boundaries": {"data": "application-defined", "network": "optional", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".QUALITY/ellmos-tests", "version": null}, {"id": "GARDENER", "display_name": "GARDENER", "category": "memory", "kind": "service", "status": "active", "visibility": "public", "description": "Provides: knowledge.search.default, memory.organic, knowledge.index", "provides": ["knowledge.search.default", "memory.organic", "knowledge.index", "knowledge.search"], "requires": [], "optional": [], "boundaries": {"data": "user-local", "network": "local", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".MEMORY/gardener", "version": null}, {"id": "KnowledgeDigest", "display_name": "KnowledgeDigest", "category": "knowledge", "kind": "service", "status": "alpha", "visibility": "public", "description": "Provides: knowledge.ingest, knowledge.search, knowledge.search.default", "provides": ["knowledge.ingest", "knowledge.search", "knowledge.search.default"], "requires": [], "optional": [], "boundaries": {"data": "user-local", "network": "optional", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".KNOWLEDGE/KnowledgeDigest", "version": null}, {"id": "llm-note", "display_name": "llm-note", "category": "memory", "kind": "library", "status": "released", "visibility": "public", "description": "Local-first notes and notebooks an LLM assistant keeps for its user (capture, organize, recall) - SQLite + plain text, extracted from BACH Notizblock/Denkarium.", "provides": ["notes.local", "notes.notebook"], "requires": [], "optional": ["memory.curated", "memory.organic", "tasks.default"], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".TOOLS/llm-note", "version": "1.0.3"}, {"id": "lock-master", "display_name": "lock-master", "category": "control", "kind": "protocol", "status": "active", "visibility": "public", "description": "Provides: coordination.locking, control.locks, control.permissions", "provides": ["coordination.locking", "control.locks", "control.permissions"], "requires": [], "optional": [], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONTROL/lock-master", "version": null}, {"id": "marblerun", "display_name": "MarbleRun", "category": "control", "kind": "workflow", "status": "active", "visibility": "public", "description": "Provides: automation.default, automation.agent-chain, automation.loop", "provides": ["automation.default", "automation.agent-chain", "automation.loop"], "requires": [], "optional": ["routing.default"], "boundaries": {"data": "application-defined", "network": "optional", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONTROL/marblerun", "version": null}, {"id": "n8n-workflow-manager", "display_name": "n8n-workflow-manager", "category": "orchestration", "kind": "service", "status": "active", "visibility": "public", "description": "Provides: automation.default, automation.n8n.manager, automation.history", "provides": ["automation.default", "automation.n8n.manager", "automation.history"], "requires": [], "optional": ["automation.n8n.external"], "boundaries": {"data": "user-local", "network": "listed", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".ORCHESTRATION/n8n-workflow-manager", "version": "0.2.0"}, {"id": "open-compute", "display_name": "open-compute", "category": "tools", "kind": "tool", "status": "development", "visibility": "public", "description": "Provides: tool.computer-use, runtime.perception-action, runtime.cooperative-control-headless", "provides": ["tool.computer-use", "runtime.perception-action", "runtime.cooperative-control-headless"], "requires": [], "optional": ["tool.demonstration-replay"], "boundaries": {"data": "application-defined", "network": "optional", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".TOOLS/open-compute", "version": null}, {"id": "policy-registry", "display_name": "policy-registry", "category": "control", "kind": "library", "status": "active", "visibility": "public", "description": "Provides: policy.registry, policy.resolve, policy.discovery", "provides": ["policy.registry", "policy.resolve", "policy.discovery"], "requires": [], "optional": ["sync.yard", "tom.advisory", "mcp"], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONTROL/policy-registry", "version": null}, {"id": "project-docs-template", "display_name": "project-docs-template", "category": "quality", "kind": "template", "status": "released", "visibility": "public", "description": "Agent-ready project documentation profiles with safe local generation and maintenance tools.", "provides": ["quality.project-docs", "quality.project-lint"], "requires": [], "optional": [], "boundaries": {"data": "public", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".QUALITY/project-docs-template", "version": "0.1.0"}, {"id": "rechtsabteilung", "display_name": "law-checker", "category": "domains", "kind": "workflow", "status": "active", "visibility": "public", "description": "Provides: domain.legal.orientation, domain.legal.sources", "provides": ["domain.legal.orientation", "domain.legal.sources"], "requires": [], "optional": [], "boundaries": {"data": "sensitive", "network": "listed", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".DOMAINS/law-checker", "version": null}, {"id": "report-forge", "display_name": "report-forge", "category": "domains", "kind": "workflow", "status": "released", "visibility": "public", "description": "Provides: domain.reporting.pipeline-core", "provides": ["domain.reporting.pipeline-core"], "requires": [], "optional": ["domain.privacy.anonymizer"], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".DOMAINS/report-forge", "version": null}, {"id": "roshambo", "display_name": "roshambo", "category": "control", "kind": "library", "status": "development", "visibility": "public", "description": "Multi-Agent-Koordinator: serialisierbare Leases auf CockroachDB, damit zwei Agenten nie dieselbe Arbeit beanspruchen, plus verteilter Vektorindex für Rückschau auf frühere Versuche und deren Ausgang.", "provides": ["coordination.locking", "control.locks", "memory.vector-recall"], "requires": [], "optional": [], "boundaries": {"data": "application-defined", "network": "listed", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONTROL/roshambo", "version": null}, {"id": "sqlite-transit-sync", "display_name": "sqlite-transit-sync", "category": "memory", "kind": "library", "status": "active", "visibility": "public", "description": "Provides: sync.database, sync.database.sqlite, snapshot.verified", "provides": ["sync.database", "sync.database.sqlite", "snapshot.verified"], "requires": [], "optional": ["sync.files"], "boundaries": {"data": "application-defined", "network": "transport-defined", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".MEMORY/sqlite-transit-sync", "version": null}, {"id": "steuer-assistent", "display_name": "steuer-assistent", "category": "domains", "kind": "service", "status": "released", "visibility": "public", "description": "Provides: domain.tax.documents, domain.tax.workpaper_export", "provides": ["domain.tax.documents", "domain.tax.workpaper_export"], "requires": [], "optional": ["privacy.anonymize"], "boundaries": {"data": "sensitive", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".DOMAINS/steuer-assistent", "version": "0.2.2"}, {"id": "swarm_ai", "display_name": "swarm_ai", "category": "orchestration", "kind": "workflow", "status": "experimental", "visibility": "public", "description": "Local-first Python toolkit for inspectable LLM swarm coordination patterns.", "provides": ["swarm.patterns", "swarm.parallel", "swarm.consensus", "swarm.stigmergy", "swarm.translation", "swarm.summarization", "swarm.team_lock"], "requires": [], "optional": ["routing.default"], "boundaries": {"data": "application-defined", "network": "optional", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".ORCHESTRATION/swarm_ai", "version": null}, {"id": "system-explorer", "display_name": "System Explorer", "category": "control", "kind": "tool", "status": "development", "visibility": "public", "description": "Evidence-backed maps of desired functions, carriers, actual use, and architecture drift.", "provides": ["system.discovery", "system.mapping", "system.component-registry.validate", "system.component-registry.resolve", "system.component-registry.activation-gate", "system.coverage", "system.function-equivalence.import", "system.function-equivalence.coverage", "system.architecture.diff", "system.control-document.mapping", "system.directory-tree", "system.data-topology", "system.cloud-topology", "system.deployment-purpose-analysis", "system.server-privacy-check", "system.cost-local-comparison", "system.map.export", "system.map.import", "system.map.federation", "system.llm-trace-analysis", "system.llm-action-surface", "system.software-resource.mapping", "system.llm-readiness-analysis", "system.crystallized-intelligence.mapping", "system.token-saving-endpoint.analysis", "system.explainer-video.handoff", "system.repository-diagram.sync", "api-prober.evidence-adapter", "registry.discovery", "database.schema.mapping", "evidence.registry", "document.registry", "change.proposal.readonly", "trampelpfad.probe-plan"], "requires": [], "optional": ["controlcenter.context", "policy.registry", "byum.prompt-evidence", "hooker.runtime-evidence", "swarm-ai.probe-runner", "unified-gui.host", "system-gap-master.handoff", "apiprober.passive-export", "ai-media-editor.uc6"], "boundaries": {"data": "user-local", "network": "local", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONTROL/system-explorer", "version": "0.4.0"}, {"id": "system-gap-master", "display_name": "system-gap-master", "category": "control", "kind": "workflow", "status": "active", "visibility": "public", "description": "Provides: sync.files, sync.yard, sync.messages", "provides": ["sync.files", "sync.yard", "sync.messages"], "requires": [], "optional": ["sync.database"], "boundaries": {"data": "sensitive", "network": "transport-defined", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONTROL/system-gap-master", "version": null}, {"id": "task-master", "display_name": "task-master", "category": "control", "kind": "library", "status": "active", "visibility": "public", "description": "Provides: tasks.default, tasks.workflow", "provides": ["tasks.default", "tasks.workflow"], "requires": [], "optional": [], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONTROL/task-master", "version": null}, {"id": "ticket-master", "display_name": "ticket-master", "category": "control", "kind": "workflow", "status": "active", "visibility": "public", "description": "Provides: control.tickets, workflow.ticket-triage", "provides": ["control.tickets", "workflow.ticket-triage"], "requires": [], "optional": ["tasks.default"], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".CONTROL/ticket-master", "version": null}, {"id": "USMC", "display_name": "USMC", "category": "memory", "kind": "library", "status": "active", "visibility": "public", "description": "Provides: memory.curated, memory.facade", "provides": ["memory.curated", "memory.facade"], "requires": [], "optional": ["memory.organic"], "boundaries": {"data": "user-local", "network": "none", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".MEMORY/USMC", "version": null}, {"id": "web-scraper", "display_name": "web-scraper", "category": "tools", "kind": "tool", "status": "development", "visibility": "public", "description": "Provides: tool.web-fetch, tool.web-extract, tool.web-screenshot", "provides": ["tool.web-fetch", "tool.web-extract", "tool.web-screenshot"], "requires": [], "optional": [], "boundaries": {"data": "application-defined", "network": "listed", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".TOOLS/web-scraper", "version": null}, {"id": "WikiStub-Seed", "display_name": "WikiStub-Seed", "category": "knowledge", "kind": "dataset", "status": "released", "visibility": "public", "description": "Provides: knowledge.dataset.wikistub, knowledge.seed.multilingual", "provides": ["knowledge.dataset.wikistub", "knowledge.seed.multilingual"], "requires": [], "optional": [], "boundaries": {"data": "public", "network": "none", "platforms": ["windows", "macos", "linux", "web"]}, "resolved_source": ".KNOWLEDGE/WikiStub-Seed", "version": null}, {"id": "worksheet-generator", "display_name": "worksheet-generator", "category": "domains", "kind": "workflow", "status": "released", "visibility": "public", "description": "Provides: domain.education.material-generation", "provides": ["domain.education.material-generation"], "requires": [], "optional": ["domain.education.icf-reference"], "boundaries": {"data": "user-local", "network": "listed", "platforms": ["windows", "macos", "linux"]}, "resolved_source": ".DOMAINS/worksheet-generator", "version": null}], "categories": [{"id": "memory", "directory": ".MEMORY", "description_de": "Gedächtnis, Notizen, Nutzermodelle und Wissensabgleich in Datenbanken", "description_en": "Memory, notes, user models and database-level knowledge reconciliation", "leitfrage_de": "Was weiss ich schon?", "leitfrage_en": "What do I already know?"}, {"id": "orchestration", "directory": ".ORCHESTRATION", "description_de": "Routing, Ketten, Schwärme, Delegation und Automation", "description_en": "Routing, chains, swarms, delegation and automation", "leitfrage_de": "Wer macht es, mit welchem Modell/Muster?", "leitfrage_en": "Who does it, with which model/pattern?"}, {"id": "connectors", "directory": ".CONNECTORS", "description_de": "Agenten-, Menschen-, Kanal- und Providerverbindungen", "description_en": "Agent, human, channel and provider connections", "leitfrage_de": "Wie erreiche ich Mensch/Agent/Dienst?", "leitfrage_en": "How do I reach a person/agent/service?"}, {"id": "runtime", "directory": ".RUNTIME", "description_de": "Chat-Laufzeit, Host und Operator-Oberflächen", "description_en": "Chat runtime, host and operator surfaces", "leitfrage_de": "Worin laeuft der Agent / wo bedient man ihn?", "leitfrage_en": "Where does the agent run / where is it operated?"}, {"id": "control", "directory": ".CONTROL", "description_de": "Locks, Tickets, Aufgaben, Ketten und Koordinationsprotokolle", "description_en": "Locks, tickets, tasks, chains and coordination protocols", "leitfrage_de": "Wer darf was — und was ist zu tun?", "leitfrage_en": "Who may do what — and what needs doing?"}, {"id": "sync", "directory": ".SYNC", "description_de": "Datei- und Backup-Synchronisation zwischen Maschinen", "description_en": "File and backup synchronization between machines", "leitfrage_de": "Wie kommt es konsistent aufs andere System?", "leitfrage_en": "How does it stay consistent on the other system?"}, {"id": "knowledge", "directory": ".KNOWLEDGE", "description_de": "Dokumentwissen, Datensätze und Retrieval-Korpora", "description_en": "Document knowledge, datasets and retrieval corpora", "leitfrage_de": "Wo steht das — in meinen Dokumenten?", "leitfrage_en": "Where is that documented — in my files?"}, {"id": "tools", "directory": ".TOOLS", "description_de": "Scharf umrissene technische Werkzeuge", "description_en": "Sharply scoped technical tools", "leitfrage_de": "Womit wird konkret hantiert?", "leitfrage_en": "What tool actually handles this?"}, {"id": "quality", "directory": ".QUALITY", "description_de": "Tests, Projektstandards und Qualitätsgerüste", "description_en": "Tests, project standards and quality scaffolding", "leitfrage_de": "Ist es gut — und dokumentiert?", "leitfrage_en": "Is it good — and documented?"}, {"id": "domains", "directory": ".DOMAINS", "description_de": "Optionale fachliche Module und Domänenpakete", "description_en": "Optional domain-specific modules and packages", "leitfrage_de": "Fuer welches Fachgebiet?", "leitfrage_en": "For which domain/field?"}, {"id": "meta", "directory": ".", "description_de": "Meta-Ebene über den Fähigkeitsfamilien: Module, die den Baukasten selbst regeln (z. B. den Veröffentlichungsprozess). Liegt bewusst im Root, weil ein Modul nicht in einer Kategorie liegen kann, über die es entscheidet", "description_en": "Meta layer above the capability families: modules that govern the kit itself (e.g. the release process). Deliberately located at the root, because a module cannot sit inside a category it decides over", "leitfrage_de": "Wer entscheidet ueber die Module selbst?", "leitfrage_en": "What governs the modules themselves?"}], "rules": {"schema": "ellmos.composition-rules.v1", "roles": [{"id": "memory.curated", "minimum": 0, "maximum": 1, "providers": ["USMC"]}, {"id": "memory.organic", "minimum": 0, "maximum": 1, "providers": ["GARDENER"]}, {"id": "tasks.default", "minimum": 0, "maximum": 1, "providers": ["task-master"]}, {"id": "tickets.capture", "minimum": 0, "maximum": 1, "providers": ["ticket-master"]}, {"id": "knowledge.search.default", "minimum": 0, "maximum": 1, "providers": ["GARDENER", "KnowledgeDigest"]}, {"id": "routing.default", "minimum": 0, "maximum": 1, "providers": ["clutch", "ellmos-agent-bridge"]}, {"id": "automation.default", "minimum": 0, "maximum": 1, "providers": ["marblerun", "n8n-workflow-manager"]}, {"id": "swarm.patterns", "minimum": 0, "maximum": 1, "providers": ["clutch", "swarm_ai"]}, {"id": "chat.runtime", "minimum": 0, "maximum": 1, "providers": ["ellmos-chat"]}, {"id": "operator.ui", "minimum": 0, "maximum": 1, "providers": ["ellmos-unified-gui"]}, {"id": "sync.files", "minimum": 0, "maximum": 1, "providers": ["system-gap-master"]}, {"id": "sync.database", "minimum": 0, "maximum": 1, "providers": ["sqlite-transit-sync"]}, {"id": "agents.lifecycle", "minimum": 0, "maximum": 1, "providers": ["coma"]}, {"id": "coordination.locking", "minimum": 0, "maximum": 1, "providers": ["lock-master", "roshambo"]}]}, "core_module_ids": ["USMC", "GARDENER", "task-master", "clutch", "lock-master", "ticket-master", "system-gap-master", "ellmos-chat", "ellmos-core"]}</script>
+<script>
+"use strict";
+const DATA = JSON.parse(document.getElementById("catalog-data").textContent);
+const CORE_IDS = new Set(DATA.core_module_ids);
+const MODULES_BY_ID = {};
+DATA.modules.forEach(m => MODULES_BY_ID[m.id] = m);
+
+/* ---------- i18n ---------- */
+const STRINGS = {
+  de: {
+    title: "Stack-Composer — Fähigkeiten einkaufen",
+    subtitle: "Stelle dir aus dem ellmos-Modul-Baukasten deinen eigenen KI-Stack zusammen.",
+    publicBanner: "Public components only — excerpt of the full catalog.",
+    catalogMetaPrefix: "Katalog-Stand",
+    refreshHint: "Auffrischen: python .MODULES/_scripts/build_catalog.py",
+    footerHint: "Entwurf → an einen Agenten übergeben (Ordner/Repo + Katalog-Eintrag). Finale Prüfung immer via validate_composition.py — die Browser-Prüfung ist nur eine Vorschau.",
+    startTitle: "Wie möchtest du starten?",
+    startBody: "Du kannst Module frei auswählen oder ein paar Fragen beantworten lassen, die dir eine Vorauswahl in den Warenkorb legen — frei anpassbar danach.",
+    startManual: "Selbst zusammenstellen",
+    startWizard: "Fragen beantworten",
+    startSkip: "Überspringen",
+    wizardNext: "Weiter",
+    wizardBack: "Zurück",
+    wizardFinish: "Vorauswahl übernehmen",
+    cartTitle: "Dein Stack",
+    stackNameLabel: "Name deines Stacks",
+    stackNamePlaceholder: "mein-stack",
+    purposeLabel: "Zweck (kurz)",
+    purposePlaceholder: "Wofür soll dieser Stack dienen?",
+    emptyCart: "Noch nichts im Warenkorb — Module links per „In den Stack“ hinzufügen.",
+    stackClassLabel: "Stack-Klasse",
+    sensitivityLabel: "Max. Datensensitivität",
+    issuesTitle: "Regelprüfung",
+    notesTitle: "Hinweise",
+    noIssues: "Keine Regelverstöße erkannt.",
+    add: "In den Stack",
+    remove: "Entfernen",
+    copyJson: "JSON kopieren",
+    downloadJson: "JSON herunterladen",
+    copyMd: "MD kopieren",
+    downloadMd: "MD herunterladen",
+    copiedToast: "In Zwischenablage kopiert.",
+    downloadedToast: "Datei heruntergeladen.",
+    archNote: "Architektur-Hinweis: FileCommander (Vollzugriff) vs. Clatcher (enger Repair-Scope) — MCP-seitig nicht automatisch beide einbinden.",
+    finalHint: "Entwurf an einen Agenten übergeben → der baut Ordner/Repo + Katalog-Eintrag; finale Prüfung immer via validate_composition.py (Browser-Prüfung ist nur Vorschau).",
+    coreLegend: "kernnah",
+    filteredNote: n => `${n} Module aus dem vollen Katalog sind in dieser öffentlichen Ansicht ausgeblendet (privat/intern oder ohne öffentliche Quelle).`,
+    exclusiveMsg: role => `Kardinalität verletzt: „${role}“ erlaubt höchstens 1 Anbieter — wähle nur einen.`,
+    exclusiveKnowledge: "knowledge.search.default: wähle GARDENER ODER KnowledgeDigest als Standard.",
+    complementUsmcGardener: "USMC (kuratiert) und GARDENER (organisch) ergänzen sich — kuratierte Wahrheit bleibt aber einmalig.",
+    sensitivityEscalatedBy: names => `Eskaliert durch: ${names}`,
+    wizardQuestions: [
+      {
+        text: "Soll dein Stack ein Gedächtnis haben?",
+        multi: false,
+        options: [
+          {label:"Kuratiert (USMC)", ids:["USMC"]},
+          {label:"Organisch + Suche (GARDENER)", ids:["GARDENER"]},
+          {label:"Beides", ids:["USMC","GARDENER"]},
+          {label:"Nein", ids:[]}
+        ]
+      },
+      {
+        text: "Aufgabenverwaltung?",
+        multi: false,
+        options: [
+          {label:"Ja (task-master)", ids:["task-master"]},
+          {label:"Nein", ids:[]}
+        ]
+      },
+      {
+        text: "Dokumentwissen / RAG-Suche? (genau ein Standard: GARDENER ODER KnowledgeDigest)",
+        multi: false,
+        options: [
+          {label:"KnowledgeDigest", ids:["KnowledgeDigest"]},
+          {label:"GARDENER (falls noch nicht gewählt)", ids:["GARDENER"]},
+          {label:"Nein", ids:[]}
+        ]
+      },
+      {
+        text: "Mehrere Agenten/Maschinen koordinieren?",
+        multi: true,
+        options: [
+          {label:"Ja, mehrere Agenten (lock-master + ticket-master)", ids:["lock-master","ticket-master"]},
+          {label:"Ja, auch mehrere Maschinen (zusätzlich system-gap-master)", ids:["system-gap-master"]},
+          {label:"Nein", ids:[]}
+        ]
+      },
+      {
+        text: "Workflows/Automation?",
+        multi: false,
+        options: [
+          {label:"n8n-workflow-manager", ids:["n8n-workflow-manager"]},
+          {label:"llmauto", ids:["llmauto"]},
+          {label:"Nein", ids:[]}
+        ]
+      },
+      {
+        text: "Modell-/Provider-Routing?",
+        multi: false,
+        options: [
+          {label:"Ja (clutch)", ids:["clutch"]},
+          {label:"Nein", ids:[]}
+        ]
+      },
+      {
+        text: "Computer bedienen (GUI-Automation)?",
+        multi: false,
+        options: [
+          {label:"Ja (open-compute + clirec)", ids:["open-compute","clirec"]},
+          {label:"Nein", ids:[]}
+        ]
+      },
+      {
+        text: "Kanäle nach außen (Messaging/Mail)?",
+        multi: true,
+        options: [
+          {label:"Messaging (connectors)", ids:["connectors"]},
+          {label:"Mail (mail-connector)", ids:["mail-connector"]},
+          {label:"Nein", ids:[]}
+        ]
+      },
+      {
+        text: "Nutzer-Entscheidungsmodell?",
+        multi: false,
+        options: [
+          {label:"Ja (build-your-users-mind)", ids:["build-your-users-mind"]},
+          {label:"Nein", ids:[]}
+        ]
+      }
+    ],
+    mdPurposeFallback: "TODO: Zweck ausformulieren.",
+    mdOpenPoints: [
+      "Zweck-Absatz oben prüfen/ausformulieren.",
+      "Sensitivität und Policies gegen den tatsächlichen Einsatzzweck prüfen.",
+      "`python .MODULES/_scripts/validate_composition.py` gegen das Manifest ausführen.",
+      "Bei Freigabe: Ordner unter `.STACKS/` anlegen und Katalog-Eintrag ergänzen."
+    ]
+  },
+  en: {
+    title: "Stack Composer — shop for capabilities",
+    subtitle: "Compose your own AI stack from the ellmos module toolkit.",
+    publicBanner: "Public components only — excerpt of the full catalog.",
+    catalogMetaPrefix: "Catalog as of",
+    refreshHint: "Refresh: python .MODULES/_scripts/build_catalog.py",
+    footerHint: "Draft → hand off to an agent (creates folder/repo + catalog entry). Final check always via validate_composition.py — the in-browser check is a preview only.",
+    startTitle: "How would you like to start?",
+    startBody: "Pick modules freely, or answer a few questions that pre-fill your cart — fully adjustable afterwards.",
+    startManual: "Build it myself",
+    startWizard: "Answer questions",
+    startSkip: "Skip",
+    wizardNext: "Next",
+    wizardBack: "Back",
+    wizardFinish: "Apply pre-selection",
+    cartTitle: "Your stack",
+    stackNameLabel: "Stack name",
+    stackNamePlaceholder: "my-stack",
+    purposeLabel: "Purpose (short)",
+    purposePlaceholder: "What is this stack for?",
+    emptyCart: "Cart is empty — add modules on the left via “Add to stack”.",
+    stackClassLabel: "Stack class",
+    sensitivityLabel: "Max. data sensitivity",
+    issuesTitle: "Rule check",
+    notesTitle: "Notes",
+    noIssues: "No rule violations detected.",
+    add: "Add to stack",
+    remove: "Remove",
+    copyJson: "Copy JSON",
+    downloadJson: "Download JSON",
+    copyMd: "Copy MD",
+    downloadMd: "Download MD",
+    copiedToast: "Copied to clipboard.",
+    downloadedToast: "File downloaded.",
+    archNote: "Architecture note: FileCommander (full access) vs. Clatcher (narrow repair scope) — on the MCP side, don't wire in both by default.",
+    finalHint: "Hand the draft to an agent → it builds the folder/repo + catalog entry; final check always via validate_composition.py (the browser check is a preview only).",
+    coreLegend: "core-adjacent",
+    filteredNote: n => `${n} modules from the full catalog are hidden in this public view (private/internal or without a public source).`,
+    exclusiveMsg: role => `Cardinality violated: “${role}” allows at most 1 provider — pick only one.`,
+    exclusiveKnowledge: "knowledge.search.default: choose GARDENER OR KnowledgeDigest as the default.",
+    complementUsmcGardener: "USMC (curated) and GARDENER (organic) complement each other — curated truth still stays singular.",
+    sensitivityEscalatedBy: names => `Escalated by: ${names}`,
+    wizardQuestions: [
+      {
+        text: "Should your stack have a memory?",
+        multi: false,
+        options: [
+          {label:"Curated (USMC)", ids:["USMC"]},
+          {label:"Organic + search (GARDENER)", ids:["GARDENER"]},
+          {label:"Both", ids:["USMC","GARDENER"]},
+          {label:"No", ids:[]}
+        ]
+      },
+      {
+        text: "Task management?",
+        multi: false,
+        options: [
+          {label:"Yes (task-master)", ids:["task-master"]},
+          {label:"No", ids:[]}
+        ]
+      },
+      {
+        text: "Document knowledge / RAG search? (exactly one default: GARDENER OR KnowledgeDigest)",
+        multi: false,
+        options: [
+          {label:"KnowledgeDigest", ids:["KnowledgeDigest"]},
+          {label:"GARDENER (if not already picked)", ids:["GARDENER"]},
+          {label:"No", ids:[]}
+        ]
+      },
+      {
+        text: "Coordinate multiple agents/machines?",
+        multi: true,
+        options: [
+          {label:"Yes, multiple agents (lock-master + ticket-master)", ids:["lock-master","ticket-master"]},
+          {label:"Yes, also multiple machines (add system-gap-master)", ids:["system-gap-master"]},
+          {label:"No", ids:[]}
+        ]
+      },
+      {
+        text: "Workflows/automation?",
+        multi: false,
+        options: [
+          {label:"n8n-workflow-manager", ids:["n8n-workflow-manager"]},
+          {label:"llmauto", ids:["llmauto"]},
+          {label:"No", ids:[]}
+        ]
+      },
+      {
+        text: "Model/provider routing?",
+        multi: false,
+        options: [
+          {label:"Yes (clutch)", ids:["clutch"]},
+          {label:"No", ids:[]}
+        ]
+      },
+      {
+        text: "Operate a computer (GUI automation)?",
+        multi: false,
+        options: [
+          {label:"Yes (open-compute + clirec)", ids:["open-compute","clirec"]},
+          {label:"No", ids:[]}
+        ]
+      },
+      {
+        text: "External channels (messaging/mail)?",
+        multi: true,
+        options: [
+          {label:"Messaging (connectors)", ids:["connectors"]},
+          {label:"Mail (mail-connector)", ids:["mail-connector"]},
+          {label:"No", ids:[]}
+        ]
+      },
+      {
+        text: "User decision model?",
+        multi: false,
+        options: [
+          {label:"Yes (build-your-users-mind)", ids:["build-your-users-mind"]},
+          {label:"No", ids:[]}
+        ]
+      }
+    ],
+    mdPurposeFallback: "TODO: spell out the purpose.",
+    mdOpenPoints: [
+      "Review/spell out the purpose paragraph above.",
+      "Check sensitivity and policies against the real use case.",
+      "Run `python .MODULES/_scripts/validate_composition.py` against the manifest.",
+      "On approval: create the folder under `.STACKS/` and add the catalog entry."
+    ]
+  }
+};
+
+let lang = DATA.default_lang === "en" ? "en" : "de";
+const selected = new Set();
+let stackName = "";
+let purposeText = "";
+
+/* ---------- helpers ---------- */
+function t(key){ return STRINGS[lang][key]; }
+function kebab(s){
+  return (s||"").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "stack";
+}
+function showToast(msg){
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>el.classList.remove("show"), 1800);
+}
+function copyText(text, doneKey){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>showToast(t(doneKey)))
+      .catch(()=>fallbackCopy(text, doneKey));
+  } else {
+    fallbackCopy(text, doneKey);
+  }
+}
+function fallbackCopy(text, doneKey){
+  const ta = document.createElement("textarea");
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); showToast(t(doneKey)); }catch(e){}
+  document.body.removeChild(ta);
+}
+function downloadText(filename, text){
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast(t("downloadedToast"));
+}
+
+/* ---------- sensitivity ranking ---------- */
+const SENS_RANK = {"public":0, "application-defined":1, "user-local":2, "sensitive":3};
+function sensClass(v){ return "sens-" + (v||"application-defined"); }
+
+/* ---------- stack class ---------- */
+function computeStackClass(ids){
+  if(ids.length === 0) return null;
+  const core = ids.filter(id => CORE_IDS.has(id));
+  const nonCore = ids.filter(id => !CORE_IDS.has(id));
+  if(core.length === 0) return "bundle-stack";
+  if(nonCore.length === 0) return "core-stack";
+  return "full-stack";
+}
+
+/* ---------- rule evaluation ---------- */
+function evaluateStack(ids){
+  const idSet = new Set(ids);
+  const violations = [];
+  (DATA.rules.roles||[]).forEach(role=>{
+    const present = (role.providers||[]).filter(p => idSet.has(p));
+    if(role.maximum != null && present.length > role.maximum){
+      if(role.id === "knowledge.search.default"){
+        violations.push(t("exclusiveKnowledge"));
+      } else {
+        violations.push(t("exclusiveMsg")(role.id));
+      }
+    }
+  });
+  const notes = [];
+  if(idSet.has("USMC") && idSet.has("GARDENER")) notes.push(t("complementUsmcGardener"));
+
+  let maxRank = -1, maxVal = null, escalators = [];
+  ids.forEach(id=>{
+    const m = MODULES_BY_ID[id];
+    if(!m) return;
+    const v = (m.boundaries && m.boundaries.data) || "application-defined";
+    const r = SENS_RANK[v] != null ? SENS_RANK[v] : 1;
+    if(r > maxRank){ maxRank = r; maxVal = v; escalators = [m.display_name]; }
+    else if(r === maxRank && maxRank >= 0){ escalators.push(m.display_name); }
+  });
+  return {
+    violations, notes,
+    stackClass: computeStackClass(ids),
+    sensitivity: maxVal, sensitivityEscalators: escalators
+  };
+}
+
+/* ---------- rendering: catalog ---------- */
+function moduleBadgeRow(m){
+  const bits = [];
+  bits.push(`<span class="chip status-${m.status}">${m.status}</span>`);
+  bits.push(`<span class="chip">${m.kind}</span>`);
+  const sens = (m.boundaries && m.boundaries.data) || "application-defined";
+  bits.push(`<span class="chip ${sensClass(sens)}">${sens}</span>`);
+  return bits.join("");
+}
+function renderCatalog(){
+  const col = document.getElementById("catalog-col");
+  col.innerHTML = "";
+  DATA.categories.forEach(cat=>{
+    const mods = DATA.modules.filter(m=>m.category === cat.id);
+    if(mods.length === 0) return;
+    const group = document.createElement("section");
+    group.className = "group";
+    const leitfrage = lang === "en" ? cat.leitfrage_en : cat.leitfrage_de;
+    group.innerHTML = `
+      <div class="group-head">
+        <div class="kicker">${cat.directory}</div>
+        <h2>${cat.id}</h2>
+        <div class="leitfrage">${leitfrage}</div>
+      </div>
+      <div class="cards"></div>`;
+    const cardsEl = group.querySelector(".cards");
+    mods.forEach(m=>{
+      const card = document.createElement("div");
+      card.className = "card" + (selected.has(m.id) ? " selected" : "");
+      card.dataset.id = m.id;
+      const coreDot = CORE_IDS.has(m.id) ? `<span class="core-dot" title="${t('coreLegend')}"></span>` : "";
+      card.innerHTML = `
+        <h3>${coreDot}${m.display_name}</h3>
+        <p class="blurb">${m.description}</p>
+        <div class="chips">${moduleBadgeRow(m)}</div>
+        <div class="card-actions">
+          <span class="src">${m.resolved_source || ""}</span>
+          <button class="btn ${selected.has(m.id) ? "danger" : ""}" data-toggle="${m.id}">
+            ${selected.has(m.id) ? t("remove") : t("add")}
+          </button>
+        </div>`;
+      cardsEl.appendChild(card);
+    });
+    col.appendChild(group);
+  });
+  col.querySelectorAll("[data-toggle]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id = btn.dataset.toggle;
+      if(selected.has(id)) selected.delete(id); else selected.add(id);
+      renderAll();
+    });
+  });
+}
+
+/* ---------- rendering: cart ---------- */
+function renderCart(){
+  const cart = document.getElementById("cart");
+  const ids = Array.from(selected);
+  const ev = evaluateStack(ids);
+  let itemsHtml = "";
+  if(ids.length === 0){
+    itemsHtml = `<div class="empty-note">${t("emptyCart")}</div>`;
+  } else {
+    itemsHtml = `<ul class="cart-items">` + ids.map(id=>{
+      const m = MODULES_BY_ID[id];
+      return `<li><span>${m ? m.display_name : id}</span><button data-remove="${id}" title="${t('remove')}">✕</button></li>`;
+    }).join("") + `</ul>`;
+  }
+  const classLabel = ev.stackClass ? ev.stackClass : "—";
+  const sensLine = ev.sensitivity
+    ? `<div class="sensitivity-line"><b>${t("sensitivityLabel")}:</b> ${ev.sensitivity}<br><span style="color:var(--text-muted)">${t("sensitivityEscalatedBy")(ev.sensitivityEscalators.join(", "))}</span></div>`
+    : "";
+  const issuesHtml = ev.violations.length
+    ? `<ul class="issues">${ev.violations.map(v=>`<li>${v}</li>`).join("")}</ul>`
+    : `<div class="empty-note">${t("noIssues")}</div>`;
+  const notesHtml = ev.notes.length
+    ? `<ul class="notes">${ev.notes.map(n=>`<li>${n}</li>`).join("")}</ul>` : "";
+
+  cart.innerHTML = `
+    <h2>${t("cartTitle")}</h2>
+    <span class="stack-class">${t("stackClassLabel")}: ${classLabel}</span>
+    <div class="field">
+      <label>${t("stackNameLabel")}</label>
+      <input id="stack-name-input" type="text" placeholder="${t('stackNamePlaceholder')}" value="${stackName.replace(/"/g,'&quot;')}">
+    </div>
+    <div class="field">
+      <label>${t("purposeLabel")}</label>
+      <textarea id="purpose-input" rows="2" placeholder="${t('purposePlaceholder')}">${purposeText}</textarea>
+    </div>
+    ${itemsHtml}
+    ${sensLine}
+    <div>
+      <div style="font-size:.72rem;color:var(--text-muted);margin:8px 0 4px;text-transform:uppercase;letter-spacing:.03em">${t("issuesTitle")}</div>
+      ${issuesHtml}
+    </div>
+    ${notesHtml ? `<div><div style="font-size:.72rem;color:var(--text-muted);margin:8px 0 4px;text-transform:uppercase;letter-spacing:.03em">${t("notesTitle")}</div>${notesHtml}</div>` : ""}
+    <div class="export-row">
+      <button class="btn secondary" id="copy-json">${t("copyJson")}</button>
+      <button class="btn secondary" id="dl-json">${t("downloadJson")}</button>
+      <button class="btn secondary" id="copy-md">${t("copyMd")}</button>
+      <button class="btn secondary" id="dl-md">${t("downloadMd")}</button>
+    </div>
+    <div class="final-hint">${t("finalHint")}</div>
+    <div class="arch-note">${t("archNote")}</div>
+  `;
+
+  cart.querySelectorAll("[data-remove]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ selected.delete(btn.dataset.remove); renderAll(); });
+  });
+  const nameInput = document.getElementById("stack-name-input");
+  nameInput.addEventListener("input", ()=>{ stackName = nameInput.value; });
+  const purposeInput = document.getElementById("purpose-input");
+  purposeInput.addEventListener("input", ()=>{ purposeText = purposeInput.value; });
+
+  document.getElementById("copy-json").addEventListener("click", ()=>copyText(buildStackJson(), "copiedToast"));
+  document.getElementById("dl-json").addEventListener("click", ()=>downloadText("stack.v2.json", buildStackJson()));
+  document.getElementById("copy-md").addEventListener("click", ()=>copyText(buildStackMarkdown(), "copiedToast"));
+  document.getElementById("dl-md").addEventListener("click", ()=>{
+    const name = kebab(stackName || "stack");
+    downloadText(`NEW-STACK_${name}.md`, buildStackMarkdown());
+  });
+}
+
+/* ---------- export builders ---------- */
+function buildStackJson(){
+  const ids = Array.from(selected);
+  const ev = evaluateStack(ids);
+  const roleByModule = {};
+  (DATA.rules.roles||[]).forEach(role=>{
+    (role.providers||[]).forEach(p=>{ if(selected.has(p) && !roleByModule[p]) roleByModule[p] = role.id; });
+  });
+  const components = ids.map(id=>{
+    const c = {id};
+    if(roleByModule[id]) c.role = roleByModule[id];
+    return c;
+  });
+  const obj = {
+    schema: "ellmos.stack.v2",
+    id: kebab(stackName || "new-stack"),
+    status: "draft",
+    stack_class: ev.stackClass || undefined,
+    visibility: "public-candidate",
+    components,
+    required_roles: [],
+    skills: [],
+    mcp_servers: [],
+    nested_stacks: [],
+    external_components: [],
+    policies: {
+      local_first: true,
+      max_data_sensitivity: ev.sensitivity || undefined
+    }
+  };
+  return JSON.stringify(obj, null, 2);
+}
+function buildStackMarkdown(){
+  const ids = Array.from(selected);
+  const ev = evaluateStack(ids);
+  const name = stackName || (lang === "en" ? "new-stack" : "neuer-stack");
+  const today = new Date().toISOString().slice(0,10);
+  const roleByModule = {};
+  (DATA.rules.roles||[]).forEach(role=>{
+    (role.providers||[]).forEach(p=>{ if(selected.has(p) && !roleByModule[p]) roleByModule[p] = role.id; });
+  });
+  const rows = ids.map(id=>{
+    const m = MODULES_BY_ID[id];
+    if(!m) return `| ${id} | ? | ? |`;
+    const role = roleByModule[id] || (m.provides && m.provides[0]) || "-";
+    return `| ${m.display_name} | \`${m.resolved_source}\` | ${role} |`;
+  }).join("\n");
+  const purpose = (purposeText && purposeText.trim()) ? purposeText.trim() : t("mdPurposeFallback");
+  const openPoints = t("mdOpenPoints").map((p,i)=>`${i+1}. ${p}`).join("\n");
+  if(lang === "en"){
+    return `# NEW-STACK: ${name} — draft/packing list
+
+> **Status: DRAFT** (${today}, generated via Stack Composer). No folder, no repo,
+> no catalog entry yet. Validate before creating anything:
+> \`python .MODULES/_scripts/validate_composition.py\`
+
+**Class: ${ev.stackClass || "-"}**
+
+## Purpose
+
+${purpose}
+
+## Packing list (component → responsibility)
+
+| Component | Origin | Role in stack |
+|---|---|---|
+${rows || "| _(none selected)_ | | |"}
+
+## Manifest draft (\`ellmos.stack.v2\`)
+
+\`\`\`json
+${buildStackJson()}
+\`\`\`
+
+## Open points before creation
+
+${openPoints}
+`;
+  }
+  return `# NEW-STACK: ${name} — Entwurf/Packliste
+
+> **Status: ENTWURF** (${today}, generiert via Stack-Composer). Noch kein Ordner, kein Repo,
+> kein Katalog-Eintrag. Vor Anlage validieren:
+> \`python .MODULES/_scripts/validate_composition.py\`
+
+**Klasse: ${ev.stackClass || "-"}**
+
+## Zweck
+
+${purpose}
+
+## Packliste (Komponente → Zuständigkeit)
+
+| Komponente | Herkunft | Rolle im Stack |
+|---|---|---|
+${rows || "| _(keine Auswahl)_ | | |"}
+
+## Manifest-Entwurf (\`ellmos.stack.v2\`)
+
+\`\`\`json
+${buildStackJson()}
+\`\`\`
+
+## Offene Punkte vor Anlage
+
+${openPoints}
+`;
+}
+
+/* ---------- header ---------- */
+function renderHeader(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    el.textContent = t(el.dataset.i18n);
+  });
+  const badge = document.getElementById("variant-badge");
+  badge.textContent = DATA.variant === "public" ? "public" : "full";
+  badge.className = "badge " + (DATA.variant === "public" ? "variant-public" : "variant-full");
+  document.body.classList.toggle("variant-public", DATA.variant === "public");
+
+  let metaText = `${t("catalogMetaPrefix")}: ${DATA.catalog_timestamp || "?"} · ${t("refreshHint")}`;
+  if(DATA.filtered_out_count > 0){
+    metaText += " · " + t("filteredNote")(DATA.filtered_out_count);
+  }
+  document.getElementById("catalog-meta").textContent = metaText;
+
+  document.querySelectorAll(".lang-toggle button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.lang === lang);
+  });
+}
+
+/* ---------- wizard ---------- */
+let wizardStep = 0;
+const wizardSelections = [];
+function openWizard(){
+  wizardStep = 0;
+  const qs = t("wizardQuestions");
+  wizardSelections.length = 0;
+  qs.forEach(()=>wizardSelections.push([]));
+  document.getElementById("wizard-modal").classList.remove("hidden");
+  renderWizardStep();
+}
+function closeWizard(){ document.getElementById("wizard-modal").classList.add("hidden"); }
+function renderWizardStep(){
+  const qs = t("wizardQuestions");
+  const q = qs[wizardStep];
+  document.getElementById("wizard-progress").textContent = `${wizardStep+1} / ${qs.length}`;
+  const body = document.getElementById("wizard-body");
+  const type = q.multi ? "checkbox" : "radio";
+  body.innerHTML = `<div class="wizard-q"><p class="qtext">${q.text}</p>
+    <div class="wizard-options">
+      ${q.options.map((opt,i)=>`
+        <label>
+          <input type="${type}" name="wq" value="${i}" ${wizardSelections[wizardStep].includes(i) ? "checked" : ""}>
+          <span>${opt.label}</span>
+        </label>`).join("")}
+    </div></div>`;
+  body.querySelectorAll("input").forEach(inp=>{
+    inp.addEventListener("change", ()=>{
+      const i = Number(inp.value);
+      if(q.multi){
+        const arr = wizardSelections[wizardStep];
+        const pos = arr.indexOf(i);
+        if(inp.checked && pos === -1) arr.push(i);
+        if(!inp.checked && pos !== -1) arr.splice(pos,1);
+      } else {
+        wizardSelections[wizardStep] = [i];
+      }
+    });
+  });
+  const backBtn = document.getElementById("wizard-back");
+  const nextBtn = document.getElementById("wizard-next");
+  backBtn.disabled = wizardStep === 0;
+  nextBtn.textContent = (wizardStep === qs.length - 1) ? t("wizardFinish") : t("wizardNext");
+}
+function applyWizardResults(){
+  const qs = t("wizardQuestions");
+  qs.forEach((q, qi)=>{
+    (wizardSelections[qi]||[]).forEach(optIdx=>{
+      (q.options[optIdx].ids||[]).forEach(id=>{
+        if(MODULES_BY_ID[id]) selected.add(id);
+      });
+    });
+  });
+}
+
+/* ---------- wire-up ---------- */
+function renderAll(){ renderHeader(); renderCatalog(); renderCart(); }
+
+document.getElementById("start-manual").addEventListener("click", ()=>{
+  document.getElementById("start-modal").classList.add("hidden");
+});
+document.getElementById("start-skip").addEventListener("click", ()=>{
+  document.getElementById("start-modal").classList.add("hidden");
+});
+document.getElementById("start-wizard").addEventListener("click", ()=>{
+  document.getElementById("start-modal").classList.add("hidden");
+  openWizard();
+});
+document.getElementById("wizard-back").addEventListener("click", ()=>{
+  if(wizardStep > 0){ wizardStep--; renderWizardStep(); }
+});
+document.getElementById("wizard-next").addEventListener("click", ()=>{
+  const qs = t("wizardQuestions");
+  if(wizardStep < qs.length - 1){ wizardStep++; renderWizardStep(); }
+  else { applyWizardResults(); closeWizard(); renderAll(); }
+});
+document.querySelectorAll(".lang-toggle button[data-lang]").forEach(b=>{
+  b.addEventListener("click", ()=>{ lang = b.dataset.lang; renderAll(); });
+});
+
+renderAll();
+
+/* Manueller Theme-Umschalter — geteilter Schluessel mit den ellmos-Karten.
+   Ohne gespeicherte Wahl bleibt die Systemeinstellung (Auto, ◐). */
+(function(){
+  var KEY = "ellmos-theme";
+  var btn = document.getElementById("theme-btn");
+  if(!btn) return;
+  function label(){
+    var t = document.documentElement.getAttribute("data-theme");
+    btn.textContent = t === "light" ? "🌙" : (t === "dark" ? "☀️" : "◐");
+  }
+  try{
+    var saved = localStorage.getItem(KEY);
+    if(saved === "light" || saved === "dark"){
+      document.documentElement.setAttribute("data-theme", saved);
+    }
+  }catch(e){}
+  label();
+  btn.addEventListener("click", function(){
+    var cur = document.documentElement.getAttribute("data-theme");
+    var next;
+    if(!cur){
+      next = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ? "light" : "dark";
+    } else {
+      next = (cur === "light") ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", next);
+    try{ localStorage.setItem(KEY, next); }catch(e){}
+    label();
+  });
+})();
+</script>
+</body>
+</html>

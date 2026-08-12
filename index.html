@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ellmos-ai — Module Circuit Map</title>
+<style>
+  :root{
+    --bg:#0b1410; --board:#0e1a14; --zone:#12241b; --zone-edge:#1f3a2c;
+    --copper:#d8a05a; --copper-dim:#8a6a3e; --trace:#3f6b52; --trace-hot:#e8b96a;
+    --ink:#d7e4da; --ink-dim:#8fa697; --ink-faint:#5f7568;
+    --ok:#5ad08a; --dev:#e0b45a; --plan:#7d8f84; --priv:#c97b7b;
+    --chip:#0a120e; --accent:#63d6a4;
+    --panel:#0d1712; --panel-edge:#24402f; --surface:transparent;
+  }
+  html[data-theme="light"]{
+    --bg:#f6f7fd; --board:#ffffff; --zone:#ffffff; --zone-edge:#e4e6f6;
+    --copper:#5f3dc4; --copper-dim:#9775fa; --trace:#b9bef0; --trace-hot:#e64980;
+    --ink:#272a4d; --ink-dim:#5d6083; --ink-faint:#9497bb;
+    --ok:#0ca678; --dev:#f08c00; --plan:#a9acce; --priv:#e64980;
+    --chip:#f3f4fc; --accent:#4263eb;
+    --panel:#fbfbff; --panel-edge:#e4e6f6; --surface:#ffffff;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{background:var(--bg); color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif; font-size:15px; line-height:1.45}
+  a{color:var(--accent)}
+
+  /* ---------- Kopf ---------- */
+  header{display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end;
+    padding:22px 26px 14px; border-bottom:1px solid var(--zone-edge); background:var(--surface)}
+  .brand h1{font-size:26px; letter-spacing:.5px; color:var(--copper); font-weight:700}
+  html[data-theme="light"] .brand h1{font-weight:800;
+    background:linear-gradient(90deg,#4263eb 0%,#7048e8 45%,#e64980 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  .brand h1 .dot{color:var(--accent)}
+  html[data-theme="light"] .brand h1 .dot{color:transparent}
+  .brand .sub{color:var(--ink-dim); font-size:14px; margin-top:2px; max-width:60ch}
+  nav.pagenav{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+  nav.pagenav a{font-size:12.5px; color:var(--ink-dim); text-decoration:none;
+    border:1px solid var(--zone-edge); border-radius:999px; padding:3px 11px;
+    background:var(--surface)}
+  nav.pagenav a.on{background:var(--copper); color:#181008; font-weight:700; border-color:var(--copper)}
+  html[data-theme="light"] nav.pagenav a.on{background:linear-gradient(90deg,#4263eb,#7048e8);
+    color:#fff; border-color:transparent}
+  nav.pagenav a:hover{border-color:var(--copper)}
+  .controls{margin-left:auto; display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+  .controls input[type=search]{background:var(--chip); color:var(--ink);
+    border:1px solid var(--zone-edge); border-radius:8px; padding:7px 12px; width:220px; font-size:14px}
+  .controls input[type=search]:focus{outline:1px solid var(--copper-dim)}
+  .toggle{display:flex; align-items:center; gap:6px; color:var(--ink-dim); font-size:13px;
+    cursor:pointer; user-select:none}
+  .themebtn{background:var(--chip); border:1px solid var(--zone-edge); border-radius:8px;
+    padding:6px 11px; font-size:15px; cursor:pointer; line-height:1}
+  .themebtn:hover{border-color:var(--copper)}
+  .langsw{display:flex; border:1px solid var(--zone-edge); border-radius:8px; overflow:hidden}
+  .langsw button{background:var(--chip); color:var(--ink-dim); border:0; padding:7px 12px;
+    font-size:13px; cursor:pointer}
+  .langsw button.on{background:var(--copper); color:#181008; font-weight:700}
+  html[data-theme="light"] .langsw button.on{background:linear-gradient(90deg,#4263eb,#7048e8); color:#fff}
+
+  /* ---------- Layout ---------- */
+  main{display:flex; gap:0; align-items:stretch}
+  #boardwrap{flex:1 1 auto; min-width:0; padding:22px; position:relative}
+  #board{position:relative; display:grid; gap:34px 40px;
+    grid-template-columns:1.1fr 1.1fr 1fr .95fr;
+    grid-template-areas:
+      "runtime runtime connectors connectors"
+      "orchestration control tools tools"
+      "memory knowledge sync sync"
+      "domains domains quality meta";
+  }
+  #wires{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible}
+  .wlabel{position:absolute; transform:translate(-50%,-50%); background:var(--board);
+    border:1px solid var(--trace); color:var(--ink-dim); font-size:11px; padding:2px 8px;
+    border-radius:999px; pointer-events:none; white-space:nowrap; z-index:3; transition:.15s}
+  html[data-theme="light"] .wlabel{box-shadow:0 2px 6px rgba(70,70,150,.08)}
+  .wlabel.hot{border-color:var(--trace-hot); color:var(--trace-hot); background:#161006}
+  html[data-theme="light"] .wlabel.hot{background:#fff0f6}
+
+  /* ---------- Zonen ---------- */
+  .zone{position:relative; z-index:2; background:var(--zone);
+    border:1px solid var(--zone-edge); border-radius:12px; padding:12px 14px 14px;
+    box-shadow:0 0 0 4px rgba(216,160,90,.03), inset 0 0 40px rgba(0,0,0,.25);
+    transition:border-color .15s, box-shadow .15s, transform .15s; cursor:default}
+  .zone::before{content:""; position:absolute; left:10px; right:10px; top:-3px; height:3px;
+    background:repeating-linear-gradient(90deg,var(--copper-dim) 0 10px,transparent 10px 24px);
+    opacity:.5; border-radius:2px}
+  html[data-theme="light"] .zone{border-top:3px solid var(--zct,#7048e8); border-radius:14px;
+    box-shadow:0 8px 24px rgba(76,78,160,.08)}
+  html[data-theme="light"] .zone::before{display:none}
+  .zone.hot{border-color:var(--copper); box-shadow:0 0 0 4px rgba(216,160,90,.10)}
+  html[data-theme="light"] .zone.hot{border-color:var(--zone-edge);
+    border-top-color:var(--zct,#7048e8); box-shadow:0 10px 30px rgba(76,78,160,.18);
+    transform:translateY(-2px)}
+  .zone h2{font-size:14px; letter-spacing:.4px; display:flex;
+    gap:9px; align-items:center; flex-wrap:wrap}
+  .zone h2 .ic{width:38px; height:38px; flex:0 0 auto; border-radius:11px; display:flex;
+    align-items:center; justify-content:center; font-size:20px;
+    background:var(--chip); border:1px solid var(--zone-edge)}
+  html[data-theme="light"] .zone h2 .ic{border:0;
+    background:linear-gradient(135deg,var(--zc1,#e5dbff),var(--zc2,#d0bfff));
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.6), 0 3px 8px rgba(76,78,160,.14)}
+  .zone h2 .ttl{color:var(--copper); font-weight:700}
+  html[data-theme="light"] .zone h2 .ttl{color:var(--zct,#5f3dc4)}
+  .zone h2 .q{color:var(--ink-faint); font-weight:400; font-size:12px; letter-spacing:0;
+    flex-basis:100%}
+  .zone .xbadge{display:inline-block; font-size:10.5px; color:#0e1a14; background:var(--copper-dim);
+    border-radius:4px; padding:1px 6px; vertical-align:middle; font-weight:600}
+  html[data-theme="light"] .zone .xbadge{color:var(--zct,#5f3dc4); background:var(--zc1,#e5dbff)}
+  .mods{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px}
+  .mod{display:inline-flex; align-items:center; gap:6px; background:var(--chip);
+    border:1px solid var(--zone-edge); border-radius:7px; padding:4px 9px; font-size:12.5px;
+    color:var(--ink); cursor:pointer; transition:.12s; font-family:Consolas,ui-monospace,monospace}
+  .mod:hover{border-color:var(--copper); color:#fff; transform:translateY(-1px)}
+  html[data-theme="light"] .mod:hover{border-color:var(--zct,#7048e8); color:var(--ink);
+    background:#fff; box-shadow:0 3px 8px rgba(76,78,160,.12)}
+  .mod.pinned{border-color:var(--accent); box-shadow:0 0 0 2px rgba(99,214,164,.25)}
+  html[data-theme="light"] .mod.pinned{border-color:var(--trace-hot);
+    box-shadow:0 0 0 2px rgba(230,73,128,.2)}
+  .mod.dim{opacity:.22; filter:saturate(.3)}
+  .mod .led{width:7px; height:7px; border-radius:50%; flex:0 0 auto}
+  .led.ok{background:var(--ok); box-shadow:0 0 5px var(--ok)}
+  .led.dev{background:var(--dev); box-shadow:0 0 5px var(--dev)}
+  .led.plan{background:var(--plan)}
+  html[data-theme="light"] .led.ok, html[data-theme="light"] .led.dev{box-shadow:none}
+  .mod .lock{font-size:10px; color:var(--priv)}
+  .zone[data-area="runtime"]{grid-area:runtime}
+  .zone[data-area="connectors"]{grid-area:connectors}
+  .zone[data-area="orchestration"]{grid-area:orchestration}
+  .zone[data-area="control"]{grid-area:control}
+  .zone[data-area="tools"]{grid-area:tools}
+  .zone[data-area="memory"]{grid-area:memory}
+  .zone[data-area="knowledge"]{grid-area:knowledge}
+  .zone[data-area="sync"]{grid-area:sync}
+  .zone[data-area="domains"]{grid-area:domains}
+  .zone[data-area="quality"]{grid-area:quality}
+  .zone[data-area="meta"]{grid-area:meta}
+
+  /* Außenwelt-Pins an der Connectors-Zone */
+  .pins{margin-top:10px; border-top:1px dashed var(--zone-edge); padding-top:8px;
+    font-size:11.5px; color:var(--ink-faint)}
+  .pins b{color:var(--copper-dim); font-weight:600}
+  html[data-theme="light"] .pins b{color:var(--zct,#1971c2)}
+
+  /* ---------- Panel ---------- */
+  #panel{flex:0 0 340px; max-width:340px; border-left:1px solid var(--zone-edge);
+    background:var(--panel); padding:18px; position:sticky; top:0; align-self:flex-start;
+    max-height:100vh; overflow:auto}
+  #panel .hint{color:var(--ink-faint); font-size:13px}
+  #panel h3{color:var(--copper); font-size:16px; margin-bottom:2px; overflow-wrap:anywhere}
+  #panel .meta{font-size:12px; color:var(--ink-dim); margin-bottom:10px; display:flex;
+    flex-wrap:wrap; gap:6px}
+  #panel .meta span{border:1px solid var(--panel-edge); border-radius:5px; padding:1px 7px;
+    background:var(--surface)}
+  #panel .desc{font-size:13.5px; color:var(--ink); margin-bottom:12px}
+  #panel .prov{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px}
+  #panel .prov code{font-size:11px; background:var(--chip); border:1px solid var(--panel-edge);
+    border-radius:4px; padding:1px 6px; color:var(--ink-dim)}
+  #panel .edges{margin-top:8px}
+  #panel .edges h4{font-size:12px; color:var(--ink-dim); text-transform:uppercase;
+    letter-spacing:.8px; margin-bottom:6px}
+  #panel .edges li{list-style:none; font-size:13px; margin-bottom:9px; padding-left:12px;
+    border-left:2px solid var(--trace)}
+  #panel .edges li b{color:var(--trace-hot); font-weight:600}
+  #panel .repo{display:inline-block; margin-top:4px; font-size:13px; word-break:break-all}
+  #panel .pinnote{margin-top:14px; font-size:11.5px; color:var(--ink-faint)}
+
+  /* ---------- Schichten & Fuß ---------- */
+  #layers{padding:26px; border-top:1px solid var(--zone-edge); background:var(--surface)}
+  #layers h2{font-size:15px; color:var(--copper); margin-bottom:4px}
+  #layers .lsub{color:var(--ink-faint); font-size:13px; margin-bottom:14px}
+  .stack{display:flex; flex-wrap:wrap; gap:8px; align-items:stretch}
+  .layer{flex:1 1 150px; min-width:150px; background:var(--zone); border:1px solid var(--zone-edge);
+    border-radius:9px; padding:9px 11px; cursor:default; transition:.12s}
+  html[data-theme="light"] .layer{background:var(--bg)}
+  .layer:hover{border-color:var(--copper)}
+  .layer b{display:block; font-size:13px; color:var(--ink)}
+  .layer i{font-style:normal; font-size:11.5px; color:var(--ink-faint)}
+  .layer .arr{float:right; color:var(--copper-dim)}
+  .layer.hl{border-color:var(--copper); box-shadow:0 0 0 3px rgba(216,160,90,.08)}
+  html[data-theme="light"] .layer.hl{border-color:var(--copper-dim);
+    background:linear-gradient(135deg,#edf2ff,#f3f0ff); box-shadow:0 0 0 3px rgba(112,72,232,.08)}
+  #layerinfo{margin-top:12px; font-size:13px; color:var(--ink-dim); min-height:2.6em; max-width:100ch}
+
+  footer{padding:16px 26px 30px; color:var(--ink-faint); font-size:12px;
+    border-top:1px solid var(--zone-edge); display:flex; flex-wrap:wrap; gap:18px;
+    align-items:center; background:var(--surface)}
+  .leg{display:flex; gap:14px; flex-wrap:wrap; align-items:center}
+  .leg span{display:inline-flex; align-items:center; gap:5px}
+
+  @media (max-width:1100px){
+    main{flex-direction:column}
+    #panel{position:static; max-width:none; flex:auto; border-left:0;
+      border-top:1px solid var(--zone-edge); max-height:none}
+  }
+  @media (max-width:860px){
+    #board{grid-template-columns:1fr;
+      grid-template-areas:"runtime" "connectors" "orchestration" "control" "tools"
+        "memory" "knowledge" "sync" "domains" "quality" "meta"}
+    .controls input[type=search]{width:150px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>ellmos<span class="dot">-</span>ai <span style="font-weight:400;color:var(--ink-dim)">·</span> <span id="t-title">Der Schaltplan</span></h1>
+    <p class="sub" id="t-sub"></p>
+    <nav class="pagenav">
+      <a href="index.html" class="on">⌁ Circuit Map</a>
+      <a href="skills.html">✎ Skill Library</a>
+      <a href="stack-composer.html">⚡ Stack Composer</a>
+      <a href="https://github.com/ellmos-ai">GitHub ↗</a>
+    </nav>
+  </div>
+  <div class="controls">
+    <input type="search" id="q" placeholder="Modul suchen …">
+    <button id="themebtn" class="themebtn" title="hell / dunkel">☀️</button>
+    <div class="langsw">
+      <button id="lang-de">DE</button><button id="lang-en" class="on">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="boardwrap">
+    <div id="board"></div>
+    <svg id="wires">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--trace)"></path>
+        </marker>
+        <marker id="arrhot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--trace-hot)"></path>
+        </marker>
+      </defs>
+      <g id="wiregroup"></g>
+    </svg>
+  </div>
+  <aside id="panel"><p class="hint" id="panelhint"></p><div id="panelbody"></div></aside>
+</main>
+
+<section id="layers">
+  <h2 id="t-layers-h"></h2>
+  <p class="lsub" id="t-layers-sub"></p>
+  <div class="stack" id="stack"></div>
+  <div id="layerinfo"></div>
+</section>
+
+<footer>
+  <div class="leg">
+    <span><span class="led ok" style="display:inline-block"></span> <span id="t-leg-ok"></span></span>
+    <span><span class="led dev" style="display:inline-block"></span> <span id="t-leg-dev"></span></span>
+    <span><span class="led plan" style="display:inline-block"></span> <span id="t-leg-plan"></span></span>
+    <span><span class="lock" style="color:var(--priv)">🔒</span> <span id="t-leg-priv"></span></span>
+  </div>
+  <div id="t-source" style="margin-left:auto"></div>
+</footer>
+
+<script>
+"use strict";
+
+/* ================= Bereichs-Icons + helle Farbwelten ================= */
+const SKIN = {
+  runtime:      {i:"🖥️", c1:"#dbe4ff", c2:"#bac8ff", t:"#3b5bdb"},
+  connectors:   {i:"🔌", c1:"#d0ebff", c2:"#a5d8ff", t:"#1971c2"},
+  orchestration:{i:"🧭", c1:"#e5dbff", c2:"#d0bfff", t:"#6741d9"},
+  control:      {i:"⚙️", c1:"#f3d9fa", c2:"#eebefa", t:"#9c36b5"},
+  tools:        {i:"🛠️", c1:"#edf2ff", c2:"#bac8ff", t:"#4c6ef5"},
+  memory:       {i:"🧠", c1:"#ffdeeb", c2:"#fcc2d7", t:"#d6336c"},
+  knowledge:    {i:"📚", c1:"#f8f0fc", c2:"#eebefa", t:"#ae3ec9"},
+  sync:         {i:"🔄", c1:"#e7f5ff", c2:"#99d0f7", t:"#1c7ed6"},
+  domains:      {i:"🧩", c1:"#f3f0ff", c2:"#d0bfff", t:"#7048e8"},
+  quality:      {i:"🧪", c1:"#fff0f6", c2:"#fcc2d7", t:"#e64980"},
+  meta:         {i:"🚧", c1:"#e5dbff", c2:"#c5b3f2", t:"#5f3dc4"}
+};
+
+/* ================= I18N ================= */
+const UI = {
+  de: {
+    title:"Der Schaltplan",
+    sub:"Alle Funktionsbereiche und Module des ellmos-Baukastens auf einer Platine — fahre über einen Bereich, um zu sehen, wie er mit den anderen zusammenarbeitet; fahre über ein Modul, um seinen Zweck zu lesen.",
+    search:"Modul suchen …", pubonly:"nur Öffentliches",
+    hint:"Fahre über einen Bereich oder ein Modul — hier erscheinen Zweck, Status und Zusammenspiel. Ein Klick pinnt die Ansicht (für Links).",
+    edgesOut:"So arbeitet dieser Bereich mit anderen zusammen",
+    layersH:"Wo diese Karte im Gesamtbild liegt",
+    layersSub:"Der Baukasten ist geschichtet: Jede Schicht nutzt die darunter über stabile Verträge — nie über Kopien. Diese Karte zeigt die Modul-Schicht.",
+    legOk:"im Einsatz", legDev:"in Entwicklung", legPlan:"geplant", legPriv:"privat / intern",
+    source:"ellmos-ai · öffentlicher Auszug: 36 von 51+ Modulen in 11 Funktionsbereichen · Stand 2026-08-12",
+    status:{ok:"im Einsatz", dev:"in Entwicklung", plan:"geplant"},
+    vis:{public:"öffentlich", cand:"Veröffentlichung vorbereitet", priv:"privat"},
+    area:"Bereich", repo:"Repository ansehen", provides:"stellt bereit",
+    pinnote:"Klick auf ein anderes Element wechselt · Klick auf dasselbe löst die Pinnung.",
+    crossnote:"wirkt bereichsübergreifend", world:"Außenwelt", worldpins:"Telegram · Discord · Signal · Mail · Webhook · Mensch"
+  },
+  en: {
+    title:"The Circuit Diagram",
+    sub:"Every functional area and module of the ellmos construction kit on one board — hover over an area to see how it works with the others; hover over a module to read its purpose.",
+    search:"Search modules …", pubonly:"public only",
+    hint:"Hover over an area or a module — purpose, status and interplay appear here. Click to pin the view (for links).",
+    edgesOut:"How this area works with the others",
+    layersH:"Where this map sits in the big picture",
+    layersSub:"The kit is layered: each layer uses the one below through stable contracts — never through copies. This map shows the module layer.",
+    legOk:"in use", legDev:"in development", legPlan:"planned", legPriv:"private / internal",
+    source:"ellmos-ai · public excerpt: 36 of 51+ modules in 11 functional areas · as of 2026-08-12",
+    status:{ok:"in use", dev:"in development", plan:"planned"},
+    vis:{public:"public", cand:"publication in preparation", priv:"private"},
+    area:"Area", repo:"View repository", provides:"provides",
+    pinnote:"Clicking another element switches · clicking the same one unpins.",
+    crossnote:"cross-cutting", world:"Outside world", worldpins:"Telegram · Discord · Signal · Mail · Webhook · Human"
+  }
+};
+
+/* ================= BEREICHE ================= */
+const AREAS = [
+  {id:"runtime", dir:".RUNTIME",
+   name:{de:"Laufzeit & Oberflächen", en:"Runtime & Interfaces"},
+   q:{de:"Worin läuft der Agent — und wo bedient man ihn?", en:"What does the agent run in — and where do you operate it?"},
+   desc:{de:"Die Umgebung, in der ein Agent lebt: Chat-Laufzeit, Host-Shell mit Auth und Spaces, Operator-Konsole, Sprach-Ein-/Ausgabe. Von hier aus greift alles andere ineinander.",
+         en:"The environment an agent lives in: chat runtime, host shell with auth and spaces, operator console, voice I/O. From here, everything else interlocks."}},
+  {id:"connectors", dir:".CONNECTORS",
+   name:{de:"Kanäle & Provider", en:"Channels & Providers"},
+   q:{de:"Wie erreiche ich Mensch, Agent oder Dienst?", en:"How do I reach a human, agent, or service?"},
+   desc:{de:"Verbindungen nach draußen: Messaging-Kanäle wie Telegram oder Signal, Mail-Postfächer, Webhooks — und Adapter, die fremde Agenten-CLIs anschließbar machen.",
+         en:"Connections to the outside: messaging channels like Telegram or Signal, mailboxes, webhooks — and adapters that make third-party agent CLIs pluggable."}},
+  {id:"orchestration", dir:".ORCHESTRATION",
+   name:{de:"Routing & Delegation", en:"Routing & Delegation"},
+   q:{de:"Wer macht es — mit welchem Modell und Muster?", en:"Who does it — with which model and pattern?"},
+   desc:{de:"Entscheidet, WAS laufen soll: welches Modell eine Aufgabe bekommt, ob ein Schwarm sie besser löst, an welchen Partner delegiert wird, welcher Workflow anspringt.",
+         en:"Decides WHAT should run: which model gets a task, whether a swarm solves it better, which partner it is delegated to, which workflow kicks in."}},
+  {id:"control", dir:".CONTROL",
+   name:{de:"Steuerung & Ausführung", en:"Control & Execution"},
+   q:{de:"Wer darf was — und was ist zu tun?", en:"Who may do what — and what needs doing?"},
+   desc:{de:"Die zentrale Exekutive: Locks und Rechte, Tickets und Tasks, Zeitpläne, Ketten und Gates. Hier wird ausgeführt und koordiniert, was die Orchestrierung entschieden hat.",
+         en:"The central executive: locks and permissions, tickets and tasks, schedules, chains and gates. This is where decisions from orchestration are executed and coordinated."}},
+  {id:"tools", dir:".TOOLS",
+   name:{de:"Scharfe Einzelwerkzeuge", en:"Sharp Single-Purpose Tools"},
+   q:{de:"Womit wird konkret hantiert?", en:"What is actually handled with?"},
+   desc:{de:"Eng umrissene technische Werkzeuge, die ein Agent zubuchen kann wie einen Skill mit Laufzeit: Computer-Use, Web-Abruf, API-Erkundung, Demonstrations-Aufnahmen.",
+         en:"Sharply scoped technical tools an agent can add like a skill with a runtime: computer use, web fetching, API probing, demonstration recordings."}},
+  {id:"memory", dir:".MEMORY",
+   name:{de:"Gedächtnis & Nutzer-Modell", en:"Memory & User Model"},
+   q:{de:"Was weiß ich schon?", en:"What do I already know?"},
+   desc:{de:"Alles, was ein Agent behält: kuratierte Fakten, organisch wachsende Volltext-Indizes, Notizen, ein Modell seines Nutzers — und der Abgleich dieser Datenbanken zwischen Maschinen.",
+         en:"Everything an agent retains: curated facts, organically growing full-text indexes, notes, a model of its user — and keeping these databases in sync across machines."}},
+  {id:"knowledge", dir:".KNOWLEDGE",
+   name:{de:"Dokumentwissen & Korpora", en:"Document Knowledge & Corpora"},
+   q:{de:"Wo steht das — in meinen Dokumenten?", en:"Where is that written — in my documents?"},
+   desc:{de:"Wissen aus Dokumenten: Einlesen, Zerlegen, Volltextsuche über große Bestände — plus Startdatensätze zum Füttern neuer Systeme.",
+         en:"Knowledge from documents: ingesting, chunking, full-text search over large collections — plus seed datasets for bootstrapping new systems."}},
+  {id:"sync", dir:".SYNC",
+   name:{de:"Dateien & Sicherungen", en:"Files & Backups"},
+   q:{de:"Wie kommt es konsistent aufs andere System?", en:"How does it get to the other machine consistently?"},
+   desc:{de:"Der klassische Datei- und Backup-Fall zwischen Maschinen. Datenbank-Abgleich wandert bewusst ins Gedächtnis (sqlite-transit-sync), System-Abstimmung in die Steuerung.",
+         en:"The classic file-and-backup case between machines. Database sync deliberately lives in Memory (sqlite-transit-sync); system coordination lives in Control."}},
+  {id:"domains", dir:".DOMAINS",
+   name:{de:"Fachliche Pakete", en:"Domain Packages"},
+   q:{de:"Für welches Fachgebiet?", en:"For which field?"},
+   desc:{de:"Optionale Fachmodule: Recht, Steuern, Bildung, Medien, Marktdaten, Anonymisierung. Sie setzen auf den Kern auf, statt eigene Infrastruktur zu bauen.",
+         en:"Optional domain modules: law, taxes, education, media, market data, anonymization. They build on the core instead of building their own infrastructure."}},
+  {id:"quality", dir:".QUALITY", cross:true,
+   name:{de:"Standards & Tests", en:"Standards & Tests"},
+   q:{de:"Ist es gut — und dokumentiert?", en:"Is it good — and documented?"},
+   desc:{de:"Testbatterien und Doku-Gerüste, die für alle Bereiche gelten: Jedes Modul wird geprüft und agent-tauglich dokumentiert. Wirkt quer über die ganze Platine.",
+         en:"Test batteries and documentation scaffolds that apply to every area: each module gets tested and documented agent-ready. Cuts across the whole board."}},
+  {id:"meta", dir:"(Root)", cross:true,
+   name:{de:"Meta-Ebene", en:"Meta Level"},
+   q:{de:"Wer entscheidet über die Module selbst?", en:"Who decides about the modules themselves?"},
+   desc:{de:"Module, die den Baukasten selbst regeln — etwa Veröffentlichungs-Gates. Liegt bewusst über den Familien: Ein Modul kann nicht in einer Kategorie liegen, über die es entscheidet.",
+         en:"Modules that govern the kit itself — e.g. release gates. Deliberately sits above the families: a module cannot live inside a category it rules over."}}
+];
+
+/* ================= LEITERBAHNEN (Zusammenarbeit) ================= */
+const EDGES = [
+  {from:"orchestration", to:"control",
+   label:{de:"entscheidet → ausführen", en:"decides → execute"},
+   desc:{de:"Die Orchestrierung entscheidet, WAS laufen soll — ausgeführt und überwacht wird es in der Steuerung, nie umgekehrt.",
+         en:"Orchestration decides WHAT should run — Control executes and supervises it, never the other way round."}},
+  {from:"control", to:"memory",
+   label:{de:"steuert den Speicher", en:"steers the memory"},
+   desc:{de:"Gedächtnis vs. zentrale Exekutive: das Gedächtnis hält den Speicher, die Steuerung bedient ihn — Hooks schieben Wissen in die Session, Tasks bestimmen die Arbeit, Locks regeln, wer schreiben darf.",
+         en:"Memory vs. central executive: Memory holds the store, Control operates it — hooks push knowledge into the session, tasks define the work, locks decide who may write."}},
+  {from:"memory", to:"knowledge", both:true,
+   label:{de:"eine Standard-Suche", en:"one default search"},
+   desc:{de:"Suche braucht einen Owner: Standard-Suche ist entweder der Gedächtnis-Index (GARDENER) oder der Dokumentkorpus (KnowledgeDigest) — nie beide zugleich.",
+         en:"Search needs an owner: the default is either the memory index (GARDENER) or the document corpus (KnowledgeDigest) — never both at once."}},
+  {from:"memory", to:"sync", both:true,
+   label:{de:"DB-Abgleich ≠ Datei-Backup", en:"DB sync ≠ file backup"},
+   desc:{de:"Wissens-Datenbanken gleicht sqlite-transit-sync ab (gehört zum Gedächtnis); der Bereich Dateien & Sicherungen trägt nur noch den klassischen Backup-Fall.",
+         en:"Knowledge databases are reconciled by sqlite-transit-sync (part of Memory); Files & Backups carries only the classic backup case."}},
+  {from:"runtime", to:"orchestration",
+   label:{de:"fragt den Router", en:"asks the router"},
+   desc:{de:"Die Laufzeit fragt Routing & Delegation, welches Modell oder Muster eine Aufgabe bekommt, bevor sie startet.",
+         en:"The runtime asks Routing & Delegation which model or pattern a task gets before it starts."}},
+  {from:"runtime", to:"connectors",
+   label:{de:"erreicht die Welt", en:"reaches the world"},
+   desc:{de:"Chat, Konsole und Stimme erreichen Menschen, fremde Agenten und Dienste über die Kanäle — Telegram, Mail, Webhook und Adapter.",
+         en:"Chat, console and voice reach humans, other agents and services through the channels — Telegram, mail, webhooks and adapters."}},
+  {from:"runtime", to:"tools",
+   label:{de:"hantiert mit Werkzeug", en:"wields the tools"},
+   desc:{de:"Der laufende Agent greift zu den scharfen Einzelwerkzeugen: Bildschirm bedienen, Web abrufen, APIs erkunden, Demonstrationen aufzeichnen.",
+         en:"The running agent picks up the sharp tools: operate the screen, fetch the web, probe APIs, record demonstrations."}},
+  {from:"domains", to:"memory",
+   label:{de:"nutzen den Kern", en:"use the core"},
+   desc:{de:"Fachpakete setzen auf Gedächtnis, Steuerung und Werkzeuge auf, statt eigene Infrastruktur zu bauen — deshalb bleiben sie schlank und austauschbar.",
+         en:"Domain packages build on memory, control and tools instead of building their own infrastructure — which keeps them lean and replaceable."}}
+];
+
+/* ================= MODULE =================
+   st: ok = active/released · dev = alpha/development/experimental/staging · plan = planned
+   vis: pub · cand (public-candidate) · priv (private/internal) */
+const MODULES = [
+ /* MEMORY */
+ {id:"USMC", area:"memory", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/usmc",
+  prov:["memory.curated","memory.facade"],
+  d:{de:"Kuratiertes SQLite-Gedächtnis für LLM-Agenten und die Fassade des Memory-Verbunds: Fakten, Lektionen, Arbeitsstand und Sessionberichte, die mehrere Agenten teilen.",
+     en:"Curated SQLite memory for LLM agents and the facade of the memory network: facts, lessons, working state and session reports shared across agents."}},
+ {id:"GARDENER", area:"memory", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/gardener",
+  prov:["memory.organic","knowledge.search.default","knowledge.index"],
+  d:{de:"Das organische Gedächtnis: beobachtet Quellen (Transkripte, Skills, Dokumente) und macht alles über einen SQLite-Volltextindex wiederauffindbar — vier Funktionen, zwei Datenbanken.",
+     en:"The organic memory: observes sources (transcripts, skills, documents) and makes everything findable through a SQLite full-text index — four functions, two databases."}},
+ {id:"llm-note", area:"memory", st:"ok", vis:"pub", repo:"https://github.com/doc-bricks/llm-note",
+  prov:["notes.local","notes.notebook"],
+  d:{de:"Notizen und Notizbücher, die ein Assistent für seinen Nutzer führt: erfassen, ordnen, wiederfinden — SQLite plus Klartext, als Inbox vor dem großen Gedächtnis.",
+     en:"Notes and notebooks an assistant keeps for its user: capture, organize, recall — SQLite plus plain text, an inbox in front of the long-term memory."}},
+ {id:"build-your-users-mind", area:"memory", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/build-your-users-mind",
+  prov:["memory.user-model","decision.preferences"],
+  d:{de:"Ein Rezept, mit dem jeder KI-Agent aus Interaktionslogs ein selbstverbesserndes Modell seines Nutzers baut: belegte Vorlieben, vorhergesagte Entscheidungen, Feedback-Schleife.",
+     en:"A recipe for any AI agent to build a self-improving model of its user from interaction logs: evidenced preferences, predicted decisions, a feedback loop."}},
+ {id:"sqlite-transit-sync", area:"memory", st:"ok", vis:"pub", repo:"https://github.com/dev-bricks/sqlite-transit-sync",
+  prov:["sync.database.sqlite","snapshot.verified"],
+  d:{de:"Hält SQLite-Datenbanken auf mehreren Maschinen auf demselben Wissensstand: verifizierte Snapshots und konfigurierbare Merge-Regeln auf Zeilenebene, ganz ohne Server.",
+     en:"Keeps SQLite databases on multiple machines at the same state of knowledge: verified snapshots and configurable row-level merge policies, with zero servers."}},
+
+ /* ORCHESTRATION */
+ {id:"clutch", area:"orchestration", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/clutch",
+  prov:["routing.default","routing.model","swarm.patterns"],
+  d:{de:"Der Standard-Router: provider-neutral entscheidet er, welches Modell und welches Muster eine Aufgabe bekommt — mit Budgetzonen und Auto-Learning aus vergangenen Läufen.",
+     en:"The default router: provider-neutral, it decides which model and pattern a task gets — with budget zones and auto-learning from past runs."}},
+ {id:"swarm_ai", area:"orchestration", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/swarm-ai",
+  prov:["swarm.consensus","swarm.stigmergy","swarm.parallel"],
+  d:{de:"Schwarm-Muster zum Nachvollziehen und Benutzen: Konsens-Abstimmung, Stigmergie, parallele Worker und Boss-Delegation — lokal und inspizierbar.",
+     en:"Swarm patterns you can inspect and use: consensus voting, stigmergy, parallel workers and boss delegation — local and transparent."}},
+ {id:"n8n-workflow-manager", area:"orchestration", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/n8n-workflow-manager",
+  prov:["automation.n8n.manager","automation.history"],
+  d:{de:"Verwaltet n8n-Workflows local-first: visueller Graph-Viewer, REST-API, CLI und Abgleich über mehrere n8n-Server.",
+     en:"Manages n8n workflows local-first: visual graph viewer, REST API, CLI and sync across multiple n8n servers."}},
+ {id:"COMA", area:"orchestration", st:"dev", vis:"pub", repo:"https://github.com/dev-bricks/coma",
+  prov:["runtime.agent-spawn","orchestration.job-protocol"],
+  d:{de:"Lebenszyklus-Schicht für Agentenprozesse: startet Claude, Codex oder agy über verifizierte CLI-Adapter, führt ein Datei-Jobprotokoll und pollt den Status. Bewusst kein Scheduler.",
+     en:"Lifecycle layer for agent processes: spawns Claude, Codex or agy through verified CLI adapters, keeps a file-based job protocol and polls status. Deliberately not a scheduler."}},
+
+ /* CONTROL */
+ {id:"lock-master", area:"control", st:"ok", vis:"pub", repo:"https://github.com/dev-bricks/lock-master",
+  prov:["control.locks","control.permissions"],
+  d:{de:"Portables Datei-Lock-System ohne Abhängigkeiten: LOCK*.txt mit Scopes und Verfall plus agent-neutralem Rechtesystem — damit sich mehrere Agenten nie ins Gehege kommen.",
+     en:"Portable zero-dependency file-lock system: LOCK*.txt with scopes and expiry plus an agent-neutral permission system — so multiple agents never collide."}},
+ {id:"ticket-master", area:"control", st:"ok", vis:"pub", repo:"https://github.com/dev-bricks/ticket-master",
+  prov:["control.tickets","workflow.ticket-triage"],
+  d:{de:"Live-Erfassung im Moment des Auftretens: nimmt Bugs und Wünsche als strukturierte Tickets auf und triagiert sie an das passende Modell oder den passenden Agenten.",
+     en:"Live capture the moment something appears: files bugs and wishes as structured tickets and triages them to the right model or agent."}},
+ {id:"task-master", area:"control", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/task-master",
+  prov:["tasks.default"],
+  d:{de:"Deterministische Aufgabenwahl: nicht das Modell, sondern ein Code-Selektor entscheidet, was als Nächstes drankommt — der Backlog kann nicht ausweichen.",
+     en:"Deterministic task selection: a code-side selector, not the model, decides what comes next — the backlog cannot be dodged."}},
+ {id:"system-gap-master", area:"control", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/system-gap-master",
+  prov:["sync.yard","sync.messages"],
+  d:{de:"Serverloser Abstimmungshof für Setups mit mehreren Maschinen und Agenten: Slot-Regel, tägliches Sync-Ritual, Nachrichtenaustausch und Bootstrap-Runbooks.",
+     en:"Serverless coordination yard for multi-machine, multi-agent setups: slot rule, gated daily ritual, message exchange and bootstrap runbooks."}},
+ {id:"memory-hooker", area:"control", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/memoryhooker",
+  prov:["memory.hook","memory.reminder"],
+  d:{de:"Schiebt lokales Wissen im richtigen Moment in die Session: verbindet Gedächtnisquellen mit den Lifecycle-Hooks der Coding-Agenten — erinnern, andeuten oder gezielt suchen.",
+     en:"Pushes local knowledge into the session at the right moment: connects memory sources to coding-agent lifecycle hooks — remind, hint, or search on demand."}},
+ {id:"WORKFLOWHOOKER", area:"control", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/workflowhooker",
+  prov:["workflow.hook","workflow.check"],
+  d:{de:"Kleine, konfigurierbare Arbeitsablauf-Prüfungen an denselben Lifecycle-Hooks: Gates, Drift- und Kosten-Checks — local-first, ohne Laufzeit-Abhängigkeiten.",
+     en:"Small configurable workflow checks at the same lifecycle hooks: gates, drift and cost checks — local-first, zero runtime dependencies."}},
+ {id:"MarbleRun", area:"control", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/MarbleRun",
+  prov:["automation.agent-chain","automation.loop"],
+  d:{de:"Autonome Agentenketten und Loops für Claude Code: eine Murmelbahn aus Läufen, die sich selbst fortsetzen — local-first, als Paket „llmauto“ importierbar.",
+     en:"Autonomous agent chains and loops for Claude Code: a marble run of self-continuing sessions — local-first, importable as the “llmauto” package."}},
+ {id:"policy-registry", area:"control", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/policy-registry",
+  prov:["policy.registry","policy.resolve"],
+  d:{de:"Das Regelverzeichnis: welche Policy gilt wo und für wen — auflösbar für Agenten, damit Regeln gefunden statt vermutet werden.",
+     en:"The rule registry: which policy applies where and to whom — resolvable by agents, so rules are found rather than guessed."}},
+ {id:"roshambo", area:"control", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/roshambo",
+  prov:["coordination.locking","memory.vector-recall"],
+  d:{de:"Multi-Agent-Koordinator auf CockroachDB: serialisierbare Leases sorgen dafür, dass zwei Agenten nie dieselbe Arbeit beanspruchen, ein verteilter Vektorindex erinnert an frühere Versuche samt Ausgang.",
+     en:"Multi-agent coordinator on CockroachDB: serializable leases ensure two agents never claim the same work; a distributed vector index recalls earlier attempts and their outcomes."}},
+ {id:"ellmos-scheduler", area:"control", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/ellmos-scheduler",
+  prov:["automation.schedule","automation.lease","automation.run-history"],
+  d:{de:"Eigenständiger Zeitgeber mit Lease-/Claim-Verwaltung und Laufprotokoll: plant wiederkehrende Läufe und verhindert, dass zwei Hosts denselben ausführen.",
+     en:"Standalone timekeeper with lease/claim management and a run recorder: schedules recurring runs and prevents two hosts from executing the same one."}},
+ {id:"system-explorer", area:"control", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/system-explorer",
+  prov:["system.discovery","system.mapping"],
+  d:{de:"Evidenzgestützte Landkarten des eigenen Systems: Soll-Funktionen, ihre Träger, tatsächliche Nutzung — und wo die Architektur vom Plan wegdriftet.",
+     en:"Evidence-backed maps of your own system: desired functions, their carriers, actual use — and where the architecture drifts from the plan."}},
+
+ /* CONNECTORS */
+ {id:"connectors", area:"connectors", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/connectors",
+  prov:["connector.messaging","connector.webhook"],
+  d:{de:"Portable Messaging-Anbindungen für KI-Agenten: Telegram, Discord, Signal, WhatsApp, Home Assistant und Webhooks — aus BACH herausgelöst, überall einsetzbar.",
+     en:"Portable messaging connectors for AI agents: Telegram, Discord, Signal, WhatsApp, Home Assistant and webhooks — extracted from BACH, usable anywhere."}},
+ {id:"companion-for-agy", area:"connectors", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/companion-for-agy",
+  prov:["adapter.agy","provider.gemini.cli"],
+  d:{de:"Macht die Antigravity-/Gemini-CLI für andere Programme nutzbar: ein ConPTY-Wrapper fängt die Terminal-Antworten ein, die agy sonst nie auf stdout ausgibt.",
+     en:"Makes the Antigravity/Gemini CLI usable by other programs: a ConPTY wrapper captures the terminal responses agy never prints to stdout."}},
+
+ /* RUNTIME */
+
+ /* KNOWLEDGE */
+ {id:"KnowledgeDigest", area:"knowledge", st:"dev", vis:"pub", repo:"https://github.com/file-bricks/knowledgedigest",
+  prov:["knowledge.ingest","knowledge.search"],
+  d:{de:"Dokumentwissen im großen Stil: Einlesen, Zerlegen, Volltextsuche über tausende Dokumente — bedienbar über GUI, Web, CLI und API.",
+     en:"Document knowledge at scale: ingest, chunk, full-text search across thousands of documents — operable via GUI, web, CLI and API."}},
+ {id:"WikiStub-Seed", area:"knowledge", st:"ok", vis:"pub", repo:"https://github.com/dev-bricks/WikiStub-Seed",
+  prov:["knowledge.dataset.wikistub","knowledge.seed.multilingual"],
+  d:{de:"Ein mehrsprachiger Startdatensatz, mit dem sich frische Wissenssysteme füttern und testen lassen.",
+     en:"A multilingual seed dataset for feeding and testing fresh knowledge systems."}},
+
+ /* SYNC */
+
+ /* TOOLS */
+ {id:"open-compute", area:"tools", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/open-compute",
+  prov:["tool.computer-use","runtime.perception-action"],
+  d:{de:"Modell-agnostischer Computer-Use-Kern: eine Agentenschleife für Claude, OpenAI-CUA und Mock-Backends, mit normierten Koordinaten und Safety-Gate vor jeder Aktion.",
+     en:"Model-agnostic computer-use core: one agent loop for Claude, OpenAI CUA and mock backends, with normalized coordinates and a safety gate before every action."}},
+ {id:"clirec", area:"tools", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/clirec",
+  prov:["tool.demonstration-record","tool.demonstration-replay"],
+  d:{de:"Zeichnet GUI-Demonstrationen menschenlesbar auf und spielt sie wieder ab — für CLI- und Agenten-Workflows, die man zeigen statt beschreiben will.",
+     en:"Records GUI demonstrations in human-readable form and replays them — for CLI and agent workflows you'd rather show than describe."}},
+ {id:"web-scraper", area:"tools", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/web-scraper",
+  prov:["tool.web-fetch","tool.web-extract"],
+  d:{de:"Eigenständiger, SSRF-gesicherter Web-Abruf: Seiten holen, Links, Formulare und Inhalte extrahieren, Screenshots machen — aus BACH herausgelöst.",
+     en:"Standalone, SSRF-guarded web fetching: get pages, extract links, forms and content, take screenshots — extracted from BACH."}},
+ {id:"ApiProber", area:"tools", st:"ok", vis:"pub", repo:"https://github.com/dev-bricks/apiprober",
+  prov:["tool.api-probe","tool.openapi-discovery"],
+  d:{de:"Passive API-Erkundung: findet heraus, was eine Schnittstelle kann (OpenAPI-Discovery), ohne sie zu belasten.",
+     en:"Passive API exploration: discovers what an interface can do (OpenAPI discovery) without stressing it."}},
+
+ /* QUALITY */
+ {id:"ellmos-tests", area:"quality", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/ellmos-tests",
+  prov:["quality.tests","quality.evaluation.boe"],
+  d:{de:"B/O/E-Testbatterien für SKILL.md-basierte Agentensysteme: misst und vergleicht, was ein Agenten-Hub wirklich kann.",
+     en:"B/O/E test batteries for SKILL.md-based agent systems: measures and compares what an agent hub can actually do."}},
+ {id:"project-docs-template", area:"quality", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/project-docs-template",
+  prov:["quality.project-docs","quality.project-lint"],
+  d:{de:"Agent-taugliches Doku-Gerüst für jedes Projekt: START/STATE/TODO/DONE, Workflows und leichte Werkzeuge — damit jede Session sofort weiß, wo sie steht.",
+     en:"Agent-ready documentation scaffold for any project: START/STATE/TODO/DONE, workflows and lightweight tooling — so every session instantly knows where it stands."}},
+
+ /* DOMAINS */
+ {id:"law-checker", area:"domains", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/law-checker",
+  prov:["domain.legal.orientation"],
+  d:{de:"Quellengestützte juristische Erstorientierung für deutsches Recht: Normtexte sprechen selbst, mit Fundstellen — ausdrücklich kein Anwaltsersatz.",
+     en:"Source-grounded first legal orientation for German law: the statutes speak for themselves, with citations — explicitly not a substitute for a lawyer."}},
+ {id:"worksheet-generator", area:"domains", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/worksheet-generator",
+  prov:["domain.education.material-generation"],
+  d:{de:"Individualisierte Arbeitsblätter für pädagogische und therapeutische Fachkräfte: aus Förderziel, Niveau und Alter wird druckfertiges Material.",
+     en:"Individualized worksheets for educational and therapeutic professionals: support goal, level and age become print-ready material."}},
+ {id:"steuer-assistent", area:"domains", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/steuer-assistent",
+  prov:["domain.tax.documents"],
+  d:{de:"Offline-Arbeitsmappe für Werbungskosten von Arbeitnehmern: Belege sammeln, ordnen, als Arbeitspapier exportieren.",
+     en:"Offline worksheet for German employee income-related expenses: collect receipts, organize them, export a workpaper."}},
+ {id:"Anonymizer", area:"domains", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/anonymizer",
+  prov:["privacy.anonymize","privacy.pseudonymize"],
+  d:{de:"Fail-closed-Pseudonymisierung sensibler Dokumente: erkennt Namen und Kennungen, ersetzt alles oder nichts — im Zweifel wird blockiert statt geleakt.",
+     en:"Fail-closed pseudonymization of sensitive documents: detects names and identifiers, replaces all or nothing — when in doubt it blocks instead of leaking."}},
+ {id:"report-forge", area:"domains", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/report-forge",
+  prov:["domain.reporting.pipeline-core"],
+  d:{de:"Domänen-neutraler Kern für anonymisierbare Berichts-Pipelines: Quelldokumente extrahieren, schema-gebundenen LLM-Prompt bauen, Bericht erzeugen.",
+     en:"Domain-neutral core for anonymizable report pipelines: extract source documents, build a schema-bound LLM prompt, generate the report."}},
+ {id:"ai-media-editor", area:"domains", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/ai-media-editor",
+  prov:["domain.media.editing"],
+  d:{de:"Local-first Medien-Editor für Video, Audio und Podcast: lokale Transkription, transkriptbasierte Schnitte und generative Arbeitsschritte.",
+     en:"Local-first media editor for video, audio and podcasts: local transcription, transcript-based cuts and generative workflow steps."}},
+
+ /* META */
+];
+
+/* ================= SCHICHTEN ================= */
+const LAYERS = [
+ {id:"skills", n:{de:"Skills", en:"Skills"}, s:{de:"~99 Fähigkeiten in 10 Gruppen", en:"~99 skills in 10 groups"},
+  d:{de:"Prompt-, Wissens- und Workflow-Fähigkeiten ohne eigene Laufzeit: Sie bestimmen das WIE — Prozess, Methode, Domänenwissen — und rufen Werkzeuge über MCP oder CLI.",
+     en:"Prompt, knowledge and workflow capabilities without their own runtime: they define the HOW — process, method, domain knowledge — and call tools via MCP or CLI."}},
+ {id:"mcp", n:{de:"MCP-Oberflächen", en:"MCP Surfaces"}, s:{de:"9 eigene Server", en:"9 own servers"},
+  d:{de:"Protokoll-Oberflächen, keine zweiten Fachwahrheiten: Funktions-Server bündeln Aktionen (Dateien, Code, Deploy, Computer-Use), der Stack-Server bündelt Module, die Control-Plane verwaltet alle.",
+     en:"Protocol surfaces, not second sources of truth: function servers bundle actions (files, code, deploy, computer use), the stack server bundles modules, the control plane manages them all."}},
+ {id:"modules", n:{de:"Module", en:"Modules"}, s:{de:"diese Karte — 51 Bausteine", en:"this map — 51 building blocks"},
+  d:{de:"Der Baukasten selbst: 51 eigenständige Bausteine in 11 Funktionsbereichen. Eine Familie ist eine Ordnungs-Kategorie, keine Installationseinheit.",
+     en:"The construction kit itself: 51 independent building blocks in 11 functional areas. A family is an ordering category, not an installation unit."}},
+ {id:"bundles", n:{de:"Bundles", en:"Bundles"}, s:{de:"32 Rezepte, 4 Säulen", en:"32 recipes, 4 pillars"},
+  d:{de:"Vorgedachte Funktionseinheiten zwischen Modul und Stack: Rezepte aus Seed + Komponentenliste, gegliedert in die Säulen Gedächtnis, Steuerung, Nutzer-Assistenz und Fachlichkeit.",
+     en:"Pre-designed functional units between module and stack: recipes of seed + component list, organized into the pillars memory, control, user assistance and domain."}},
+ {id:"stacks", n:{de:"Stacks", en:"Stacks"}, s:{de:"betreibbare Kompositionen", en:"operable compositions"},
+  d:{de:"Manifest-getriebene Kompositionen aus Modulen, Skills, MCP-Servern und Software — vom fokussierten Bundle-Stack bis zum vollen, betreibbaren System.",
+     en:"Manifest-driven compositions of modules, skills, MCP servers and software — from a focused bundle stack to a full, operable system."}},
+ {id:"os", n:{de:"OS-Stacks", en:"OS Stacks"}, s:{de:"BACH · rinnsal", en:"BACH · rinnsal"},
+  d:{de:"Besondere Stacks in Betriebssystem-Größe: breite, zweckoffene Allrounder, die Module als Abhängigkeit konsumieren statt alles selbst zu bauen.",
+     en:"Special stacks at operating-system scale: broad, open-purpose all-rounders that consume modules as dependencies instead of building everything themselves."}}
+];
+
+/* ================= STATE + RENDER ================= */
+let lang = "en";
+let pinned = null;   // {type:"area"|"module", id}
+let hovered = null;
+
+const $ = s => document.querySelector(s);
+const areaById = id => AREAS.find(a=>a.id===id);
+const edgesOf = id => EDGES.filter(e=>e.from===id||e.to===id);
+
+function statusClass(m){ return m.st==="ok"?"ok":(m.st==="plan"?"plan":"dev"); }
+
+function buildBoard(){
+  const board = $("#board");
+  board.innerHTML = "";
+  for(const a of AREAS){
+    const z = document.createElement("div");
+    z.className = "zone"; z.dataset.area = a.id;
+    const S = SKIN[a.id];
+    z.style.setProperty("--zc1", S.c1); z.style.setProperty("--zc2", S.c2);
+    z.style.setProperty("--zct", S.t);
+    const cross = a.cross ? ` <span class="xbadge">⟡ ${UI[lang].crossnote}</span>` : "";
+    let html = `<h2><span class="ic">${S.i}</span><span class="ttl">${a.dir} · ${a.name[lang]}</span>${cross}<span class="q">„${a.q[lang]}“</span></h2><div class="mods">`;
+    for(const m of MODULES.filter(m=>m.area===a.id)){
+      const lock = (m.vis==="priv") ? `<span class="lock">🔒</span>` : "";
+      html += `<button class="mod" data-mod="${m.id}"><span class="led ${statusClass(m)}"></span>${m.id}${lock}</button>`;
+    }
+    html += `</div>`;
+    if(!MODULES.some(m=>m.area===a.id)){
+      html += `<div class="pins">${lang==="de"
+        ? "Die Module dieser Familie sind noch in privater Entwicklung."
+        : "The modules of this family are still in private development."}</div>`;
+    }
+    if(a.id==="connectors"){
+      html += `<div class="pins">⇥ <b>${UI[lang].world}:</b> ${UI[lang].worldpins}</div>`;
+    }
+    z.innerHTML = html;
+    board.appendChild(z);
+  }
+}
+
+/* --- Leiterbahnen --- */
+function anchor(rect, other, wrap){
+  const cx=(rect.left+rect.right)/2, cy=(rect.top+rect.bottom)/2;
+  const ox=(other.left+other.right)/2, oy=(other.top+other.bottom)/2;
+  const dx=ox-cx, dy=oy-cy;
+  let x,y;
+  if(Math.abs(dx)*(rect.height/rect.width) > Math.abs(dy)){
+    x = dx>0 ? rect.right : rect.left; y = cy + dy*0.15;
+  } else {
+    y = dy>0 ? rect.bottom : rect.top; x = cx + dx*0.15;
+  }
+  return {x:x-wrap.left, y:y-wrap.top};
+}
+function drawWires(){
+  const wrap = $("#boardwrap").getBoundingClientRect();
+  const g = $("#wiregroup"); g.innerHTML = "";
+  document.querySelectorAll(".wlabel").forEach(e=>e.remove());
+  const svg = $("#wires");
+  svg.setAttribute("width", wrap.width); svg.setAttribute("height", wrap.height);
+  EDGES.forEach((e,i)=>{
+    const zf = document.querySelector(`.zone[data-area="${e.from}"]`);
+    const zt = document.querySelector(`.zone[data-area="${e.to}"]`);
+    if(!zf||!zt) return;
+    const rf = zf.getBoundingClientRect(), rt = zt.getBoundingClientRect();
+    const p1 = anchor(rf, rt, wrap), p2 = anchor(rt, rf, wrap);
+    const mx=(p1.x+p2.x)/2, my=(p1.y+p2.y)/2;
+    const nx=-(p2.y-p1.y), ny=(p2.x-p1.x);
+    const nl=Math.hypot(nx,ny)||1;
+    const bend = 18 * (i%2===0?1:-1);
+    const cx=mx+nx/nl*bend, cy=my+ny/nl*bend;
+    const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    path.setAttribute("d",`M${p1.x},${p1.y} Q${cx},${cy} ${p2.x},${p2.y}`);
+    path.setAttribute("fill","none");
+    path.setAttribute("stroke","var(--trace)");
+    path.setAttribute("stroke-width","2");
+    path.setAttribute("marker-end","url(#arr)");
+    if(e.both) path.setAttribute("marker-start","url(#arr)");
+    path.dataset.from=e.from; path.dataset.to=e.to; path.dataset.i=i;
+    g.appendChild(path);
+    const lab = document.createElement("div");
+    lab.className="wlabel"; lab.dataset.i=i;
+    lab.textContent = e.label[lang];
+    lab.style.left = (mx+nx/nl*bend*0.9)+"px";
+    lab.style.top  = (my+ny/nl*bend*0.9)+"px";
+    $("#boardwrap").appendChild(lab);
+  });
+  applyHighlight();
+}
+
+function applyHighlight(){
+  const act = pinned || hovered;
+  const hotArea = act && act.type==="area" ? act.id
+    : act && act.type==="module" ? MODULES.find(m=>m.id===act.id).area : null;
+  document.querySelectorAll(".zone").forEach(z=>{
+    z.classList.toggle("hot", z.dataset.area===hotArea);
+  });
+  document.querySelectorAll("#wiregroup path").forEach(p=>{
+    const hot = hotArea && (p.dataset.from===hotArea || p.dataset.to===hotArea);
+    p.setAttribute("stroke", hot?"var(--trace-hot)":"var(--trace)");
+    p.setAttribute("stroke-width", hot?"2.6":"2");
+    p.setAttribute("marker-end", hot?"url(#arrhot)":"url(#arr)");
+    if(p.getAttribute("marker-start")) p.setAttribute("marker-start", hot?"url(#arrhot)":"url(#arr)");
+  });
+  document.querySelectorAll(".wlabel").forEach(l=>{
+    const e = EDGES[+l.dataset.i];
+    l.classList.toggle("hot", !!(hotArea && (e.from===hotArea||e.to===hotArea)));
+  });
+  document.querySelectorAll(".mod").forEach(b=>{
+    b.classList.toggle("pinned", !!(pinned && pinned.type==="module" && b.dataset.mod===pinned.id));
+  });
+}
+
+/* --- Panel --- */
+function showPanel(){
+  const act = pinned || hovered;
+  const hint = $("#panelhint"), body = $("#panelbody");
+  if(!act){ hint.style.display="block"; body.innerHTML=""; return; }
+  hint.style.display="none";
+  const T = UI[lang];
+  if(act.type==="area"){
+    const a = areaById(act.id);
+    let html = `<h3>${a.dir} · ${a.name[lang]}</h3>
+      <div class="meta"><span>„${a.q[lang]}“</span></div>
+      <p class="desc">${a.desc[lang]}</p>
+      <div class="edges"><h4>${T.edgesOut}</h4><ul>`;
+    const es = edgesOf(a.id);
+    if(es.length===0 && a.cross){
+      html += `<li><b>⟡</b> ${a.desc[lang]}</li>`;
+    }
+    for(const e of es){
+      const other = e.from===a.id ? areaById(e.to) : areaById(e.from);
+      const dir = e.both ? "↔" : (e.from===a.id ? "→" : "←");
+      html += `<li><b>${dir} ${other.name[lang]}</b><br>${e.desc[lang]}</li>`;
+    }
+    html += `</ul></div>`;
+    if(pinned) html += `<p class="pinnote">📌 ${T.pinnote}</p>`;
+    body.innerHTML = html;
+  } else {
+    const m = MODULES.find(x=>x.id===act.id);
+    const a = areaById(m.area);
+    const st = T.status[m.st==="ok"?"ok":(m.st==="plan"?"plan":"dev")];
+    const vis = m.vis==="pub"?T.vis.public:(m.vis==="cand"?T.vis.cand:T.vis.priv);
+    let html = `<h3>${m.id}</h3>
+      <div class="meta">
+        <span>${T.area}: ${a.name[lang]}</span>
+        <span>● ${st}</span>
+        <span>${m.vis==="priv"?"🔒 ":""}${vis}</span>
+      </div>
+      <p class="desc">${m.d[lang]}</p>`;
+    if(m.prov.length){
+      html += `<div class="prov">${m.prov.map(p=>`<code>${p}</code>`).join("")}</div>`;
+    }
+    if(m.repo && m.vis!=="priv"){
+      html += `<a class="repo" href="${m.repo.replace(/\.git$/,"")}" target="_blank" rel="noopener">↗ ${T.repo}</a>`;
+    }
+    if(pinned) html += `<p class="pinnote">📌 ${T.pinnote}</p>`;
+    body.innerHTML = html;
+  }
+}
+
+/* --- Filter --- */
+function applyFilter(){
+  const q = $("#q").value.trim().toLowerCase();
+  const pubOnly = false;
+  document.querySelectorAll(".mod").forEach(b=>{
+    const m = MODULES.find(x=>x.id===b.dataset.mod);
+    const txt = (m.id+" "+m.prov.join(" ")+" "+m.d.de+" "+m.d.en).toLowerCase();
+    const hitQ = !q || txt.includes(q);
+    const hitP = !pubOnly || m.vis==="pub" || m.vis==="cand";
+    b.classList.toggle("dim", !(hitQ&&hitP));
+  });
+}
+
+/* --- Schichten --- */
+function buildLayers(){
+  const st = $("#stack"); st.innerHTML="";
+  LAYERS.forEach((l,i)=>{
+    const d = document.createElement("div");
+    d.className="layer"+(l.id==="modules"?" hl":"");
+    d.innerHTML = `<b>${l.n[lang]}${i<LAYERS.length-1?'<span class="arr">→</span>':''}</b><i>${l.s[lang]}</i>`;
+    d.addEventListener("mouseenter",()=>{ $("#layerinfo").textContent = l.d[lang]; });
+    st.appendChild(d);
+  });
+  $("#layerinfo").textContent = LAYERS[2].d[lang];
+}
+
+/* --- UI-Texte --- */
+function applyUiTexts(){
+  const T = UI[lang];
+  $("#t-title").textContent=T.title; $("#t-sub").textContent=T.sub;
+  $("#q").placeholder=T.search;
+  $("#panelhint").textContent=T.hint;
+  $("#t-layers-h").textContent=T.layersH; $("#t-layers-sub").textContent=T.layersSub;
+  $("#t-leg-ok").textContent=T.legOk; $("#t-leg-dev").textContent=T.legDev;
+  $("#t-leg-plan").textContent=T.legPlan; $("#t-leg-priv").textContent=T.legPriv;
+  $("#t-source").textContent=T.source;
+  document.documentElement.lang = lang;
+  $("#lang-de").classList.toggle("on",lang==="de");
+  $("#lang-en").classList.toggle("on",lang==="en");
+}
+
+/* --- Events --- */
+function wireEvents(){
+  const board = $("#board");
+  board.addEventListener("mouseover", ev=>{
+    const mod = ev.target.closest(".mod");
+    const zone = ev.target.closest(".zone");
+    if(mod){ hovered={type:"module",id:mod.dataset.mod}; }
+    else if(zone){ hovered={type:"area",id:zone.dataset.area}; }
+    applyHighlight(); showPanel();
+  });
+  board.addEventListener("mouseleave", ()=>{ hovered=null; applyHighlight(); showPanel(); });
+  board.addEventListener("click", ev=>{
+    const mod = ev.target.closest(".mod");
+    const zone = ev.target.closest(".zone");
+    let next=null;
+    if(mod) next={type:"module",id:mod.dataset.mod};
+    else if(zone) next={type:"area",id:zone.dataset.area};
+    if(next && pinned && pinned.type===next.type && pinned.id===next.id) pinned=null;
+    else pinned=next;
+    applyHighlight(); showPanel();
+  });
+  $("#q").addEventListener("input", applyFilter);
+  $("#lang-de").addEventListener("click", ()=>setLang("de"));
+  $("#lang-en").addEventListener("click", ()=>setLang("en"));
+  window.addEventListener("resize", ()=>requestAnimationFrame(drawWires));
+}
+
+function setLang(l){
+  lang=l; applyUiTexts(); buildBoard(); buildLayers();
+  applyFilter(); requestAnimationFrame(drawWires); showPanel();
+}
+
+/* --- Init --- */
+applyUiTexts(); buildBoard(); buildLayers(); wireEvents();
+requestAnimationFrame(drawWires); showPanel();
+setTimeout(drawWires, 300);  /* Fonts/Layout nachziehen */
+
+/* --- Theme-Umschalter (dunkel = Default) --- */
+const THEME_KEY = "ellmos-theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  const b = document.getElementById("themebtn");
+  if(b) b.textContent = (t === "light" ? "🌙" : "☀️");
+}
+let savedTheme = "dark";
+try{ if(localStorage.getItem(THEME_KEY) === "light") savedTheme = "light"; }catch(e){}
+applyTheme(savedTheme);
+document.getElementById("themebtn").addEventListener("click", () => {
+  const t = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+  try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+  applyTheme(t);
+});
+
+</script>
+</body>
+</html>
