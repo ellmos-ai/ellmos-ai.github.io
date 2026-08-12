@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ellmos-ai — Bundle Recipes (public excerpt)</title>
+<style>
+  :root{--bg:#0b1410;--board:#0e1a14;--zone:#12241b;--zone-edge:#1f3a2c;--copper:#d8a05a;
+    --copper-dim:#8a6a3e;--trace:#3f6b52;--trace-hot:#e8b96a;--ink:#d7e4da;--ink-dim:#8fa697;
+    --ink-faint:#5f7568;--ok:#5ad08a;--dev:#e0b45a;--plan:#7d8f84;--priv:#c97b7b;--chip:#0a120e;
+    --accent:#63d6a4;--panel:#0d1712;--panel-edge:#24402f;--surface:transparent}
+  html[data-theme="light"]{--bg:#f6f7fd;--board:#ffffff;--zone:#ffffff;--zone-edge:#e4e6f6;
+    --copper:#5f3dc4;--copper-dim:#9775fa;--trace:#b9bef0;--trace-hot:#e64980;
+    --ink:#272a4d;--ink-dim:#5d6083;--ink-faint:#9497bb;--ok:#0ca678;--dev:#f08c00;
+    --plan:#a9acce;--priv:#e64980;--chip:#f3f4fc;--accent:#4263eb;
+    --panel:#fbfbff;--panel-edge:#e4e6f6;--surface:#ffffff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;
+    font-size:15px;line-height:1.45}
+  a{color:var(--accent)}
+  header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;padding:22px 26px 14px;
+    border-bottom:1px solid var(--zone-edge);background:var(--surface)}
+  .brand h1{font-size:24px;color:var(--copper);font-weight:700}
+  html[data-theme="light"] .brand h1{font-weight:800;
+    background:linear-gradient(90deg,#4263eb 0%,#7048e8 45%,#e64980 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .themebtn{background:var(--chip);border:1px solid var(--zone-edge);border-radius:8px;
+    padding:6px 11px;font-size:15px;cursor:pointer;line-height:1}
+  .themebtn:hover{border-color:var(--copper)}
+  .brand .sub{color:var(--ink-dim);font-size:13.5px;margin-top:2px;max-width:70ch}
+  nav.pagenav{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 0}
+  nav.pagenav a{font-size:12.5px;color:var(--ink-dim);text-decoration:none;
+    border:1px solid var(--zone-edge);border-radius:999px;padding:3px 11px}
+  nav.pagenav a.on{background:var(--copper);color:#181008;font-weight:700;border-color:var(--copper)}
+  html[data-theme="light"] nav.pagenav a.on{background:linear-gradient(90deg,#4263eb,#7048e8);
+    color:#fff;border-color:transparent}
+  nav.pagenav a:hover{border-color:var(--copper)}
+  .controls{margin-left:auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .controls input[type=search]{background:var(--chip);color:var(--ink);border:1px solid var(--zone-edge);
+    border-radius:8px;padding:7px 12px;width:220px;font-size:14px}
+  .langsw{display:flex;border:1px solid var(--zone-edge);border-radius:8px;overflow:hidden}
+  .langsw button{background:var(--chip);color:var(--ink-dim);border:0;padding:7px 12px;font-size:13px;cursor:pointer}
+  .langsw button.on{background:var(--copper);color:#181008;font-weight:700}
+  html[data-theme="light"] .langsw button.on{background:linear-gradient(90deg,#4263eb,#7048e8);color:#fff}
+  .warn{margin:14px 26px 0;border:1px solid #6b4a3a;background:#1c120c;color:#e0b45a;
+    border-radius:9px;padding:9px 14px;font-size:13px}
+  html[data-theme="light"] .warn{border-color:#ffd8a8;background:#fff4e6;color:#d9480f}
+  footer{padding:16px 26px 30px;color:var(--ink-faint);font-size:12px;
+    border-top:1px solid var(--zone-edge);background:var(--surface)}
+
+  main{display:flex;align-items:flex-start}
+  #left{flex:1 1 auto;min-width:0;padding:20px 26px}
+  h2.sec{font-size:15px;color:var(--copper);margin:18px 0 4px}
+  p.secsub{color:var(--ink-faint);font-size:12.5px;margin-bottom:10px;max-width:90ch}
+  .stackrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+  .stackcard{background:var(--zone);border:1px solid var(--zone-edge);border-radius:9px;
+    padding:8px 12px;cursor:pointer;transition:.12s;font-size:13px}
+  .stackcard:hover{border-color:var(--copper)}
+  .stackcard.on{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,214,164,.25)}
+  .stackcard b{display:block;color:var(--ink);font-family:Consolas,monospace;font-size:13px}
+  .stackcard i{font-style:normal;color:var(--ink-faint);font-size:11px}
+  .pillar{margin-top:16px}
+  .pillar h3{font-size:13px;color:var(--copper-dim);letter-spacing:.8px;text-transform:uppercase;
+    margin-bottom:8px}
+  .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+  .bundle{background:var(--zone);border:1px solid var(--zone-edge);border-radius:10px;
+    padding:10px 12px;cursor:pointer;transition:.12s}
+  .bundle:hover{border-color:var(--copper)}
+  .bundle.on{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,214,164,.2)}
+  .bundle.dim{opacity:.25}
+  .bundle.hot{border-color:var(--trace-hot)}
+  .bundle b{font-family:Consolas,monospace;font-size:12.5px;color:var(--ink);display:block;
+    overflow-wrap:anywhere}
+  .bundle .cls{font-size:10.5px;color:var(--ink-faint)}
+  .bundle .cnt{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
+  .cnt span{font-size:10.5px;border:1px solid var(--zone-edge);border-radius:4px;padding:0 6px;
+    color:var(--ink-dim)}
+  #panel{flex:0 0 360px;max-width:360px;border-left:1px solid var(--zone-edge);background:var(--panel);
+    padding:18px;position:sticky;top:0;max-height:100vh;overflow:auto}
+  #panel h3{color:var(--copper);font-size:15px;margin-bottom:4px;overflow-wrap:anywhere;
+    font-family:Consolas,monospace}
+  #panel .meta{font-size:12px;color:var(--ink-dim);margin-bottom:10px}
+  #panel .hint{color:var(--ink-faint);font-size:13px}
+  #panel h4{font-size:11.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.8px;
+    margin:12px 0 5px}
+  #panel li{list-style:none;font-size:12.5px;font-family:Consolas,monospace;padding:2px 0;
+    color:var(--ink);overflow-wrap:anywhere}
+  #panel li .tt{color:var(--ink-faint);font-size:10.5px;font-family:"Segoe UI",sans-serif}
+  #panel li.req::before{content:"● ";color:var(--ok)}
+  #panel li.rec::before{content:"◐ ";color:var(--dev)}
+  #panel li.opt::before{content:"○ ";color:var(--plan)}
+  @media(max-width:1000px){main{flex-direction:column}
+    #panel{position:static;max-width:none;border-left:0;border-top:1px solid var(--zone-edge);flex:auto}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>ellmos-ai · <span id="t-title">Bundles &amp; Stacks</span></h1>
+    <p class="sub" id="t-sub"></p>
+    <nav class="pagenav">
+      <a href="index.html">⌁ Circuit Map</a>
+      <a href="bundles.html" class="on">▦ Bundle Recipes</a>
+      <a href="skills.html">✎ Skill Library</a>
+      <a href="stack-composer.html">⚡ Stack Composer</a>
+      <a href="https://github.com/ellmos-ai">GitHub ↗</a>
+    </nav>
+  </div>
+  <div class="controls"><button id="themebtn" class="themebtn" title="hell / dunkel">☀️</button><div class="langsw">
+    <button id="lang-de">DE</button><button id="lang-en" class="on">EN</button></div></div>
+</header>
+<div class="warn" id="t-warn"></div>
+<main>
+  <div id="left">
+    <h2 class="sec" id="t-bs-h" style="display:none"></h2><p class="secsub" id="t-bs-sub" style="display:none"></p>
+    <div class="stackrow" id="bstacks" style="display:none"></div>
+    <h2 class="sec" id="t-ms-h" style="display:none"></h2><p class="secsub" id="t-ms-sub" style="display:none"></p>
+    <div class="stackrow" id="mstacks" style="display:none"></div>
+    <h2 class="sec" id="t-bu-h"></h2><p class="secsub" id="t-bu-sub"></p>
+    <div id="pillars"></div>
+  </div>
+  <aside id="panel"><p class="hint" id="panelhint"></p><div id="panelbody"></div></aside>
+</main>
+<footer id="t-source"></footer>
+<script>
+"use strict";
+const BUNDLES=[{"id": "ellmos-agents-bundle", "pillar": "control", "cls": "platform", "comps": [{"t": "module", "ref": "module:companion-for-agy", "req": "recommended"}, {"t": "access_surface", "ref": "access_surface:agent-providers", "req": "recommended"}, {"t": "access_surface", "ref": "access_surface:agent-subscriptions", "req": "optional"}, {"t": "access_surface", "ref": "access_surface:agent-apis", "req": "optional"}, {"t": "skill", "ref": "skill:model-strategy", "req": "recommended"}, {"t": "skill", "ref": "skill:agents-bridge", "req": "recommended"}, {"t": "skill", "ref": "skill:headless", "req": "optional"}]}, {"id": "ellmos-briefing-bundle", "pillar": "uas", "cls": "domain", "comps": [{"t": "skill", "ref": "skill:dossier-briefing", "req": "recommended"}]}, {"id": "ellmos-coordination-choice-bundle", "pillar": "control", "cls": "choice", "comps": [{"t": "skill", "ref": "skill:decide", "req": "recommended"}, {"t": "skill", "ref": "skill:decision-briefing", "req": "optional"}]}, {"id": "ellmos-daily-life-bundle", "pillar": "uas", "cls": "domain", "comps": [{"t": "skill", "ref": "skill:haushalt-manager", "req": "recommended"}, {"t": "skill", "ref": "skill:hauslagerist-reader", "req": "optional"}, {"t": "skill", "ref": "skill:wetter", "req": "optional"}, {"t": "skill", "ref": "skill:reiseroute", "req": "optional"}, {"t": "skill", "ref": "skill:location-suche", "req": "optional"}, {"t": "skill", "ref": "skill:tageszeitung", "req": "optional"}]}, {"id": "ellmos-doc-handler-bundle", "pillar": "domain", "cls": "domain", "comps": [{"t": "module", "ref": "module:report-forge", "req": "recommended"}, {"t": "module", "ref": "module:worksheet-generator", "req": "recommended"}, {"t": "module", "ref": "module:anonymizer", "req": "recommended"}, {"t": "module", "ref": "module:KnowledgeDigest", "req": "optional"}, {"t": "module", "ref": "module:llm-note", "req": "optional"}, {"t": "skill", "ref": "skill:docs-analysis", "req": "recommended"}, {"t": "skill", "ref": "skill:document-chunker", "req": "recommended"}, {"t": "skill", "ref": "skill:bilingual-doc-sync", "req": "recommended"}, {"t": "skill", "ref": "skill:llm-text-hygiene", "req": "recommended"}, {"t": "skill", "ref": "skill:notizblock", "req": "optional"}, {"t": "skill", "ref": "skill:encoding-fix", "req": "optional"}]}, {"id": "ellmos-finance-assist-bundle", "pillar": "uas", "cls": "domain", "comps": [{"t": "skill", "ref": "skill:finanz-versicherung", "req": "recommended"}]}, {"id": "ellmos-health-assist-bundle", "pillar": "uas", "cls": "domain", "comps": [{"t": "skill", "ref": "skill:gesundheit", "req": "recommended"}, {"t": "skill", "ref": "skill:medizin-daten", "req": "recommended"}]}, {"id": "ellmos-knowledge-bundle", "pillar": null, "cls": "platform", "comps": [{"t": "module", "ref": "module:KnowledgeDigest", "req": "required"}, {"t": "module", "ref": "module:WikiStub-Seed", "req": "recommended"}, {"t": "module", "ref": "module:report-forge", "req": "recommended"}, {"t": "module", "ref": "module:web-scraper", "req": "recommended"}, {"t": "module", "ref": "module:project-docs-template", "req": "recommended"}, {"t": "skill", "ref": "skill:docs-analysis", "req": "recommended"}, {"t": "skill", "ref": "skill:document-chunker", "req": "recommended"}, {"t": "skill", "ref": "skill:bilingual-doc-sync", "req": "optional"}]}, {"id": "ellmos-knowledge-search-choice-bundle", "pillar": null, "cls": "choice", "comps": [{"t": "skill", "ref": "skill:decide", "req": "recommended"}]}, {"id": "ellmos-media-production-bundle", "pillar": null, "cls": "domain", "comps": [{"t": "module", "ref": "module:ai-media-editor", "req": "required"}, {"t": "module", "ref": "module:open-compute", "req": "recommended"}, {"t": "module", "ref": "module:web-scraper", "req": "recommended"}, {"t": "module", "ref": "module:report-forge", "req": "recommended"}, {"t": "software_app", "ref": "software:MediaBrain", "req": "optional"}, {"t": "skill", "ref": "skill:textproduction", "req": "optional"}, {"t": "skill", "ref": "skill:video-transcriber", "req": "optional"}]}, {"id": "ellmos-memory-human-context-bundle", "pillar": "memory", "cls": "platform", "comps": [{"t": "module", "ref": "module:USMC", "req": "required"}, {"t": "module", "ref": "module:GARDENER", "req": "recommended"}, {"t": "module", "ref": "module:memory-hooker", "req": "recommended"}, {"t": "module", "ref": "module:build-your-users-mind", "req": "recommended"}, {"t": "access_surface", "ref": "access_surface:Homebase-memory", "req": "optional"}, {"t": "skill", "ref": "skill:decision-briefing", "req": "optional"}]}, {"id": "ellmos-voice-media-assist-bundle", "pillar": "uas", "cls": "domain", "comps": [{"t": "skill", "ref": "skill:voice", "req": "recommended"}, {"t": "skill", "ref": "skill:transkription", "req": "recommended"}, {"t": "skill", "ref": "skill:mediabrain-reader", "req": "optional"}]}, {"id": "ellmos-working-memory-bundle", "pillar": "memory", "cls": "platform", "comps": [{"t": "module", "ref": "module:memory-hooker", "req": "required"}, {"t": "module", "ref": "module:WORKFLOWHOOKER", "req": "required"}, {"t": "module", "ref": "module:task-master", "req": "recommended"}, {"t": "module", "ref": "module:ticket-master", "req": "recommended"}, {"t": "skill", "ref": "skill:condition", "req": "recommended"}]}];
+const BSTACKS=[];
+const MSTACKS=[];
+const UI={
+ de:{sub:"Die Rezept-Ebene: Welche Bundles stecken in welchem Stack — und aus welchen Modulen, Skills und Apps besteht ein Bundle? Klicke einen Stack, um seine Bundles aufleuchten zu lassen.",
+  warn:"Erste Release-Welle: 13 von 32 Bundle-Rezepten sind freigegeben und hier vollständig einsehbar. Die übrigen (u. a. Sovereign-Härtung und Hosted-Betrieb) folgen in Wellen oder bleiben bewusst privat.",
+  bsH:"Bundle-Stacks (.SYSTEMS)", bsSub:"Deployment-Projektionen, die ganze Bundles referenzieren (bundle_refs). Klick zeigt die enthaltenen Bundles.",
+  msH:"Modul-Stacks (.STACKS)", msSub:"Validierte Kompositionen, die einzelne Module direkt listen (components). Klick zeigt die Module im Detail-Panel.",
+  buH:"Die 13 freigegebenen Bundle-Rezepte nach Säulen", buSub:"Ein Bundle = Seed + Komponentenliste. ● erforderlich · ◐ empfohlen · ○ optional. Säulen: memory hält Zustand, control steuert ihn, uas bedient die Person, domain trägt Fachlichkeit.",
+  hint:"Klicke einen Stack oder ein Bundle — hier erscheint die Zusammensetzung.",
+  inStacks:"Steckt in diesen Stacks", none:"Stack-Zuordnungen folgen mit späteren Release-Wellen.",
+  refs:"Enthaltene Bundles", optrefs:"Optionale Bundles", comps:"Module im Stack", ext:"Externe Komponenten",
+  types:{module:"Modul",skill:"Skill",software_app:"Software-App",access_surface:"Zugangsfläche",contract:"Vertrag"},
+  pillars:{memory:"Säule: memory — hält Zustand und findet ihn wieder",control:"Säule: control — steuert den Zustand",
+    uas:"Säule: uas — bedient die Person direkt",domain:"Säule: domain — trägt Fachlichkeit",none:"Ohne Säulen-Zuordnung"},
+  cls:{platform:"platform",domain:"domain",choice:"Auswahlregister",synthetic:"synthetisch (Bundle aus Bundles)","hosted-private":"hosted-private"},
+  source:"Quelle: .BUNDLES/bundles.catalog.v1.json + Bundle-Manifeste + .SYSTEMS/stacks + .STACKS · Stand 2026-08-12"},
+ en:{sub:"The recipe layer: which bundles sit in which stack — and which modules, skills and apps make up a bundle? Click a stack to light up its bundles.",
+  warn:"First release wave: 13 of 32 bundle recipes are cleared and fully browsable here. The remaining ones (incl. sovereign hardening and hosted operations) follow in waves or stay private by design.",
+  bsH:"Bundle stacks (.SYSTEMS)", bsSub:"Deployment projections referencing whole bundles (bundle_refs). Click to see the contained bundles.",
+  msH:"Module stacks (.STACKS)", msSub:"Validated compositions listing individual modules directly (components). Click shows the modules in the detail panel.",
+  buH:"The 13 released bundle recipes by pillar", buSub:"A bundle = seed + component list. ● required · ◐ recommended · ○ optional. Pillars: memory holds state, control steers it, uas serves the person, domain carries expertise.",
+  hint:"Click a stack or a bundle — its composition appears here.",
+  inStacks:"Contained in these stacks", none:"Stack assignments follow with later release waves.",
+  refs:"Contained bundles", optrefs:"Optional bundles", comps:"Modules in this stack", ext:"External components",
+  types:{module:"Module",skill:"Skill",software_app:"Software app",access_surface:"Access surface",contract:"Contract"},
+  pillars:{memory:"Pillar: memory — holds state and finds it again",control:"Pillar: control — steers the state",
+    uas:"Pillar: uas — serves the person directly",domain:"Pillar: domain — carries expertise",none:"No pillar assigned"},
+  cls:{platform:"platform",domain:"domain",choice:"choice register",synthetic:"synthetic (bundle of bundles)","hosted-private":"hosted-private"},
+  source:"Source: .BUNDLES/bundles.catalog.v1.json + bundle manifests + .SYSTEMS/stacks + .STACKS · as of 2026-08-12"}
+};
+let lang="en", sel=null; // {type:'bstack'|'mstack'|'bundle', id}
+const $=s=>document.querySelector(s);
+function short(id){return id.replace(/^ellmos-/,"").replace(/-bundle$/,"");}
+function refName(r){return r.split(":").slice(1).join(":")||r;}
+function build(){
+  const T=UI[lang];
+  $("#t-sub").textContent=T.sub; $("#t-warn").textContent=T.warn;
+  $("#t-bs-h").textContent=T.bsH; $("#t-bs-sub").textContent=T.bsSub;
+  $("#t-ms-h").textContent=T.msH; $("#t-ms-sub").textContent=T.msSub;
+  $("#t-bu-h").textContent=T.buH; $("#t-bu-sub").textContent=T.buSub;
+  $("#panelhint").textContent=T.hint; $("#t-source").textContent=T.source;
+  $("#lang-de").classList.toggle("on",lang==="de");
+  $("#lang-en").classList.toggle("on",lang==="en");
+  document.documentElement.lang=lang;
+  const bs=$("#bstacks"); bs.innerHTML="";
+  for(const s of BSTACKS){
+    const d=document.createElement("div"); d.className="stackcard"; d.dataset.bstack=s.id;
+    d.innerHTML=`<b>${s.id}</b><i>${s.refs.length}${s.opt.length?"+"+s.opt.length:""} Bundles</i>`;
+    bs.appendChild(d);
+  }
+  const ms=$("#mstacks"); ms.innerHTML="";
+  for(const s of MSTACKS){
+    const d=document.createElement("div"); d.className="stackcard"; d.dataset.mstack=s.id;
+    d.innerHTML=`<b>${s.id}</b><i>${s.comps.length} ${lang==="de"?"Module":"modules"}</i>`;
+    ms.appendChild(d);
+  }
+  const order=["memory","control","uas","domain","none"];
+  const pl=$("#pillars"); pl.innerHTML="";
+  for(const p of order){
+    const list=BUNDLES.filter(b=>(b.pillar||"none")===p);
+    if(!list.length) continue;
+    const sec=document.createElement("div"); sec.className="pillar";
+    sec.innerHTML=`<h3>${T.pillars[p]}</h3>`;
+    const g=document.createElement("div"); g.className="bgrid";
+    for(const b of list){
+      const card=document.createElement("div"); card.className="bundle"; card.dataset.bundle=b.id;
+      const nm=b.comps.filter(c=>c.t==="module").length, ns=b.comps.filter(c=>c.t==="skill").length,
+            na=b.comps.filter(c=>c.t==="software_app").length,
+            nx=b.comps.length-nm-ns-na;
+      let cnt=[];
+      if(nm)cnt.push(nm+" M"); if(ns)cnt.push(ns+" S"); if(na)cnt.push(na+" App"); if(nx)cnt.push(nx+" ·");
+      card.innerHTML=`<b>${short(b.id)}</b><span class="cls">${T.cls[b.cls]||b.cls||""}</span>
+        <div class="cnt">${cnt.map(c=>`<span>${c}</span>`).join("")}</div>`;
+      g.appendChild(card);
+    }
+    sec.appendChild(g); pl.appendChild(sec);
+  }
+  applySel();
+}
+function applySel(){
+  document.querySelectorAll(".stackcard").forEach(c=>{
+    c.classList.toggle("on", !!sel && ((sel.type==="bstack"&&c.dataset.bstack===sel.id)||(sel.type==="mstack"&&c.dataset.mstack===sel.id)));
+  });
+  let hot=new Set();
+  if(sel&&sel.type==="bstack"){
+    const s=BSTACKS.find(x=>x.id===sel.id);
+    [...s.refs,...s.opt].forEach(r=>hot.add(r));
+  }
+  document.querySelectorAll(".bundle").forEach(c=>{
+    const isSel=sel&&sel.type==="bundle"&&c.dataset.bundle===sel.id;
+    c.classList.toggle("on",!!isSel);
+    c.classList.toggle("hot",hot.has(c.dataset.bundle));
+    c.classList.toggle("dim",(hot.size>0&&!hot.has(c.dataset.bundle))||(sel&&sel.type==="bundle"&&!isSel));
+  });
+  showPanel();
+}
+function showPanel(){
+  const T=UI[lang], hint=$("#panelhint"), body=$("#panelbody");
+  if(!sel){hint.style.display="block";body.innerHTML="";return}
+  hint.style.display="none";
+  if(sel.type==="bundle"){
+    const b=BUNDLES.find(x=>x.id===sel.id);
+    const inB=BSTACKS.filter(s=>s.refs.includes(b.id)||s.opt.includes(b.id)).map(s=>s.id);
+    const grp={required:[],recommended:[],optional:[],other:[]};
+    for(const c of b.comps){(grp[c.req]||grp.other).push(c)}
+    let html=`<h3>${b.id}</h3><div class="meta">${T.pillars[b.pillar||"none"]}<br>${T.cls[b.cls]||b.cls||""}</div>`;
+    const lab={required:"● required",recommended:"◐ recommended",optional:"○ optional",other:"·"};
+    const cls={required:"req",recommended:"rec",optional:"opt",other:"opt"};
+    for(const k of ["required","recommended","optional","other"]){
+      if(!grp[k].length)continue;
+      html+=`<h4>${lab[k]}</h4><ul>`;
+      for(const c of grp[k]){
+        html+=`<li class="${cls[k]}">${refName(c.ref)} <span class="tt">${T.types[c.t]||c.t}</span></li>`;
+      }
+      html+="</ul>";
+    }
+    html+=`<h4>${T.inStacks}</h4>`;
+    html+= inB.length? `<ul>${inB.map(s=>`<li>${s}</li>`).join("")}</ul>` : `<p class="hint">${T.none}</p>`;
+    body.innerHTML=html;
+  }else if(sel.type==="bstack"){
+    const s=BSTACKS.find(x=>x.id===sel.id);
+    let html=`<h3>${s.id}</h3><h4>${T.refs}</h4><ul>${s.refs.map(r=>`<li class="req">${short(r)}</li>`).join("")}</ul>`;
+    if(s.opt.length)html+=`<h4>${T.optrefs}</h4><ul>${s.opt.map(r=>`<li class="opt">${short(r)}</li>`).join("")}</ul>`;
+    body.innerHTML=html;
+  }else{
+    const s=MSTACKS.find(x=>x.id===sel.id);
+    let html=`<h3>${s.id}</h3><h4>${T.comps}</h4><ul>${s.comps.map(r=>`<li class="req">${r}</li>`).join("")}</ul>`;
+    if(s.ext.length)html+=`<h4>${T.ext}</h4><ul>${s.ext.map(r=>`<li class="opt">${r}</li>`).join("")}</ul>`;
+    body.innerHTML=html;
+  }
+}
+document.addEventListener("click",ev=>{
+  const bs=ev.target.closest("[data-bstack]"), ms=ev.target.closest("[data-mstack]"),
+        bu=ev.target.closest("[data-bundle]");
+  let next=null;
+  if(bs)next={type:"bstack",id:bs.dataset.bstack};
+  else if(ms)next={type:"mstack",id:ms.dataset.mstack};
+  else if(bu)next={type:"bundle",id:bu.dataset.bundle};
+  else return;
+  sel=(sel&&sel.type===next.type&&sel.id===next.id)?null:next;
+  applySel();
+});
+$("#lang-de").addEventListener("click",()=>{lang="de";build()});
+$("#lang-en").addEventListener("click",()=>{lang="en";build()});
+build();
+
+/* --- Theme-Umschalter (dunkel = Default) --- */
+const THEME_KEY="ellmos-theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme=t;
+  const b=document.getElementById("themebtn");
+  if(b) b.textContent=(t==="light"?"🌙":"☀️");
+}
+let savedTheme="dark";
+try{ if(localStorage.getItem(THEME_KEY)==="light") savedTheme="light"; }catch(e){}
+applyTheme(savedTheme);
+document.getElementById("themebtn").addEventListener("click",()=>{
+  const t=document.documentElement.dataset.theme==="light"?"dark":"light";
+  try{ localStorage.setItem(THEME_KEY,t); }catch(e){}
+  applyTheme(t);
+});
+
+</script>
+</body>
+</html>

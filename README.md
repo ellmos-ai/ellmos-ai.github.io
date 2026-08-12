@@ -5,6 +5,7 @@ Live at **https://ellmos-ai.github.io**
 | Page | What it shows |
 |---|---|
 | [`index.html`](https://ellmos-ai.github.io) | **Module Circuit Map** — the functional areas of the ellmos construction kit, how they work together, and every public module with its purpose (DE/EN, dark/light) |
+| [`bundles.html`](https://ellmos-ai.github.io/bundles.html) | **Bundle Recipes** — the 13 released composition recipes (first rollout wave): which modules, skills and apps make up each bundle, with requirement levels |
 | [`skills.html`](https://ellmos-ai.github.io/skills.html) | **Skill Library** — the public SKILL.md library, readable in place, copy-to-clipboard |
 | [`stack-composer.html`](https://ellmos-ai.github.io/stack-composer.html) | **Stack Composer** — assemble your own stack from public modules, with live composition-rule checks and `stack.v2.json` export |
 
