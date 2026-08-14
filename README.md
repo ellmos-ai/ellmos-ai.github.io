@@ -1,3 +1,5 @@
+<img src="assets/banner.png" width="100%" alt="ellmos-ai.github.io Banner">
+
 # ellmos-ai.github.io — interactive maps of the ellmos ecosystem
 
 Live at **https://ellmos-ai.github.io**
