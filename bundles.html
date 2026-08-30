@@ -3,14 +3,6 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ellmos-ai — Bundle Recipes (public excerpt)</title>
-<meta name="description" content="Browse 13 public ellmos-ai bundle recipes and see which modules, skills and apps compose each stack.">
-<link rel="canonical" href="https://ellmos-ai.github.io/bundles.html">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ellmos-ai — Bundle Recipes">
-<meta property="og:description" content="Public composition recipes for ellmos-ai modules, skills and apps.">
-<meta property="og:url" content="https://ellmos-ai.github.io/bundles.html">
-<meta property="og:image" content="https://ellmos-ai.github.io/assets/banner.png">
-<meta name="twitter:card" content="summary_large_image">
 <style>
   :root{--bg:#0b1410;--board:#0e1a14;--zone:#12241b;--zone-edge:#1f3a2c;--copper:#d8a05a;
     --copper-dim:#8a6a3e;--trace:#3f6b52;--trace-hot:#e8b96a;--ink:#d7e4da;--ink-dim:#8fa697;
@@ -136,7 +128,7 @@ const BSTACKS=[];
 const MSTACKS=[];
 const UI={
  de:{sub:"Die Rezept-Ebene: Welche Bundles stecken in welchem Stack — und aus welchen Modulen, Skills und Apps besteht ein Bundle? Klicke einen Stack, um seine Bundles aufleuchten zu lassen.",
-  warn:"Erste Release-Welle: 13 von 32 Bundle-Rezepten sind freigegeben und hier vollständig einsehbar. Die übrigen (u. a. Sovereign-Härtung und Hosted-Betrieb) folgen in Wellen oder bleiben bewusst privat.",
+  warn:"⚠ Interne Vollansicht (alle 32 Rezepte + Stacks): 13 Rezepte sind als erste Welle freigegeben und öffentlich unter ellmos-ai.github.io/bundles.html (Gap-Analyse 2026-08-08, Ring 1+2). Sovereign-Härtung, Hosted-Betrieb und noch nicht materialisierte Rezepte bleiben privat — diese Vollansicht deshalb NICHT veröffentlichen.",
   bsH:"Bundle-Stacks (.SYSTEMS)", bsSub:"Deployment-Projektionen, die ganze Bundles referenzieren (bundle_refs). Klick zeigt die enthaltenen Bundles.",
   msH:"Modul-Stacks (.STACKS)", msSub:"Validierte Kompositionen, die einzelne Module direkt listen (components). Klick zeigt die Module im Detail-Panel.",
   buH:"Die 13 freigegebenen Bundle-Rezepte nach Säulen", buSub:"Ein Bundle = Seed + Komponentenliste. ● erforderlich · ◐ empfohlen · ○ optional. Säulen: memory hält Zustand, control steuert ihn, uas bedient die Person, domain trägt Fachlichkeit.",
@@ -149,7 +141,7 @@ const UI={
   cls:{platform:"platform",domain:"domain",choice:"Auswahlregister",synthetic:"synthetisch (Bundle aus Bundles)","hosted-private":"hosted-private"},
   source:"Quelle: .BUNDLES/bundles.catalog.v1.json + Bundle-Manifeste + .SYSTEMS/stacks + .STACKS · Stand 2026-08-12"},
  en:{sub:"The recipe layer: which bundles sit in which stack — and which modules, skills and apps make up a bundle? Click a stack to light up its bundles.",
-  warn:"First release wave: 13 of 32 bundle recipes are cleared and fully browsable here. The remaining ones (incl. sovereign hardening and hosted operations) follow in waves or stay private by design.",
+  warn:"⚠ Internal full view (all 32 recipes + stacks): 13 recipes are cleared as the first release wave and public at ellmos-ai.github.io/bundles.html (gap analysis 2026-08-08, rings 1+2). Sovereign hardening, hosted operations and unmaterialized recipes stay private — do NOT publish this full view.",
   bsH:"Bundle stacks (.SYSTEMS)", bsSub:"Deployment projections referencing whole bundles (bundle_refs). Click to see the contained bundles.",
   msH:"Module stacks (.STACKS)", msSub:"Validated compositions listing individual modules directly (components). Click shows the modules in the detail panel.",
   buH:"The 13 released bundle recipes by pillar", buSub:"A bundle = seed + component list. ● required · ◐ recommended · ○ optional. Pillars: memory holds state, control steers it, uas serves the person, domain carries expertise.",

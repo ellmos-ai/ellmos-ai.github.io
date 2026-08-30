@@ -4,14 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ellmos-ai — Module Circuit Map</title>
-<meta name="description" content="Explore the public ellmos-ai ecosystem through an interactive module circuit map, with German and English guidance.">
-<link rel="canonical" href="https://ellmos-ai.github.io/">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ellmos-ai — Module Circuit Map">
-<meta property="og:description" content="An interactive public map of the ellmos-ai module ecosystem.">
-<meta property="og:url" content="https://ellmos-ai.github.io/">
-<meta property="og:image" content="https://ellmos-ai.github.io/assets/banner.png">
-<meta name="twitter:card" content="summary_large_image">
 <style>
   :root{
     --bg:#0b1410; --board:#0e1a14; --zone:#12241b; --zone-edge:#1f3a2c;
@@ -297,7 +289,7 @@ const UI = {
     layersH:"Wo diese Karte im Gesamtbild liegt",
     layersSub:"Der Baukasten ist geschichtet: Jede Schicht nutzt die darunter über stabile Verträge — nie über Kopien. Diese Karte zeigt die Modul-Schicht.",
     legOk:"im Einsatz", legDev:"in Entwicklung", legPlan:"geplant", legPriv:"privat / intern",
-    source:"ellmos-ai · öffentlicher Auszug: 36 von 51+ Modulen in 11 Funktionsbereichen · Stand 2026-08-12",
+    source:"Quelle: modules.catalog.json + ARCHITECTURE.md · 56 Module in 11 Funktionsbereichen · Stand 2026-08-18",
     status:{ok:"im Einsatz", dev:"in Entwicklung", plan:"geplant"},
     vis:{public:"öffentlich", cand:"Veröffentlichung vorbereitet", priv:"privat"},
     area:"Bereich", repo:"Repository ansehen", provides:"stellt bereit",
@@ -313,7 +305,7 @@ const UI = {
     layersH:"Where this map sits in the big picture",
     layersSub:"The kit is layered: each layer uses the one below through stable contracts — never through copies. This map shows the module layer.",
     legOk:"in use", legDev:"in development", legPlan:"planned", legPriv:"private / internal",
-    source:"ellmos-ai · public excerpt: 36 of 51+ modules in 11 functional areas · as of 2026-08-12",
+    source:"Source: modules.catalog.json + ARCHITECTURE.md · 56 modules in 11 functional areas · as of 2026-08-18",
     status:{ok:"in use", dev:"in development", plan:"planned"},
     vis:{public:"public", cand:"publication in preparation", priv:"private"},
     area:"Area", repo:"View repository", provides:"provides",
@@ -442,6 +434,10 @@ const MODULES = [
   prov:["sync.database.sqlite","snapshot.verified"],
   d:{de:"Hält SQLite-Datenbanken auf mehreren Maschinen auf demselben Wissensstand: verifizierte Snapshots und konfigurierbare Merge-Regeln auf Zeilenebene, ganz ohne Server.",
      en:"Keeps SQLite databases on multiple machines at the same state of knowledge: verified snapshots and configurable row-level merge policies, with zero servers."}},
+ {id:"prompt-listener", area:"memory", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/prompt-listener",
+  prov:["memory.prompt-listener","memory.activity-patterns"],
+  d:{de:"Eine scharf umrissene Einheit: sammelt und bewertet Prompts aus Agenten-Sitzungen und reicht die Daten an jeden Abnehmer weiter — Workflow-Analyse, Aktivitätsmuster, Nutzer-Modelle, Race-Auswertung.",
+     en:"A purpose-sharp unit: collects and evaluates prompts from agent sessions and hands the data to any consumer — workflow analysis, activity patterns, user models, race evaluation."}},
 
  /* ORCHESTRATION */
  {id:"clutch", area:"orchestration", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/clutch",
@@ -466,7 +462,7 @@ const MODULES = [
   prov:["control.locks","control.permissions"],
   d:{de:"Portables Datei-Lock-System ohne Abhängigkeiten: LOCK*.txt mit Scopes und Verfall plus agent-neutralem Rechtesystem — damit sich mehrere Agenten nie ins Gehege kommen.",
      en:"Portable zero-dependency file-lock system: LOCK*.txt with scopes and expiry plus an agent-neutral permission system — so multiple agents never collide."}},
- {id:"ticket-master", area:"control", st:"ok", vis:"pub", repo:"https://github.com/dev-bricks/ticket-master",
+ {id:"ticket-master", area:"control", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/ticket-master",
   prov:["control.tickets","workflow.ticket-triage"],
   d:{de:"Live-Erfassung im Moment des Auftretens: nimmt Bugs und Wünsche als strukturierte Tickets auf und triagiert sie an das passende Modell oder den passenden Agenten.",
      en:"Live capture the moment something appears: files bugs and wishes as structured tickets and triages them to the right model or agent."}},
@@ -506,6 +502,10 @@ const MODULES = [
   prov:["system.discovery","system.mapping"],
   d:{de:"Evidenzgestützte Landkarten des eigenen Systems: Soll-Funktionen, ihre Träger, tatsächliche Nutzung — und wo die Architektur vom Plan wegdriftet.",
      en:"Evidence-backed maps of your own system: desired functions, their carriers, actual use — and where the architecture drifts from the plan."}},
+ {id:"system-auditor", area:"control", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/system-auditor",
+  prov:["quality.audit.rules","quality.audit.integration","quality.audit.governance"],
+  d:{de:"Belegbasierte System-Audits über mehrere Maschinen hinweg: prüft Regel-Treue, ob Module wie deklariert zusammenspielen, und ob Kontrolldateien, Policies und Entscheidungen widerspruchsfrei sind — mit Meta-Bündelung mehrerer Läufe. Ausgekapselt aus dem ticket-master-TICKET-WRITER.",
+     en:"Evidence-based system audits across machines: checks rule compliance, whether modules integrate as declared, and whether control files, policies and decisions stay consistent — with meta-bundling across runs. Extracted from ticket-master's TICKET-WRITER."}},
 
  /* CONNECTORS */
  {id:"connectors", area:"connectors", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/connectors",
@@ -558,6 +558,10 @@ const MODULES = [
   prov:["quality.project-docs","quality.project-lint"],
   d:{de:"Agent-taugliches Doku-Gerüst für jedes Projekt: START/STATE/TODO/DONE, Workflows und leichte Werkzeuge — damit jede Session sofort weiß, wo sie steht.",
      en:"Agent-ready documentation scaffold for any project: START/STATE/TODO/DONE, workflows and lightweight tooling — so every session instantly knows where it stands."}},
+ {id:"compare-race", area:"quality", st:"dev", vis:"pub", repo:"https://github.com/ellmos-ai/compare-race",
+  prov:["quality.model-comparison","quality.evaluation"],
+  d:{de:"Derselbe Prompt an mehrere Modelle — Stoppuhr oder echtes Rennen. Das startende Modell urteilt selbst; Zeit ist nur eine von mehreren Bewertungsachsen (Achsen aus system-auditor übernommen).",
+     en:"Same prompt, several models — stopwatch or true race. The starting model judges itself; time is only one of several evaluation axes (axes reused from system-auditor)."}},
 
  /* DOMAINS */
  {id:"law-checker", area:"domains", st:"ok", vis:"pub", repo:"https://github.com/ellmos-ai/law-checker",
