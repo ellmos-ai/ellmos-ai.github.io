@@ -16,6 +16,22 @@ requests, no tracking). They are generated from the ellmos module catalogs in th
 workspace and show the **public excerpt** of the ecosystem — the full system contains
 additional private modules and the recipe layer.
 
+## Maintenance
+
+`_tools/pages_maintainer.py` couples the generated site to the system-auditor's fixed
+seven-day window. It runs both workspace generators, keeps the publication gates fail-closed,
+and commits only when generated site content changed. Push is a separate `--push` flag.
+
+```powershell
+$env:PYTHONIOENCODING='utf-8'
+python _tools/pages_maintainer.py --check
+python _tools/pages_maintainer.py --run
+```
+
+The Desktop-app fallback command and scheduling hand-off are documented in
+[`_tools/FALLBACK-AUTOMATION.md`](_tools/FALLBACK-AUTOMATION.md). The repository contains no
+Desktop Scheduled Task or Codex automation definition.
+
 Org overview: https://github.com/ellmos-ai · Umbrella: https://github.com/open-bricks
 
 ## Lizenz / License

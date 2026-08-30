@@ -1,0 +1,3 @@
+LOCK*.txt
+_tools/.state/
+__pycache__/
