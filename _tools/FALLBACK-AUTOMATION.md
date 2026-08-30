@@ -35,10 +35,20 @@ fail-closed ab.
 
 ## MAINTAINER-Rolle
 
-Ohne Änderung am `task-master`-Repo kann der Rollenweg gestartet werden mit:
+Ohne Änderung am `task-master`-Repo kann der Master das Ticket als normale
+MAINTAINER-Aufgabe registrieren (die SQLite-Aufgabendatenbank ändert sich dabei, nicht das
+Repository):
+
+```powershell
+Set-Location "C:\_Local_DEV\repos\task-master"
+python -c "from taskplan import api; print(api.add_from_ticket('T-20260830-650928382', 'ellmos-ai.github.io im 7-Tage-Fenster warten', description='Pages-Maintainer per --fallback prüfen und nur bei Fälligkeit ausführen.', priority='medium', tags='role:maintainer,pages-drift', effort='easy', scope='local', project_path=r'C:\_Local_DEV\repos\ellmos-ai.github.io', source=r'C:\Users\lukas\OneDrive\.TOPICS\_control-center\_TICKETS\QUEUED\T-20260830-650928382.WORKSTATION-LG.txt'))"
+```
+
+Der Rollenweg lässt sich anschließend starten mit:
 
 ```powershell
 python -m taskplan launch --role maintainer --provider codex
 ```
 
-Die konkrete Daueraufgabe bleibt dieses Skript; TASKPLAN ist nur der optionale Rollen-Launcher.
+Die Registrierung und der Rollenstart sind Übergabeschritte des Masters und wurden in W650
+nicht ausgeführt. Die konkrete Daueraufgabe bleibt dieses Skript.
