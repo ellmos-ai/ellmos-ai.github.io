@@ -1,3 +1,23 @@
+# Caches & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+
+# Locks & State
 LOCK*.txt
 _tools/.state/
-__pycache__/
+
+# Sync & Conflict Patterns
+*.sync-conflict-*
+*.conflict
+*-CONFLIT-*
+*.tmp
+*.bak
+
+# Build & Distribution Artefacts
+build/
+dist/
+*.egg-info/
+.wheel-smoke/

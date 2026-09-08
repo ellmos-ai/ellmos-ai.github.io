@@ -1,0 +1,53 @@
+# ellmos-ai.github.io — LLM Context & Architecture Reference
+
+> Interactive public ecosystem maps, bundle recipes, skill library, and stack composer for the ellmos AI framework.
+
+- **Live Site**: https://ellmos-ai.github.io
+- **Repository**: https://github.com/ellmos-ai/ellmos-ai.github.io
+- **Organization**: https://github.com/ellmos-ai
+- **Umbrella Ecosystem**: https://github.com/open-bricks
+- **License**: MIT
+- **Current Version**: 0.1.0
+- **Last Checked**: 2026-09-08
+
+## Overview
+
+`ellmos-ai.github.io` serves as the official public web gateway to the `ellmos` ecosystem. It presents interactive visual maps, modular recipes, and composition tools for human engineers and autonomous agents alike. All pages are built as self-contained static HTML documents that require no build pipeline in the repository, make no third-party network requests, and execute 100% offline within the client's browser.
+
+## Public Artifacts
+
+| File | Title | Description |
+|---|---|---|
+| [`index.html`](https://ellmos-ai.github.io) | Module Circuit Map | Visual circuit diagram of all public modules categorized by functional domain (DE/EN, dark/light modes). |
+| [`bundles.html`](https://ellmos-ai.github.io/bundles.html) | Bundle Recipes | 13 curated composition recipes detailing which modules, skills, and tools form each functional bundle. |
+| [`skills.html`](https://ellmos-ai.github.io/skills.html) | Skill Library | Full public skill catalog with inline reader and copy-to-clipboard functionality. |
+| [`stack-composer.html`](https://ellmos-ai.github.io/stack-composer.html) | Stack Composer | Interactive canvas to compose custom module stacks with live rule validation and `stack.v2.json` export. |
+| [`.nojekyll`](.nojekyll) | NoJekyll Marker | Disables Jekyll processing on GitHub Pages to serve pure static artifacts directly. |
+
+## Maintenance & Automation
+
+The repository contains an idempotent, windowed site maintainer script that syncs public artifacts with upstream catalogs without exposing private or draft modules:
+
+- **Script**: `_tools/pages_maintainer.py`
+- **Fallback Documentation**: `_tools/FALLBACK-AUTOMATION.md`
+- **Cadence**: 7-day window anchored to Mondays (synchronized with `system-auditor`).
+- **Safety Gates**:
+  - Verification of skill counts against canonical `.SKILLS` registry.
+  - Fail-closed leak-gates detecting private module IDs or draft visibility flags (`vis:"priv"`, `vis:"cand"`).
+  - Atomic content checking: Git commits are generated only when verified public site files differ from HEAD.
+
+## Security & Privacy Invariants
+
+As defined in [`SECURITY.md`](SECURITY.md):
+1. **100% Static & Zero-Egress**: Zero telemetry, zero analytics, zero external HTTP calls, no third-party CDNs.
+2. **Fail-Closed Leak-Gates**: Upstream private modules are strictly quarantined and audited before publication.
+3. **Deterministic Maintenance**: Predictable 7-day window bounds, explicit state tracking in `_tools/.state/`.
+4. **Local-First & Non-Elevation**: Runs fully in unprivileged user space.
+5. **Lock Discipline**: Honors repository locks (`LOCK.pages-maintainer.txt`).
+
+## Test Suite & Verification
+
+- **Maintainer Unit Tests**: `tests/test_pages_maintainer.py` (5 tests)
+- **Metadata & Contract Tests**: `tests/test_metadata.py` (9 tests)
+- **Total Tests**: 14 automated tests (100% passing via Pytest)
+- **Code Hygiene**: Fully checked via `ruff check .` and `python -m compileall`
