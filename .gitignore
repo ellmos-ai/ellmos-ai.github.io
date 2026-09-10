@@ -1,23 +1,37 @@
-# Caches & Bytecode
+# Caches, Bytecode & Profiling
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
 .ruff_cache/
+.coverage
+coverage/
+htmlcov/
 
-# Locks & State
+# Locks & Concurrency State
+LOCK
+LOCK.*
+*.lock
 LOCK*.txt
+LOCK.permissions.json
 _tools/.state/
 
-# Sync & Conflict Patterns
+# Multi-Host Synchronization & Conflict Patterns
+*-conflict-*
 *.sync-conflict-*
+*.sync-temp-*
 *.conflict
 *-CONFLIT-*
+*-ASUS-GEI.*
 *.tmp
 *.bak
+*.swp
+*~
+*.log
 
-# Build & Distribution Artefacts
+# Build, Packaging & Distribution Artefacts
 build/
 dist/
 *.egg-info/
+wheelhouse/
 .wheel-smoke/

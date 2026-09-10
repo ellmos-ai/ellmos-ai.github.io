@@ -5,6 +5,22 @@ All notable changes to `ellmos-ai.github.io` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-09-10
+
+### Added
+- **Dual Mermaid Architectural Visualizations**: Integrated system architecture flowchart (`flowchart TB`) covering 5 operational layers (Client, Public Web Apps, Maintainer Layer, Security/Leak-Gate Isolation, Canonical Upstream Sources) and end-to-end maintenance/publishing sequence (`sequenceDiagram`) across both `README.md` and `README_de.md`.
+- **10 Governance & Runtime Invariants**: Formalized and documented `INV-STATIC-01` through `INV-SLA-10` in `SECURITY.md`, `README.md`, `README_de.md`, and `llms.txt` covering 100% Static Zero-Egress, Fail-Closed Leak-Gates, Canonical Catalog Parity, Non-Elevation User Mode, Deterministic 7-Day Window Cadence, Atomic Content Commits, Fail-Closed Lock Discipline, Multi-OS Smoke Integrity, Pure Client-Side Execution, and 48h Response / 5-Day Triage SLA.
+- **16-Repository Sibling Ecosystem Matrix**: Added structured cross-linking table connecting `ellmos-ai`, `dev-bricks`, `file-bricks`, `doc-bricks`, and `open-bricks` tools.
+- **Third-Party License Inventory** (`THIRD_PARTY_LICENSES.md`): Full permissive open-source license accounting for 0 runtime frontend dependencies, Python standard library, pytest, and ruff.
+- **Discoverability & Marketing Log** (`MARKETING-LOG.txt`): Repository-level discoverability, keyword inventory, audience personas, and metadata reference.
+- **14-Point Quick Navigation**: Standardized 14-target quick navigation with 100% anchor parity between English and German documentation.
+- **Contract Test Suite Expansion** (`tests/test_metadata.py`): Added contract tests asserting version 0.1.1, PEP 621 URLs, navigation anchors, dual Mermaid diagrams, 10 invariants table, ecosystem matrix, license accounting, and marketing log.
+
+### Changed
+- **Metadata & Tooling Updates** (`pyproject.toml`): Bumped version to `0.1.1`, configured pytest `addopts = "-ra -v"`, and added project URLs for Third-Party Licenses and Marketing Log.
+- **.gitignore Hardening**: Hardened ignore rules against multi-host conflict files (`*-conflict-*`, `*.sync-conflict-*`, `*.sync-temp-*`, `*-ASUS-GEI.*`), lock variations (`LOCK`, `LOCK.*`, `*.lock`, `LOCK*.txt`, `LOCK.permissions.json`), and packaging scratch.
+- **LLM Context Reference** (`llms.txt`): Updated to version 0.1.1, last-checked 2026-09-10, with explicit references to the 10 invariants and ecosystem matrix.
+
 ## [0.1.0] - 2026-09-08
 
 ### Added

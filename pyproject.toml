@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ellmos-ai-github-io"
-version = "0.1.0"
+version = "0.1.1"
 description = "Interactive public site maps and public component explorer for the ellmos ecosystem"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -39,6 +39,8 @@ Repository = "https://github.com/ellmos-ai/ellmos-ai.github.io"
 Issues = "https://github.com/ellmos-ai/ellmos-ai.github.io/issues"
 Changelog = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/CHANGELOG.md"
 Security = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/SECURITY.md"
+"Third-Party Licenses" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/THIRD_PARTY_LICENSES.md"
+"Marketing Log" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/MARKETING-LOG.txt"
 "Parent Organization" = "https://github.com/ellmos-ai"
 "Umbrella Ecosystem" = "https://github.com/open-bricks"
 
@@ -51,7 +53,7 @@ dev = [
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
-addopts = "-v"
+addopts = "-ra -v"
 
 [tool.ruff]
 target-version = "py310"

@@ -1,0 +1,107 @@
+================================================================================
+ELLMOS-AI / ELLMOS-AI.GITHUB.IO — DISCOVERABILITY & MARKETING LOG
+================================================================================
+Repository: https://github.com/ellmos-ai/ellmos-ai.github.io
+Live Portal: https://ellmos-ai.github.io
+Project Name: ellmos-ai.github.io (Interactive Ecosystem Maps & Explorer)
+Umbrella Ecosystem: open-bricks (https://github.com/open-bricks)
+Architecture Domain: Static Web Portal, Module Circuit Maps, Skill Library & Stack Composer
+Audit Date: 2026-09-10
+Status: ACTIVE / PFAD B DISCOVERABILITY HARDENED
+================================================================================
+
+1. PRODUCT IDENTITY & MISSION
+--------------------------------------------------------------------------------
+ellmos-ai.github.io serves as the official interactive public showcase and web gateway
+to the ellmos modular AI framework and open-bricks ecosystem. It presents interactive
+visual circuit diagrams, modular composition recipes, a full public skill catalog,
+and a visual stack composer for software engineers and autonomous AI agents.
+
+Key Portal Components:
+  1. Module Circuit Map (index.html):
+     Visual circuit diagram of all public modules categorized by functional domain
+     (DE/EN, dark/light themes, offline interactive filtering).
+  2. Bundle Recipes (bundles.html):
+     13 curated composition recipes detailing which modules, skills, and tools
+     form each functional bundle with explicit requirement levels.
+  3. Skill Library (skills.html):
+     Public SKILL.md library with integrated viewer and one-click copy-to-clipboard.
+  4. Stack Composer (stack-composer.html):
+     Interactive canvas to assemble custom module stacks with live composition-rule
+     validation and stack.v2.json export.
+
+2. TARGET PERSONAS & AUDIENCE MAPPING
+--------------------------------------------------------------------------------
+Persona 1: Autonomous AI Agent Architects & Operators (Gemini, Claude Code, Codex)
+  - Need: Machine-readable component schemas, skill documentation, and stack specifications.
+  - Value: Direct access to llms.txt, standardized public SKILL.md documents, and
+    deterministic stack.v2.json export formats.
+
+Persona 2: Modular System Engineers & Developers
+  - Need: Understanding how independent modules (MCP servers, hooks, proxies, runners)
+    wire together without having to read dozens of disparate README files.
+  - Value: Visual circuit map showing dependencies, communication protocols, and
+    interactive stack composition with real-time rule checking.
+
+Persona 3: Security & Privacy Officers
+  - Need: Ensuring that web dashboards and developer portals do not leak telemetry,
+    track users, or introduce supply-chain CDN vulnerabilities.
+  - Value: 100% static, self-contained architecture with zero external requests,
+    zero analytics, and automated fail-closed leak-gates blocking non-public IDs.
+
+3. ARCHITECTURAL INVARIANTS & GOVERNANCE
+--------------------------------------------------------------------------------
+The repository enforces 10 strict runtime and publication invariants (INV-STATIC-01 to INV-SLA-10):
+  - INV-STATIC-01: 100% Static & Zero Network Egress (0 CDNs, 0 telemetry, 0 tracking)
+  - INV-LEAK-02: Fail-Closed Leak-Gate Invariant (blocks vis:"priv" and vis:"cand")
+  - INV-CATALOG-03: Canonical Catalog Parity (verifies skill counts against .SKILLS)
+  - INV-RUNAS-04: Non-Elevation & User-Mode Safety (RunAsInvoker, 0 admin privileges)
+  - INV-WINDOW-05: Deterministic 7-Day Window Cadence (coupled to system-auditor)
+  - INV-DIFF-06: Atomic Content-Change Commits (commits strictly gated by content diffs)
+  - INV-LOCK-07: Fail-Closed Multi-Agent Lock Discipline (LOCK.pages-maintainer.txt)
+  - INV-OS-08: Multi-OS Platform Parity & Smoke Integrity (Ubuntu, Windows, macOS, Python 3.10-3.13)
+  - INV-CLIENT-09: Pure Client-Side Static Execution (all JS runs in browser without backend)
+  - INV-SLA-10: 48h Security SLA & 5-Day Triage Commitment (SECURITY.md)
+
+4. SEARCH KEYWORDS & CRAWLER DISCOVERABILITY INDEX
+--------------------------------------------------------------------------------
+Live Site: https://ellmos-ai.github.io
+GitHub: https://github.com/ellmos-ai/ellmos-ai.github.io
+Keywords:
+  - "ellmos-ai"
+  - "ellmos interactive map"
+  - "modular AI framework circuit map"
+  - "open-bricks developer tools"
+  - "local-first AI architecture"
+  - "stack composer modular agent"
+  - "public skill library LLM"
+  - "zero-egress static site architecture"
+  - "fail-closed catalog maintainer"
+
+5. ECOSYSTEM & CROSS-PROJECT SYNERGY
+--------------------------------------------------------------------------------
+ellmos-ai.github.io visualizes and connects the following 16 active sibling repositories:
+  - ellmos-ai/coma: Multi-Agent Job Board & Provider Routing Bridge
+  - ellmos-ai/clutch: Provider-neutral routing for single tasks
+  - ellmos-ai/MarbleRun: Sequential agent loops & chain execution
+  - ellmos-ai/policy-registry: Policy governance & capability permission authority
+  - ellmos-ai/system-explorer: System-wide topology & stack inspection
+  - ellmos-ai/sqlite-transit-sync: Secure SQLite snapshot & sync pipeline
+  - ellmos-ai/workflowhooker: Workflow hooking & lifecycle event interceptor
+  - ellmos-ai/memoryhooker: Agent memory injection & provenance tracking
+  - ellmos-ai/swarm_ai: LLM swarm intelligence & consensus voting toolkit
+  - ellmos-ai/ellmos-filecommander-mcp: Local-First FileCommander MCP Server
+  - ellmos-ai/ellmos-codecommander-mcp: Local-First CodeCommander MCP Server
+  - ellmos-ai/ellmos-controlcenter-mcp: Unified AI Tools & Profiles Control Center MCP
+  - dev-bricks/DevCenter: Developer workstation hub & process control
+  - dev-bricks/CodeBox: Multi-language code runner & plugin platform
+  - file-bricks/ProFiler: Local-First file analysis & privacy traffic light
+  - open-bricks/open-bricks: Umbrella open-source developer tooling ecosystem
+
+6. VERIFICATION CONTRACT & REVISION RECORD
+--------------------------------------------------------------------------------
+- Version: 0.1.1
+- CI Matrix: Ubuntu, Windows, macOS on Python 3.10, 3.11, 3.12, 3.13
+- Test Suite: 100% passing automated tests across pytest and ruff
+- Documentation Parity: 100% anchor parity between README.md and README_de.md
+================================================================================
