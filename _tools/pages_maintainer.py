@@ -13,7 +13,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 WINDOW_DAYS = 7
 WINDOW_ANCHOR = dt.datetime(2026, 1, 5, tzinfo=dt.timezone.utc)
 SITE_FILES = (".nojekyll", "index.html", "skills.html", "bundles.html", "stack-composer.html")
@@ -142,10 +141,8 @@ def run_lock(repo: Path):
     try:
         yield
     finally:
-        try:
+        with contextlib.suppress(FileNotFoundError):
             lock.unlink()
-        except FileNotFoundError:
-            pass
 
 
 def _json_array_after(text: str, prefix: str) -> list:

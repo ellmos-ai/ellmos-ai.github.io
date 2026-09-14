@@ -4,7 +4,6 @@ import json
 import subprocess
 from pathlib import Path
 
-
 SCRIPT = Path(__file__).parents[1] / "_tools" / "pages_maintainer.py"
 SPEC = importlib.util.spec_from_file_location("pages_maintainer", SCRIPT)
 maintainer = importlib.util.module_from_spec(SPEC)

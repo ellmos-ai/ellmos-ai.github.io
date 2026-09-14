@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -10,6 +9,7 @@ def test_ci_workflow_integrity():
     content = ci_path.read_text(encoding="utf-8")
 
     assert "cancel-in-progress: true" in content, "Workflow must cancel outdated runs"
+    assert "timeout-minutes: 15" in content, "Workflow job must define timeout-minutes: 15"
     for runner in ("ubuntu-latest", "windows-latest", "macos-latest"):
         assert runner in content, f"Runner {runner} missing in CI matrix"
     for py in ('"3.10"', '"3.11"', '"3.12"', '"3.13"'):
@@ -18,7 +18,7 @@ def test_ci_workflow_integrity():
     assert "actions/setup-python@v5" in content, "Workflow must use setup-python@v5"
     assert "cache: 'pip'" in content, "Workflow must use pip caching"
     assert "ruff check" in content, "Workflow must execute ruff linter"
-    assert "pytest" in content, "Workflow must execute pytest test suite"
+    assert "python -m pytest -ra -v" in content, "Workflow must execute pytest with -ra -v"
 
 
 def test_pyproject_pep621_metadata():
@@ -27,7 +27,7 @@ def test_pyproject_pep621_metadata():
     content = pyproject_path.read_text(encoding="utf-8")
 
     assert 'name = "ellmos-ai-github-io"' in content, "Project name must match"
-    assert 'version = "0.1.1"' in content, "Version must match 0.1.1"
+    assert 'version = "0.1.2"' in content, "Version must match 0.1.2"
     assert 'license = "MIT"' in content, "License must be MIT"
 
     required_urls = [
@@ -35,10 +35,12 @@ def test_pyproject_pep621_metadata():
         "Documentation",
         "Repository",
         "Issues",
+        "Bug Tracker",
         "Changelog",
         "Security",
         "Third-Party Licenses",
         "Marketing Log",
+        "LLM Context",
         "Parent Organization",
         "Umbrella Ecosystem",
     ]
@@ -48,6 +50,7 @@ def test_pyproject_pep621_metadata():
     assert "[tool.pytest.ini_options]" in content, "pytest options must be configured"
     assert 'addopts = "-ra -v"' in content, "pytest addopts must include -ra -v"
     assert "[tool.ruff]" in content, "ruff must be configured"
+    assert 'select = ["E", "F", "W", "I", "B", "SIM", "C4"]' in content, "ruff select must have full ruleset"
 
 
 def test_security_policy_contract():
@@ -225,6 +228,7 @@ def test_changelog_integrity():
     assert changelog_path.is_file(), "CHANGELOG.md must exist"
     content = changelog_path.read_text(encoding="utf-8")
 
+    assert "[0.1.2]" in content, "Release [0.1.2] must be in CHANGELOG.md"
     assert "[0.1.1]" in content, "Release [0.1.1] must be in CHANGELOG.md"
     assert "[0.1.0]" in content, "Release [0.1.0] must be in CHANGELOG.md"
 
@@ -236,9 +240,74 @@ def test_gitignore_hygiene():
 
     assert "*.sync-conflict-*" in content, "Sync conflict pattern missing"
     assert "*-conflict-*" in content, "Multi-host conflict pattern missing"
-    assert "*-ASUS-GEI.*" in content, "ASUS host pattern missing"
+    assert "* (kopie)*" in content, "Kopie pattern missing"
+    assert "* (copy)*" in content, "Copy pattern missing"
+    assert "*conflicted copy*" in content, "Conflicted copy pattern missing"
+    assert "*-WORKSTATION*" in content, "Workstation pattern missing"
+    assert "*-ASUS-GEI*" in content, "ASUS host pattern missing"
     assert ".pytest_cache/" in content, "pytest cache pattern missing"
     assert ".ruff_cache/" in content, "ruff cache pattern missing"
+    assert ".coverage.*" in content, "coverage glob pattern missing"
+    assert ".tox/" in content, "tox cache pattern missing"
     assert "LOCK" in content, "LOCK pattern missing"
     assert "LOCK*.txt" in content, "LOCK*.txt pattern missing"
     assert "LOCK.permissions.json" in content, "LOCK.permissions.json missing"
+    assert "uv.lock" in content, "uv.lock pattern missing"
+    assert "!package-lock.json" in content, "package-lock.json whitelist missing"
+
+
+def test_stale_workflow_contract():
+    stale_path = ROOT / ".github" / "workflows" / "stale.yml"
+    assert stale_path.is_file(), "Stale workflow file must exist"
+    content = stale_path.read_text(encoding="utf-8")
+
+    assert "actions/stale@v9" in content, "Stale action must use actions/stale@v9"
+    assert "timeout-minutes: 10" in content, "Stale job must specify timeout-minutes: 10"
+    assert "cancel-in-progress: true" in content, "Stale workflow must have concurrency protection"
+    assert "cron: '30 1 * * *'" in content, "Stale workflow must run on daily cron schedule"
+    assert "issues: write" in content, "Stale workflow must have write permission for issues"
+    assert "pull-requests: write" in content, "Stale workflow must have write permission for pull requests"
+
+
+def test_marketing_log_recency_and_audit():
+    marketing_doc = ROOT / "MARKETING-LOG.txt"
+    assert marketing_doc.is_file(), "MARKETING-LOG.txt must exist"
+    content = marketing_doc.read_text(encoding="utf-8")
+
+    assert "Audit Date: 2026-09-14" in content, "Marketing log must have 2026-09-14 audit date"
+    assert "TECHNICAL HYGIENE & CI HARDENING AUDIT" in content, "Pfad A audit section must exist"
+    assert "Target Version: 0.1.2" in content, "Target version 0.1.2 must be recorded"
+
+
+def test_readme_version_and_date_recency():
+    readme_en = ROOT / "README.md"
+    readme_de = ROOT / "README_de.md"
+    assert readme_en.is_file() and readme_de.is_file()
+
+    content_en = readme_en.read_text(encoding="utf-8")
+    content_de = readme_de.read_text(encoding="utf-8")
+
+    for content in (content_en, content_de):
+        assert "version-0.1.2" in content, "Version badge 0.1.2 missing"
+        assert "2026--09--14" in content, "Last-checked badge 2026-09-14 missing"
+
+
+def test_llms_txt_version_and_date_recency():
+    llms_path = ROOT / "llms.txt"
+    assert llms_path.is_file()
+    content = llms_path.read_text(encoding="utf-8")
+
+    assert "- **Current Version**: 0.1.2" in content
+    assert "- **Last Checked**: 2026-09-14" in content
+
+
+def test_ci_timeout_minutes_contract():
+    ci_path = ROOT / ".github" / "workflows" / "ci.yml"
+    stale_path = ROOT / ".github" / "workflows" / "stale.yml"
+    assert ci_path.is_file() and stale_path.is_file()
+
+    ci_content = ci_path.read_text(encoding="utf-8")
+    stale_content = stale_path.read_text(encoding="utf-8")
+
+    assert "timeout-minutes: 15" in ci_content, "CI job must specify timeout-minutes: 15"
+    assert "timeout-minutes: 10" in stale_content, "Stale job must specify timeout-minutes: 10"

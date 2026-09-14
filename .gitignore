@@ -5,8 +5,13 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .coverage
+.coverage.*
 coverage/
 htmlcov/
+.tox/
+.turbo/
+.nyc_output/
+.hypothesis/
 
 # Locks & Concurrency State
 LOCK
@@ -14,19 +19,32 @@ LOCK.*
 *.lock
 LOCK*.txt
 LOCK.permissions.json
+uv.lock
+!package-lock.json
 _tools/.state/
 
 # Multi-Host Synchronization & Conflict Patterns
+* (kopie)*
+* (copy)*
+* (Kopie)*
+* (Copy)*
+*conflicted copy*
 *-conflict-*
 *.sync-conflict-*
 *.sync-temp-*
 *.conflict
 *-CONFLIT-*
+*-WORKSTATION*
+*-WORKSTATION-LG*
+*-ASUS-GEI*
 *-ASUS-GEI.*
+*-LAPTOP*
+*-Mac Studio*
 *.tmp
 *.bak
 *.swp
 *~
+*.orig
 *.log
 
 # Build, Packaging & Distribution Artefacts

@@ -5,6 +5,19 @@ All notable changes to `ellmos-ai.github.io` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-09-14
+
+### Added
+- **GitHub Actions Stale Issues & PRs Automation** (`.github/workflows/stale.yml`): Configured `actions/stale@v9` with `timeout-minutes: 10`, `concurrency: cancel-in-progress: true`, daily cron schedule (`30 1 * * *`), and automated stale labeling after 30 days and closure after 7 days for unattended issues and pull requests.
+- **Automated Contract Suite Expansion** (`tests/test_metadata.py`): Added contract assertions for CI timeout guardrails (`timeout-minutes: 15`), Stale workflow configuration, multi-host cloud-sync and lock defense patterns, PEP 621 extended URLs (`Bug Tracker`, `LLM Context`), and changelog recency.
+
+### Changed
+- **CI Workflow Hardening** (`.github/workflows/ci.yml`): Added job-level timeout guardrail (`timeout-minutes: 15`) and standardized runner invocation flags (`python -m pytest -ra -v`).
+- **Multi-Host Cloud-Sync & Lock Defense** (`.gitignore`): Hardened ignore patterns against cloud sync conflicts (`* (kopie)*`, `* (copy)*`, `* (Kopie)*`, `* (Copy)*`, `*conflicted copy*`, `*-WORKSTATION*`, `*-WORKSTATION-LG*`, `*-ASUS-GEI*`, `*-LAPTOP*`, `*-Mac Studio*`), lock contention (`LOCK`, `LOCK.*`, `LOCK*.txt`, `LOCK.permissions.json`, `uv.lock`, `!package-lock.json`), and test caches (`.coverage.*`, `.tox/`, `.turbo/`, `.nyc_output/`, `.hypothesis/`).
+- **PEP 621 & Ruff Tooling Standard** (`pyproject.toml`): Bumped version to `0.1.2`, registered `Bug Tracker` and `LLM Context` project URLs, and expanded Ruff lint ruleset to `["E", "F", "W", "I", "B", "SIM", "C4"]`.
+- **Maintainer Idiom Optimization** (`_tools/pages_maintainer.py`): Modernized lock cleanup using `contextlib.suppress(FileNotFoundError)`.
+- **Documentation & Badges Synchronization**: Synchronized test passing counts and verification timestamps (2026-09-14) across `README.md`, `README_de.md`, `llms.txt`, and `MARKETING-LOG.txt`.
+
 ## [0.1.1] - 2026-09-10
 
 ### Added

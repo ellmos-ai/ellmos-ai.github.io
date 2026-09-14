@@ -6,8 +6,8 @@ Live Portal: https://ellmos-ai.github.io
 Project Name: ellmos-ai.github.io (Interactive Ecosystem Maps & Explorer)
 Umbrella Ecosystem: open-bricks (https://github.com/open-bricks)
 Architecture Domain: Static Web Portal, Module Circuit Maps, Skill Library & Stack Composer
-Audit Date: 2026-09-10
-Status: ACTIVE / PFAD B DISCOVERABILITY HARDENED
+Audit Date: 2026-09-14
+Status: ACTIVE / PFAD A HYGIENE & CI HARDENED
 ================================================================================
 
 1. PRODUCT IDENTITY & MISSION
@@ -100,8 +100,28 @@ ellmos-ai.github.io visualizes and connects the following 16 active sibling repo
 
 6. VERIFICATION CONTRACT & REVISION RECORD
 --------------------------------------------------------------------------------
-- Version: 0.1.1
+- Version: 0.1.2
 - CI Matrix: Ubuntu, Windows, macOS on Python 3.10, 3.11, 3.12, 3.13
 - Test Suite: 100% passing automated tests across pytest and ruff
 - Documentation Parity: 100% anchor parity between README.md and README_de.md
+================================================================================
+
+7. TECHNICAL HYGIENE & CI HARDENING AUDIT (PFAD A: 2026-09-14)
+--------------------------------------------------------------------------------
+- Target Version: 0.1.2
+- CI Timeout Hardening:
+  * .github/workflows/ci.yml: Job timeout-minutes: 15, concurrency: cancel-in-progress: true
+  * Standardized test runner flags: python -m pytest -ra -v
+- Stale Lifecycle Workflow:
+  * .github/workflows/stale.yml: actions/stale@v9, timeout-minutes: 10, cron: '30 1 * * *'
+  * permissions: issues: write, pull-requests: write
+- Multi-Host Sync & Lock Defense:
+  * .gitignore: Cloud sync conflicts (* (kopie)*, * (copy)*, *-WORKSTATION*, *-ASUS-GEI*, etc.)
+  * Lock contention patterns: LOCK, LOCK.*, LOCK*.txt, LOCK.permissions.json, uv.lock
+  * Cache patterns: .coverage.*, .tox/, .turbo/, .nyc_output/, .hypothesis/
+- Tooling & Ruff Lint Parity:
+  * pyproject.toml: version 0.1.2, Bug Tracker and LLM Context URLs registered
+  * Ruff lint select: E, F, W, I, B, SIM, C4 across all Python modules
+- Verification Gate:
+  * Full test suite 100% passing across pytest and ruff
 ================================================================================

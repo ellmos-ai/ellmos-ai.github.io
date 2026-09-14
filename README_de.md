@@ -5,9 +5,9 @@
 **Offizielles öffentliches Webportal, interaktive Modul-Schaltpläne, Bundle-Rezepte, Skill-Bibliothek und visueller Stack-Composer für das modulare ellmos KI-Framework.**
 
 <p align="center">
-  <a href="https://github.com/ellmos-ai/ellmos-ai.github.io"><img src="https://img.shields.io/badge/version-0.1.1-blue" alt="Version 0.1.1"></a>
+  <a href="https://github.com/ellmos-ai/ellmos-ai.github.io"><img src="https://img.shields.io/badge/version-0.1.2-blue" alt="Version 0.1.2"></a>
   <a href="https://github.com/ellmos-ai/ellmos-ai.github.io/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-passing-brightgreen" alt="CI Status"></a>
-  <a href="tests/"><img src="https://img.shields.io/badge/tests-18%20passed%20%7C%20100%25%20green-brightgreen" alt="Tests 18 Passed"></a>
+  <a href="tests/"><img src="https://img.shields.io/badge/tests-23%20passed%20%7C%20100%25%20green-brightgreen" alt="Tests 23 Passed"></a>
   <a href="https://www.python.org"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue" alt="Python 3.10+"></a>
   <a href="https://github.com/ellmos-ai/ellmos-ai.github.io"><img src="https://img.shields.io/badge/platforms-Windows%20%7C%20Linux%20%7C%20macOS-blue" alt="Plattformen"></a>
   <a href="https://ellmos-ai.github.io"><img src="https://img.shields.io/badge/web%20ui-Statisches%20HTML5%20%26%20Vanilla%20JS-informational" alt="Web UI"></a>
@@ -18,7 +18,7 @@
   <a href="https://github.com/ellmos-ai"><img src="https://img.shields.io/badge/ecosystem-ellmos--ai-informational" alt="Ökosystem: ellmos-ai"></a>
   <a href="https://github.com/open-bricks"><img src="https://img.shields.io/badge/umbrella-open--bricks-blueviolet" alt="Dachorganisation: open-bricks"></a>
   <a href="llms.txt"><img src="https://img.shields.io/badge/LLM--Ready-llms.txt-orange" alt="LLM-Ready"></a>
-  <a href="https://github.com/ellmos-ai/ellmos-ai.github.io"><img src="https://img.shields.io/badge/last--checked-2026--09--10-blue" alt="Zuletzt geprüft"></a>
+  <a href="https://github.com/ellmos-ai/ellmos-ai.github.io"><img src="https://img.shields.io/badge/last--checked-2026--09--14-blue" alt="Zuletzt geprüft"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Lizenz: MIT"></a>
 </p>
 

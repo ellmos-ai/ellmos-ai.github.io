@@ -7,8 +7,8 @@
 - **Organization**: https://github.com/ellmos-ai
 - **Umbrella Ecosystem**: https://github.com/open-bricks
 - **License**: MIT
-- **Current Version**: 0.1.1
-- **Last Checked**: 2026-09-10
+- **Current Version**: 0.1.2
+- **Last Checked**: 2026-09-14
 
 ## Overview
 
