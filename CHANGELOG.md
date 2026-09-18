@@ -5,6 +5,21 @@ All notable changes to `ellmos-ai.github.io` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2026-09-18
+
+### Added
+- **Bilingual 18-Point Quick Navigation & Reciprocal Anchors** (`README.md`, `README_de.md`): Symmetrical 18-point quick navigation with dual reciprocal HTML anchors (`<a id="..."></a>`) for all sections, guaranteeing permanent deep-linking and backward compatibility.
+- **Target Personas & High-Intent SEO Queries** (`README.md`, `README_de.md`): Structured definition of 4 target personas (`[PERSONA-01]` Autonomous Agent Architects, `[PERSONA-02]` Modular System Engineers, `[PERSONA-03]` Prompt Engineers, `[PERSONA-04]` Security & Compliance Officers) with pain points, solutions, typical workflows, and high-intent search phrases.
+- **10-Dimension Comparative Matrix vs. Alternatives** (`README.md`, `README_de.md`): In-depth comparison against Cloud API Hubs, Static Doc Generators, Heavy Dynamic SPAs, and Unstructured GitHub READMEs mapped across invariants `INV-STATIC-01` through `INV-SLA-10`.
+- **German Statutory Notice (§ 521 BGB)** (`README_de.md`): Formal gratuitous service liability disclosure (§ 521 BGB Gefälligkeitsrecht) integrated into the governance section.
+- **Contract Test Suite Expansion** (`tests/test_metadata.py`): Added contract assertions for 18-point navigation, target personas, comparative matrix, reciprocal anchors, statutory notice, and PEP 621 extended project URLs.
+
+### Changed
+- **Packaging & Tooling Standardization** (`pyproject.toml`): Bumped version to `0.1.3`, included `THIRD_PARTY_LICENSES.md` in `license-files`, registered `LLM Ready` project URL, and added search keywords (`mcp`, `mcp-servers`, `ai-agents`, `agentic-workflows`, `open-bricks`, `zero-egress`).
+- **Live GitHub Remote Discoverability**: Restored public homepage URL (`https://ellmos-ai.github.io`) and aligned repository topics via GitHub CLI.
+- **SBOM & Governance Audit** (`THIRD_PARTY_LICENSES.md`): Re-audited Stand 2026-09-18 for version 0.1.3 with full 10-invariant compliance mapping, unprivileged `RunAsInvoker` mode, and zero-copyleft guarantee.
+- **Discoverability & LLM Context Synchronization**: Updated `MARKETING-LOG.txt` (Section 8 Pfad B Audit Stand 2026-09-18) and `llms.txt` (version 0.1.3, last-checked 2026-09-18).
+
 ## [0.1.2] - 2026-09-14
 
 ### Added

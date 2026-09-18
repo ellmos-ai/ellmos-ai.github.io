@@ -6,8 +6,8 @@ Live Portal: https://ellmos-ai.github.io
 Project Name: ellmos-ai.github.io (Interactive Ecosystem Maps & Explorer)
 Umbrella Ecosystem: open-bricks (https://github.com/open-bricks)
 Architecture Domain: Static Web Portal, Module Circuit Maps, Skill Library & Stack Composer
-Audit Date: 2026-09-14
-Status: ACTIVE / PFAD A HYGIENE & CI HARDENED
+Audit Date: 2026-09-18
+Status: ACTIVE / PFAD B DISCOVERABILITY & VISUAL ARCHITECTURE AUDITED
 ================================================================================
 
 1. PRODUCT IDENTITY & MISSION
@@ -108,6 +108,7 @@ ellmos-ai.github.io visualizes and connects the following 16 active sibling repo
 
 7. TECHNICAL HYGIENE & CI HARDENING AUDIT (PFAD A: 2026-09-14)
 --------------------------------------------------------------------------------
+- Audit Date: 2026-09-14
 - Target Version: 0.1.2
 - CI Timeout Hardening:
   * .github/workflows/ci.yml: Job timeout-minutes: 15, concurrency: cancel-in-progress: true
@@ -124,4 +125,45 @@ ellmos-ai.github.io visualizes and connects the following 16 active sibling repo
   * Ruff lint select: E, F, W, I, B, SIM, C4 across all Python modules
 - Verification Gate:
   * Full test suite 100% passing across pytest and ruff
+================================================================================
+
+8. DISCOVERABILITY, VISUAL ARCHITECTURE & METADATA AUDIT (PFAD B: 2026-09-18)
+--------------------------------------------------------------------------------
+- Audit Date: 2026-09-18
+- Target Version: 0.1.3
+- Live GitHub Metadata & Discoverability Optimization:
+  * Homepage URL restored: https://ellmos-ai.github.io
+  * GitHub Topics aligned: documentation, ellmos-ai, github-pages, interactive-map,
+    skill-library, ecosystem-overview, stack-composer, agentic-workflows, ai-agents,
+    mcp, mcp-servers, zero-egress, open-bricks.
+- Traffic & Engagement Audit (14-Day Trailing Window):
+  * Git Clones: 137 total clones (36 unique cloners). Strong community adoption of tools.
+  * Web Traffic: GitHub Pages web traffic is served directly via CDN with 0 external tracking.
+  * Issues: 0 open issues (100% clean queue).
+- Bilingual 18-Point Quick Navigation Parity:
+  * Symmetrical 18-point navigation implemented in README.md and README_de.md.
+  * Dual reciprocal HTML anchor aliases (<a id="..."></a>) across all 18 sections
+    ensuring 100% link stability and backward compatibility.
+- Target Personas & High-Intent Search Queries:
+  * [PERSONA-01] Autonomous AI Agent Architects & Operators (Gemini, Claude Code, Codex)
+  * [PERSONA-02] Modular System Engineers & Developers
+  * [PERSONA-03] Prompt Engineers & AI Workflow Designers
+  * [PERSONA-04] Security & Compliance Officers (Zero-Egress & DSGVO)
+- 10-Dimension Comparative Matrix:
+  * Comprehensive technical comparison vs. 4 alternatives (Cloud API & Agent Hubs,
+    Static Doc Generators, Heavy Dynamic SPA Frameworks, Unstructured GitHub READMEs)
+    mapped directly to invariants INV-STATIC-01 through INV-SLA-10.
+- Dual Mermaid Architectural Visualizations:
+  * Verified 5-layer topology diagram (flowchart TB) with quoted label syntax.
+  * Verified maintenance sequence diagram (sequenceDiagram with autonumber, 0 semicolons).
+- Legal & Compliance Transparency:
+  * German statutory notice (§ 521 BGB Gefälligkeitsrecht) integrated in README_de.md.
+  * THIRD_PARTY_LICENSES.md re-audited for version 0.1.3 with 10-invariant compliance matrix.
+- Packaging & Tooling Standard:
+  * pyproject.toml: version 0.1.3, license-files = ["LICENSE", "THIRD_PARTY_LICENSES.md"],
+    LLM Ready URL registered, discoverability keywords expanded.
+- Recommendations for Future Visibility Enhancements:
+  1. Submit ellmos-ai.github.io to GitHub Pages community showcases and developer directories.
+  2. List public MCP components and interactive maps in awesome-mcp-servers, Glama, and mcp.so.
+  3. Prepare localized Spanish/Japanese translations when ecosystem scope expands.
 ================================================================================

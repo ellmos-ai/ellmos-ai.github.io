@@ -4,14 +4,27 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ellmos-ai-github-io"
-version = "0.1.2"
+version = "0.1.3"
 description = "Interactive public site maps and public component explorer for the ellmos ecosystem"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-license-files = ["LICENSE"]
+license-files = ["LICENSE", "THIRD_PARTY_LICENSES.md"]
 authors = [{ name = "Lukas Geiger" }]
-keywords = ["ellmos", "interactive-map", "skills", "bundles", "stack-composer", "static-site"]
+keywords = [
+    "ellmos",
+    "interactive-map",
+    "skills",
+    "bundles",
+    "stack-composer",
+    "static-site",
+    "mcp",
+    "mcp-servers",
+    "ai-agents",
+    "agentic-workflows",
+    "open-bricks",
+    "zero-egress",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Web Environment",
@@ -43,6 +56,7 @@ Security = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/SECURITY.
 "Third-Party Licenses" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/THIRD_PARTY_LICENSES.md"
 "Marketing Log" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/MARKETING-LOG.txt"
 "LLM Context" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/llms.txt"
+"LLM Ready" = "https://ellmos-ai.github.io/llms.txt"
 "Parent Organization" = "https://github.com/ellmos-ai"
 "Umbrella Ecosystem" = "https://github.com/open-bricks"
 

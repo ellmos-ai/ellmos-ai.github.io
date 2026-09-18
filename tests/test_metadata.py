@@ -27,8 +27,9 @@ def test_pyproject_pep621_metadata():
     content = pyproject_path.read_text(encoding="utf-8")
 
     assert 'name = "ellmos-ai-github-io"' in content, "Project name must match"
-    assert 'version = "0.1.2"' in content, "Version must match 0.1.2"
+    assert 'version = "0.1.3"' in content, "Version must match 0.1.3"
     assert 'license = "MIT"' in content, "License must be MIT"
+    assert 'license-files = ["LICENSE", "THIRD_PARTY_LICENSES.md"]' in content
 
     required_urls = [
         "Homepage",
@@ -41,11 +42,15 @@ def test_pyproject_pep621_metadata():
         "Third-Party Licenses",
         "Marketing Log",
         "LLM Context",
+        "LLM Ready",
         "Parent Organization",
         "Umbrella Ecosystem",
     ]
     for url in required_urls:
         assert f'"{url}"' in content or f"{url} =" in content, f"Missing URL: {url}"
+
+    for kw in ("mcp", "mcp-servers", "ai-agents", "agentic-workflows", "open-bricks", "zero-egress"):
+        assert f'"{kw}"' in content, f"Missing keyword: {kw}"
 
     assert "[tool.pytest.ini_options]" in content, "pytest options must be configured"
     assert 'addopts = "-ra -v"' in content, "pytest addopts must include -ra -v"
@@ -151,8 +156,94 @@ def test_readme_quick_navigation_parity():
         if line.strip().startswith("- [")
     ]
 
-    assert len(nav_en_lines) == 14, f"Expected 14 English nav items, found {len(nav_en_lines)}"
-    assert len(nav_de_lines) == 14, f"Expected 14 German nav items, found {len(nav_de_lines)}"
+    assert len(nav_en_lines) == 18, f"Expected 18 English nav items, found {len(nav_en_lines)}"
+    assert len(nav_de_lines) == 18, f"Expected 18 German nav items, found {len(nav_de_lines)}"
+
+    for i in range(1, 19):
+        prefix = f"- [{i}."
+        assert any(line.startswith(prefix) for line in nav_en_lines), f"English nav item {i} missing"
+        assert any(line.startswith(prefix) for line in nav_de_lines), f"German nav item {i} missing"
+
+
+def test_target_personas_contract():
+    readme_en = ROOT / "README.md"
+    readme_de = ROOT / "README_de.md"
+    llms_doc = ROOT / "llms.txt"
+
+    content_en = readme_en.read_text(encoding="utf-8")
+    content_de = readme_de.read_text(encoding="utf-8")
+    content_llms = llms_doc.read_text(encoding="utf-8")
+
+    personas = ["[PERSONA-01]", "[PERSONA-02]", "[PERSONA-03]", "[PERSONA-04]"]
+    for p in personas:
+        assert p in content_en, f"Persona {p} missing in README.md"
+        assert p in content_de, f"Persona {p} missing in README_de.md"
+        assert p in content_llms, f"Persona {p} missing in llms.txt"
+
+
+def test_comparative_matrix_contract():
+    readme_en = ROOT / "README.md"
+    readme_de = ROOT / "README_de.md"
+    content_en = readme_en.read_text(encoding="utf-8")
+    content_de = readme_de.read_text(encoding="utf-8")
+
+    invariants = [
+        "INV-STATIC-01",
+        "INV-LEAK-02",
+        "INV-CATALOG-03",
+        "INV-RUNAS-04",
+        "INV-WINDOW-05",
+        "INV-DIFF-06",
+        "INV-LOCK-07",
+        "INV-OS-08",
+        "INV-CLIENT-09",
+        "INV-SLA-10",
+    ]
+
+    for inv in invariants:
+        assert content_en.count(inv) >= 2, f"Invariant {inv} must appear in both matrix and governance in README.md"
+        assert content_de.count(inv) >= 2, f"Invariant {inv} must appear in both matrix and governance in README_de.md"
+
+
+def test_statutory_notice_bgb_521():
+    readme_de = ROOT / "README_de.md"
+    content_de = readme_de.read_text(encoding="utf-8")
+
+    assert "§ 521 BGB" in content_de, "German statutory notice (§ 521 BGB) missing in README_de.md"
+    assert "Gefälligkeitsverhältnisses" in content_de, "Gratuitous service disclaimer missing"
+    assert "Vorsatz und grobe Fahrlässigkeit" in content_de, "Statutory liability limitation missing"
+
+
+def test_reciprocal_html_anchors():
+    readme_en = ROOT / "README.md"
+    readme_de = ROOT / "README_de.md"
+    content_en = readme_en.read_text(encoding="utf-8")
+    content_de = readme_de.read_text(encoding="utf-8")
+
+    anchor_checkpoints = [
+        '<a id="1-features"></a>',
+        '<a id="2-architecture"></a>',
+        '<a id="3-target-personas--discoverability"></a>',
+        '<a id="4-comparative-matrix-vs-alternatives"></a>',
+        '<a id="5-dual-mermaid-diagrams"></a>',
+        '<a id="6-governance--runtime-invariants"></a>',
+        '<a id="7-interactive-web-applications-matrix"></a>',
+        '<a id="8-module-circuit-map-deep-dive"></a>',
+        '<a id="9-curated-bundle-recipes"></a>',
+        '<a id="10-public-skill-library-viewer"></a>',
+        '<a id="11-interactive-stack-composer-canvas"></a>',
+        '<a id="12-pages-maintainer-automation--leak-gates"></a>',
+        '<a id="13-verification-testing--quality-gates"></a>',
+        '<a id="14-sibling-ecosystem--cross-project-topology"></a>',
+        '<a id="15-third-party-licenses--open-source-auditing"></a>',
+        '<a id="16-machine-readable-llm-context--agent-protocol"></a>',
+        '<a id="17-changelog--project-history"></a>',
+        '<a id="18-security-policy--statutory-notice"></a>',
+    ]
+
+    for anchor in anchor_checkpoints:
+        assert anchor in content_en, f"Anchor {anchor} missing in README.md"
+        assert anchor in content_de, f"Anchor {anchor} missing in README_de.md"
 
 
 def test_third_party_licenses_contract():
@@ -165,6 +256,11 @@ def test_third_party_licenses_contract():
     assert "Python Standard Library" in content
     assert "pytest" in content
     assert "Ruff" in content
+    assert "Audit Date" in content and "2026-09-18" in content
+    assert "**Audited Target Version:** 0.1.3" in content
+    assert "RunAsInvoker" in content
+    assert "INV-STATIC-01" in content
+    assert "INV-SLA-10" in content
 
 
 def test_marketing_log_contract():
@@ -178,6 +274,7 @@ def test_marketing_log_contract():
     assert "ARCHITECTURAL INVARIANTS & GOVERNANCE" in content
     assert "SEARCH KEYWORDS & CRAWLER DISCOVERABILITY INDEX" in content
     assert "ECOSYSTEM & CROSS-PROJECT SYNERGY" in content
+    assert "DISCOVERABILITY, VISUAL ARCHITECTURE & METADATA AUDIT" in content
 
 
 def test_sibling_ecosystem_matrix():
@@ -221,6 +318,7 @@ def test_llms_txt_contract():
     assert "SECURITY.md" in content
     assert "INV-STATIC-01" in content
     assert "INV-SLA-10" in content
+    assert "[PERSONA-01]" in content
 
 
 def test_changelog_integrity():
@@ -228,6 +326,7 @@ def test_changelog_integrity():
     assert changelog_path.is_file(), "CHANGELOG.md must exist"
     content = changelog_path.read_text(encoding="utf-8")
 
+    assert "[0.1.3]" in content, "Release [0.1.3] must be in CHANGELOG.md"
     assert "[0.1.2]" in content, "Release [0.1.2] must be in CHANGELOG.md"
     assert "[0.1.1]" in content, "Release [0.1.1] must be in CHANGELOG.md"
     assert "[0.1.0]" in content, "Release [0.1.0] must be in CHANGELOG.md"
@@ -274,9 +373,10 @@ def test_marketing_log_recency_and_audit():
     assert marketing_doc.is_file(), "MARKETING-LOG.txt must exist"
     content = marketing_doc.read_text(encoding="utf-8")
 
-    assert "Audit Date: 2026-09-14" in content, "Marketing log must have 2026-09-14 audit date"
+    assert "Audit Date: 2026-09-18" in content, "Marketing log must have 2026-09-18 audit date"
     assert "TECHNICAL HYGIENE & CI HARDENING AUDIT" in content, "Pfad A audit section must exist"
-    assert "Target Version: 0.1.2" in content, "Target version 0.1.2 must be recorded"
+    assert "DISCOVERABILITY, VISUAL ARCHITECTURE & METADATA AUDIT" in content
+    assert "Target Version: 0.1.3" in content, "Target version 0.1.3 must be recorded"
 
 
 def test_readme_version_and_date_recency():
@@ -288,8 +388,8 @@ def test_readme_version_and_date_recency():
     content_de = readme_de.read_text(encoding="utf-8")
 
     for content in (content_en, content_de):
-        assert "version-0.1.2" in content, "Version badge 0.1.2 missing"
-        assert "2026--09--14" in content, "Last-checked badge 2026-09-14 missing"
+        assert "version-0.1.3" in content, "Version badge 0.1.3 missing"
+        assert "2026--09--18" in content, "Last-checked badge 2026-09-18 missing"
 
 
 def test_llms_txt_version_and_date_recency():
@@ -297,8 +397,8 @@ def test_llms_txt_version_and_date_recency():
     assert llms_path.is_file()
     content = llms_path.read_text(encoding="utf-8")
 
-    assert "- **Current Version**: 0.1.2" in content
-    assert "- **Last Checked**: 2026-09-14" in content
+    assert "- **Current Version**: 0.1.3" in content
+    assert "- **Last Checked**: 2026-09-18" in content
 
 
 def test_ci_timeout_minutes_contract():
