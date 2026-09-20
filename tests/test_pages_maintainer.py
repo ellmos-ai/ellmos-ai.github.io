@@ -108,3 +108,31 @@ def test_verify_generator_inputs_accepts_explicit_canonical_skill_root(tmp_path)
     generator.write_text('SKILLS_REPO = r"C:\\stale"\n', encoding="utf-8")
 
     maintainer.verify_generator_inputs(ai, generator, ai / ".SKILLS")
+
+
+def test_default_paths_uses_host_system_and_actor(monkeypatch, tmp_path):
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+    monkeypatch.delenv("ELLMOS_SYSTEM", raising=False)
+    monkeypatch.delenv("SYNC_SLOT", raising=False)
+    monkeypatch.delenv("ELLMOS_ACTOR", raising=False)
+    monkeypatch.delenv("AUTOMATION_PROVIDER", raising=False)
+    monkeypatch.setenv("TASKPLAN_PROVIDER", "claude-code")
+    monkeypatch.setattr(maintainer.socket, "gethostname", lambda: "ASUS-GEI")
+
+    day_log = maintainer._default_paths()[-1]
+
+    assert day_log.name == "24.laptop.claude-code.txt"
+
+
+def test_default_paths_separates_host_and_actor_combinations(monkeypatch):
+    monkeypatch.setenv("ELLMOS_SYSTEM", "workstation")
+    monkeypatch.setenv("ELLMOS_ACTOR", "codex")
+    first = maintainer._default_paths()[-1]
+
+    monkeypatch.setenv("ELLMOS_SYSTEM", "surface")
+    monkeypatch.setenv("ELLMOS_ACTOR", "gemini")
+    second = maintainer._default_paths()[-1]
+
+    assert first.name == "24.workstation.codex.txt"
+    assert second.name == "24.surface.gemini.txt"
+    assert first != second

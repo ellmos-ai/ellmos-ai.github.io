@@ -9,6 +9,7 @@ import datetime as dt
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
 from pathlib import Path
@@ -329,17 +330,68 @@ def run_maintainer(
     }
 
 
-def _default_paths() -> tuple[Path, Path, Path, Path]:
+_HOST_SYSTEM_ALIASES = {
+    "asus-gei": "laptop",
+    "workstation-lg": "workstation",
+    "mac-studio": "macstudio",
+    "macstudvonlukas": "macstudio",
+    "surface-laptop": "surface",
+}
+
+
+def _log_token(value: str | None, fallback: str = "unknown") -> str:
+    """Return one portable, lower-case component for the logging filename."""
+    token = re.sub(r"[^a-z0-9]+", "-", (value or "").strip().lower()).strip("-")
+    return token or fallback
+
+
+def _log_system(explicit: str | None = None) -> str:
+    configured = explicit or os.environ.get("ELLMOS_SYSTEM") or os.environ.get("SYNC_SLOT")
+    if configured:
+        normalized = _log_token(configured)
+    else:
+        try:
+            hostname = socket.gethostname().strip()
+        except OSError:
+            hostname = ""
+        hostname = hostname or os.environ.get("COMPUTERNAME") or os.environ.get("HOSTNAME", "")
+        normalized = _log_token(hostname)
+    return _HOST_SYSTEM_ALIASES.get(normalized, normalized)
+
+
+def _log_actor(explicit: str | None = None) -> str:
+    if explicit:
+        return _log_token(explicit)
+    for name in ("ELLMOS_ACTOR", "TASKPLAN_PROVIDER", "AUTOMATION_PROVIDER"):
+        value = os.environ.get(name, "").strip()
+        if value:
+            return _log_token(value)
+    if (
+        os.environ.get("CLAUDE_CODE")
+        or os.environ.get("CLAUDE_CODE_ENTRYPOINT")
+        or os.environ.get("CLAUDECODE")
+    ):
+        return "claude-code"
+    if os.environ.get("CLAUDE_DESKTOP"):
+        return "claude"
+    if os.environ.get("GEMINI_CLI") or os.environ.get("GEMINI_VERSION"):
+        return "gemini"
+    if (
+        os.environ.get("CODEX_SESSION_ID")
+        or os.environ.get("CODEX_VERSION")
+        or os.environ.get("CODEX_CI")
+    ):
+        return "codex"
+    return "unknown"
+
+
+def _default_paths(*, system: str | None = None, actor: str | None = None) -> tuple[Path, Path, Path, Path]:
     repo = Path(__file__).resolve().parents[1]
     user = Path(os.environ.get("USERPROFILE", str(Path.home())))
     ai_root = Path(os.environ.get("ELLMOS_AI_ROOT", user / "OneDrive" / ".TOPICS" / ".AI"))
     marker = repo / "_tools" / ".state" / "pages-maintainer.json"
-    day_log = (
-        user
-        / "OneDrive"
-        / "Desktop"
-        / "24-automation-logging"
-        / "24.workstation.codex.txt"
+    day_log = user / "OneDrive" / "Desktop" / "24-automation-logging" / (
+        f"24.{_log_system(system)}.{_log_actor(actor)}.txt"
     )
     return repo, ai_root, marker, day_log
 
