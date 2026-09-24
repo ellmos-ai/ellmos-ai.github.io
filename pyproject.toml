@@ -9,7 +9,7 @@ description = "Interactive public site maps and public component explorer for th
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-license-files = ["LICENSE", "THIRD_PARTY_LICENSES.md"]
+license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md"]
 authors = [{ name = "Lukas Geiger" }]
 keywords = [
     "ellmos",
@@ -53,6 +53,7 @@ Issues = "https://github.com/ellmos-ai/ellmos-ai.github.io/issues"
 "Bug Tracker" = "https://github.com/ellmos-ai/ellmos-ai.github.io/issues"
 Changelog = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/CHANGELOG.md"
 Security = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/SECURITY.md"
+Notice = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/NOTICE"
 "Third-Party Licenses" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/THIRD_PARTY_LICENSES.md"
 "Marketing Log" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/MARKETING-LOG.txt"
 "LLM Context" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/llms.txt"
@@ -67,9 +68,11 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
+minversion = "7.0"
 pythonpath = ["."]
 testpaths = ["tests"]
 addopts = "-ra -v"
+norecursedirs = [".git", ".pytest_cache", ".ruff_cache", "__pycache__", "build", "dist", ".venv"]
 
 [tool.ruff]
 target-version = "py310"

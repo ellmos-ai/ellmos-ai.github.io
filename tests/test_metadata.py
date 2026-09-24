@@ -9,6 +9,7 @@ def test_ci_workflow_integrity():
     content = ci_path.read_text(encoding="utf-8")
 
     assert "cancel-in-progress: true" in content, "Workflow must cancel outdated runs"
+    assert "permissions:" in content and "contents: read" in content, "Workflow must enforce least-privilege permissions"
     assert "timeout-minutes: 15" in content, "Workflow job must define timeout-minutes: 15"
     for runner in ("ubuntu-latest", "windows-latest", "macos-latest"):
         assert runner in content, f"Runner {runner} missing in CI matrix"
@@ -29,7 +30,7 @@ def test_pyproject_pep621_metadata():
     assert 'name = "ellmos-ai-github-io"' in content, "Project name must match"
     assert 'version = "0.1.3"' in content, "Version must match 0.1.3"
     assert 'license = "MIT"' in content, "License must be MIT"
-    assert 'license-files = ["LICENSE", "THIRD_PARTY_LICENSES.md"]' in content
+    assert 'license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md"]' in content
 
     required_urls = [
         "Homepage",
@@ -39,6 +40,7 @@ def test_pyproject_pep621_metadata():
         "Bug Tracker",
         "Changelog",
         "Security",
+        "Notice",
         "Third-Party Licenses",
         "Marketing Log",
         "LLM Context",
@@ -53,7 +55,9 @@ def test_pyproject_pep621_metadata():
         assert f'"{kw}"' in content, f"Missing keyword: {kw}"
 
     assert "[tool.pytest.ini_options]" in content, "pytest options must be configured"
+    assert 'minversion = "7.0"' in content, "pytest minversion 7.0 must be configured"
     assert 'addopts = "-ra -v"' in content, "pytest addopts must include -ra -v"
+    assert "norecursedirs =" in content, "pytest norecursedirs must be configured"
     assert "[tool.ruff]" in content, "ruff must be configured"
     assert 'select = ["E", "F", "W", "I", "B", "SIM", "C4"]' in content, "ruff select must have full ruleset"
 
@@ -256,8 +260,9 @@ def test_third_party_licenses_contract():
     assert "Python Standard Library" in content
     assert "pytest" in content
     assert "Ruff" in content
-    assert "Audit Date" in content and "2026-09-18" in content
+    assert "Audit Date" in content and "2026-09-24" in content
     assert "**Audited Target Version:** 0.1.3" in content
+    assert "[NOTICE](NOTICE)" in content
     assert "RunAsInvoker" in content
     assert "INV-STATIC-01" in content
     assert "INV-SLA-10" in content
@@ -326,6 +331,7 @@ def test_changelog_integrity():
     assert changelog_path.is_file(), "CHANGELOG.md must exist"
     content = changelog_path.read_text(encoding="utf-8")
 
+    assert "## [Unreleased]" in content, "Unreleased section must be present in CHANGELOG.md"
     assert "[0.1.3]" in content, "Release [0.1.3] must be in CHANGELOG.md"
     assert "[0.1.2]" in content, "Release [0.1.2] must be in CHANGELOG.md"
     assert "[0.1.1]" in content, "Release [0.1.1] must be in CHANGELOG.md"
@@ -343,16 +349,27 @@ def test_gitignore_hygiene():
     assert "* (copy)*" in content, "Copy pattern missing"
     assert "*conflicted copy*" in content, "Conflicted copy pattern missing"
     assert "*-WORKSTATION*" in content, "Workstation pattern missing"
+    assert "*-WORKSTATION.*" in content, "Workstation dot pattern missing"
+    assert "*-WORKSTATION-LG*" in content, "Workstation LG pattern missing"
+    assert "*-WORKSTATION-LG.*" in content, "Workstation LG dot pattern missing"
+    assert "*-ASUS*" in content, "ASUS pattern missing"
     assert "*-ASUS-GEI*" in content, "ASUS host pattern missing"
+    assert "*-MacBook*" in content, "MacBook pattern missing"
     assert ".pytest_cache/" in content, "pytest cache pattern missing"
+    assert ".pytest_temp/" in content, "pytest temp directory pattern missing"
     assert ".ruff_cache/" in content, "ruff cache pattern missing"
     assert ".coverage.*" in content, "coverage glob pattern missing"
     assert ".tox/" in content, "tox cache pattern missing"
     assert "LOCK" in content, "LOCK pattern missing"
+    assert "LOCK.user.*" in content, "LOCK.user.* pattern missing"
+    assert "LOCK.until.*" in content, "LOCK.until.* pattern missing"
+    assert "LOCK.condition.*" in content, "LOCK.condition.* pattern missing"
+    assert ".automation-lock" in content, ".automation-lock pattern missing"
     assert "LOCK*.txt" in content, "LOCK*.txt pattern missing"
     assert "LOCK.permissions.json" in content, "LOCK.permissions.json missing"
     assert "uv.lock" in content, "uv.lock pattern missing"
     assert "!package-lock.json" in content, "package-lock.json whitelist missing"
+    assert "*.rej" in content, "rej pattern missing"
 
 
 def test_stale_workflow_contract():
@@ -373,7 +390,7 @@ def test_marketing_log_recency_and_audit():
     assert marketing_doc.is_file(), "MARKETING-LOG.txt must exist"
     content = marketing_doc.read_text(encoding="utf-8")
 
-    assert "Audit Date: 2026-09-18" in content, "Marketing log must have 2026-09-18 audit date"
+    assert "Audit Date: 2026-09-24" in content, "Marketing log must have 2026-09-24 audit date"
     assert "TECHNICAL HYGIENE & CI HARDENING AUDIT" in content, "Pfad A audit section must exist"
     assert "DISCOVERABILITY, VISUAL ARCHITECTURE & METADATA AUDIT" in content
     assert "Target Version: 0.1.3" in content, "Target version 0.1.3 must be recorded"
@@ -389,7 +406,7 @@ def test_readme_version_and_date_recency():
 
     for content in (content_en, content_de):
         assert "version-0.1.3" in content, "Version badge 0.1.3 missing"
-        assert "2026--09--18" in content, "Last-checked badge 2026-09-18 missing"
+        assert "2026--09--24" in content, "Last-checked badge 2026-09-24 missing"
 
 
 def test_llms_txt_version_and_date_recency():
@@ -398,16 +415,43 @@ def test_llms_txt_version_and_date_recency():
     content = llms_path.read_text(encoding="utf-8")
 
     assert "- **Current Version**: 0.1.3" in content
-    assert "- **Last Checked**: 2026-09-18" in content
+    assert "- **Last Checked**: 2026-09-24" in content
 
 
 def test_ci_timeout_minutes_contract():
     ci_path = ROOT / ".github" / "workflows" / "ci.yml"
     stale_path = ROOT / ".github" / "workflows" / "stale.yml"
-    assert ci_path.is_file() and stale_path.is_file()
+    welcome_path = ROOT / ".github" / "workflows" / "welcome.yml"
+    assert ci_path.is_file() and stale_path.is_file() and welcome_path.is_file()
 
     ci_content = ci_path.read_text(encoding="utf-8")
     stale_content = stale_path.read_text(encoding="utf-8")
+    welcome_content = welcome_path.read_text(encoding="utf-8")
 
     assert "timeout-minutes: 15" in ci_content, "CI job must specify timeout-minutes: 15"
     assert "timeout-minutes: 10" in stale_content, "Stale job must specify timeout-minutes: 10"
+    assert "timeout-minutes: 5" in welcome_content, "Welcome job must specify timeout-minutes: 5"
+
+
+def test_welcome_workflow_contract():
+    welcome_path = ROOT / ".github" / "workflows" / "welcome.yml"
+    assert welcome_path.is_file(), "Welcome workflow file must exist"
+    content = welcome_path.read_text(encoding="utf-8")
+
+    assert "actions/first-interaction@v3" in content, "Welcome action must use first-interaction@v3"
+    assert "timeout-minutes: 5" in content, "Welcome job must specify timeout-minutes: 5"
+    assert "cancel-in-progress: true" in content, "Welcome workflow must have concurrency protection"
+    assert "issues: write" in content, "Welcome workflow must have write permission for issues"
+    assert "pull-requests: write" in content, "Welcome workflow must have write permission for pull requests"
+
+
+def test_notice_attribution_contract():
+    notice_path = ROOT / "NOTICE"
+    assert notice_path.is_file(), "NOTICE attribution file must exist"
+    content = notice_path.read_text(encoding="utf-8")
+
+    assert "ellmos-ai-github-io" in content
+    assert "Lukas Geiger" in content
+    assert "ellmos-ai" in content
+    assert "open-bricks" in content
+    assert "MIT License" in content

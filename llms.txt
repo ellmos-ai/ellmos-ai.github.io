@@ -6,9 +6,9 @@
 - **Repository**: https://github.com/ellmos-ai/ellmos-ai.github.io
 - **Organization**: https://github.com/ellmos-ai
 - **Umbrella Ecosystem**: https://github.com/open-bricks
-- **License**: MIT
+- **License**: MIT ([NOTICE](NOTICE) / [LICENSE](LICENSE))
 - **Current Version**: 0.1.3
-- **Last Checked**: 2026-09-18
+- **Last Checked**: 2026-09-24
 
 ## Overview
 
@@ -35,6 +35,10 @@ The repository contains an idempotent, windowed site maintainer script that sync
   - Verification of skill counts against canonical `.SKILLS` registry.
   - Fail-closed leak-gates detecting private module IDs or draft visibility flags (`vis:"priv"`, `vis:"cand"`).
   - Atomic content checking: Git commits are generated only when verified public site files differ from HEAD.
+- **GitHub Actions Workflows**:
+  - `ci.yml`: Multi-OS CI matrix across Ubuntu, Windows, macOS on Python 3.10-3.13 (`timeout-minutes: 15`, `permissions: contents: read`).
+  - `stale.yml`: Automated stale issue and pull request management (`timeout-minutes: 10`, `cancel-in-progress: true`).
+  - `welcome.yml`: Contributor first-interaction greeting automation (`timeout-minutes: 5`, `cancel-in-progress: true`).
 
 ## Security & Governance Invariants
 

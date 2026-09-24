@@ -16,6 +16,10 @@ htmlcov/
 # Locks & Concurrency State
 LOCK
 LOCK.*
+LOCK.user.*
+LOCK.until.*
+LOCK.condition.*
+.automation-lock
 *.lock
 LOCK*.txt
 LOCK.permissions.json
@@ -35,17 +39,24 @@ _tools/.state/
 *.conflict
 *-CONFLIT-*
 *-WORKSTATION*
+*-WORKSTATION.*
 *-WORKSTATION-LG*
+*-WORKSTATION-LG.*
+*-ASUS*
 *-ASUS-GEI*
 *-ASUS-GEI.*
 *-LAPTOP*
 *-Mac Studio*
+*-MacBook*
 *.tmp
 *.bak
 *.swp
 *~
 *.orig
+*.rej
 *.log
+.pytest_temp/
+.pytest_tmp*/
 
 # Build, Packaging & Distribution Artefacts
 build/

@@ -6,8 +6,8 @@ Live Portal: https://ellmos-ai.github.io
 Project Name: ellmos-ai.github.io (Interactive Ecosystem Maps & Explorer)
 Umbrella Ecosystem: open-bricks (https://github.com/open-bricks)
 Architecture Domain: Static Web Portal, Module Circuit Maps, Skill Library & Stack Composer
-Audit Date: 2026-09-18
-Status: ACTIVE / PFAD B DISCOVERABILITY & VISUAL ARCHITECTURE AUDITED
+Audit Date: 2026-09-24
+Status: ACTIVE / PFAD A REPO HYGIENE & CI HARDENING AUDITED
 ================================================================================
 
 1. PRODUCT IDENTITY & MISSION
@@ -166,4 +166,32 @@ ellmos-ai.github.io visualizes and connects the following 16 active sibling repo
   1. Submit ellmos-ai.github.io to GitHub Pages community showcases and developer directories.
   2. List public MCP components and interactive maps in awesome-mcp-servers, Glama, and mcp.so.
   3. Prepare localized Spanish/Japanese translations when ecosystem scope expands.
+================================================================================
+
+9. TECHNICAL HYGIENE & CI HARDENING AUDIT (PFAD A: 2026-09-24)
+--------------------------------------------------------------------------------
+- Audit Date: 2026-09-24
+- Target Version: 0.1.3 (Frozen per T-20260920-167562623)
+- CI/CD Workflow Hardening:
+  * .github/workflows/welcome.yml: First interaction workflow (actions/first-interaction@v3)
+    configured with timeout-minutes: 5, concurrency cancel-in-progress: true, and
+    least-privilege permissions (issues: write, pull-requests: write).
+  * .github/workflows/ci.yml: Hardened with explicit least-privilege permissions (contents: read).
+  * .github/workflows/stale.yml: Concurrency cancel-in-progress and 10m timeout verified.
+- Multi-Host Cloud-Sync & Lock Defense:
+  * .gitignore: Multi-host machine identifiers (*-MacBook*, *-ASUS*, *-WORKSTATION.*, *-WORKSTATION-LG.*),
+    lock patterns (LOCK.user.*, LOCK.until.*, LOCK.condition.*, .automation-lock),
+    pytest temp directories (.pytest_temp/, .pytest_tmp*/), and patch artifacts (*.rej).
+- PEP 621 Standard & Pytest Tooling:
+  * pyproject.toml: Notice URL registered in [project.urls], NOTICE added to license-files,
+    pytest minversion = "7.0", addopts basetemp defense, and norecursedirs guardrails.
+  * Version Freeze: version = "0.1.3" strictly maintained per release policy T-20260920-167562623.
+- Canonical Open-Source NOTICE Attribution:
+  * NOTICE created documenting Lukas Geiger, ellmos-ai, and open-bricks ecosystem attribution.
+  * THIRD_PARTY_LICENSES.md re-audited Stand 2026-09-24 (Level 1 SBOM, Zero-Copyleft, RunAsInvoker).
+- Documentation & Automated Contract Testing:
+  * llms.txt Last-Checked updated to 2026-09-24 with lifecycle workflows.
+  * CHANGELOG.md updated with comprehensive [Unreleased] section.
+  * tests/test_metadata.py expanded with contract assertions for welcome.yml, NOTICE, pytest options,
+    Level 1 SBOM recency, and changelog [Unreleased] section.
 ================================================================================

@@ -5,6 +5,20 @@ All notable changes to `ellmos-ai.github.io` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **GitHub Actions First Interaction & Welcome Automation** (`.github/workflows/welcome.yml`): Integrated `actions/first-interaction@v3` with `timeout-minutes: 5`, least-privilege permissions (`issues: write`, `pull-requests: write`), and concurrency protection (`cancel-in-progress: true`) for automated welcoming of new open-source contributors.
+- **Canonical Open-Source NOTICE Attribution File** (`NOTICE`): Added formal attribution notice acknowledging Lukas Geiger, ellmos-ai, and the open-bricks ecosystem under MIT License terms.
+- **Contract Test Suite Expansion** (`tests/test_metadata.py`): Added contract assertions for `welcome.yml` lifecycle workflow, `NOTICE` attribution file, PEP 621 pytest configuration options (`minversion = "7.0"`, `norecursedirs`), and Level 1 SBOM audit recency.
+
+### Changed
+- **CI Workflow Hardening** (`.github/workflows/ci.yml`): Strengthened workflow security with explicit least-privilege `permissions: contents: read`.
+- **Multi-Host Cloud-Sync & Lock Defense** (`.gitignore`): Extended ignore patterns with multi-host identifiers (`*-MacBook*`, `*-ASUS*`, `*-WORKSTATION.*`, `*-WORKSTATION-LG.*`), lock system files (`LOCK.user.*`, `LOCK.until.*`, `LOCK.condition.*`, `.automation-lock`), pytest temporary directories (`.pytest_temp/`, `.pytest_tmp*/`), and patch rejection artifacts (`*.rej`).
+- **PEP 621 & Pytest Configuration** (`pyproject.toml`): Registered `Notice` in `[project.urls]`, included `NOTICE` in `license-files`, standardized pytest with `minversion = "7.0"` and `norecursedirs` for build/cache/git directories, while strictly maintaining frozen version `0.1.3` per T-20260920-167562623.
+- **Third-Party License & Invariants Audit** (`THIRD_PARTY_LICENSES.md`): Re-audited Stand 2026-09-24 for Level 1 SBOM, unprivileged `RunAsInvoker` user mode, zero-copyleft core, and cross-reference to `NOTICE`.
+- **Documentation & LLM Context Synchronization**: Updated `README.md`, `README_de.md`, `llms.txt`, and `MARKETING-LOG.txt` to reflect test suite verification, audit date (2026-09-24), and welcome workflow automation.
+
 ## [0.1.3] - 2026-09-18
 
 ### Added

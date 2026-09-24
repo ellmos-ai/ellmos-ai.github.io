@@ -43,11 +43,12 @@ This document inventories all external dependencies, libraries, and open-source 
 
 ## Summary of License Compliance & Invariants Certification
 
-- **Audit Date:** 2026-09-18
+- **Audit Date:** 2026-09-24
 - **Audited Target Version:** 0.1.3
 - **Runtime Dependencies:** 0 external packages (100% self-contained native web frontend).
 - **Execution Mode:** Unprivileged User-Mode (`RunAsInvoker`), 0 administrative privileges required.
 - **Copyleft Contagion Risk:** 0% (All build and development dependencies are permissively licensed under MIT, Apache-2.0, or PSFL).
+- **Attribution & Notice:** Formal open-source attribution notice is documented in [NOTICE](NOTICE).
 
 ### Governance & Runtime Invariant Mapping
 
@@ -65,4 +66,4 @@ This document inventories all external dependencies, libraries, and open-source 
 | `INV-SLA-10` | 48h Response & 5-Day Triage SLA (SECURITY.md) | Verified & Compliant |
 
 All tooling and build dependencies are permissively licensed (MIT, Apache-2.0, PSFL).
-The deployed web pages contain no external third-party software libraries or copyleft code, ensuring full compliance and frictionless open-source distribution under the MIT license.
+The deployed web pages contain no external third-party software libraries or copyleft code, ensuring full compliance and frictionless open-source distribution under the MIT license with attribution in [NOTICE](NOTICE).
