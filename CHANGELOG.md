@@ -8,16 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Bilingual Contributing Guidelines** (`CONTRIBUTING.md`): Added comprehensive English and German developer guidelines specifying all 10 invariants (`INV-STATIC-01` to `INV-SLA-10`), `RunAsInvoker` user mode, Plan D canonical workflow (`C:\_Local_DEV\repos\ellmos-ai.github.io`), version freeze discipline, quality gates, and § 521 BGB statutory liability disclaimer.
+- **Level 1 SBOM Plain-Text Companion File** (`THIRD_PARTY_LICENSES.txt`): Created canonical plain-text Level 1 SBOM documenting zero external runtime dependencies, permissive licenses (MIT, PSFL, Apache-2.0), 10 invariants verification, unprivileged user mode, § 521 BGB disclaimer, and 48h Security SLA.
+- **GitHub Actions Auto-Assign & Label Synchronization Workflows** (`.github/workflows/auto-assign.yml`, `.github/workflows/label-sync.yml`, `.github/labels.yml`): Provisioned automated PR assignment and label synchronization with 11 standard governance labels (GOVERNANCE.md §4.2) with 5m timeouts and least-privilege permissions.
 - **GitHub Actions First Interaction & Welcome Automation** (`.github/workflows/welcome.yml`): Integrated `actions/first-interaction@v3` with `timeout-minutes: 5`, least-privilege permissions (`issues: write`, `pull-requests: write`), and concurrency protection (`cancel-in-progress: true`) for automated welcoming of new open-source contributors.
 - **Canonical Open-Source NOTICE Attribution File** (`NOTICE`): Added formal attribution notice acknowledging Lukas Geiger, ellmos-ai, and the open-bricks ecosystem under MIT License terms.
-- **Contract Test Suite Expansion** (`tests/test_metadata.py`): Added contract assertions for `welcome.yml` lifecycle workflow, `NOTICE` attribution file, PEP 621 pytest configuration options (`minversion = "7.0"`, `norecursedirs`), and Level 1 SBOM audit recency.
+- **Contract Test Suite Expansion** (`tests/test_metadata.py`): Added contract assertions for `CONTRIBUTING.md` bilingual parity and 10 invariants, `THIRD_PARTY_LICENSES.txt` companion file, `auto-assign.yml`, `label-sync.yml`, `.github/labels.yml`, PEP 621 extended URLs, and version freeze discipline.
 
 ### Changed
 - **CI Workflow Hardening** (`.github/workflows/ci.yml`): Strengthened workflow security with explicit least-privilege `permissions: contents: read`.
-- **Multi-Host Cloud-Sync & Lock Defense** (`.gitignore`): Extended ignore patterns with multi-host identifiers (`*-MacBook*`, `*-ASUS*`, `*-WORKSTATION.*`, `*-WORKSTATION-LG.*`), lock system files (`LOCK.user.*`, `LOCK.until.*`, `LOCK.condition.*`, `.automation-lock`), pytest temporary directories (`.pytest_temp/`, `.pytest_tmp*/`), and patch rejection artifacts (`*.rej`).
-- **PEP 621 & Pytest Configuration** (`pyproject.toml`): Registered `Notice` in `[project.urls]`, included `NOTICE` in `license-files`, standardized pytest with `minversion = "7.0"` and `norecursedirs` for build/cache/git directories, while strictly maintaining frozen version `0.1.3` per T-20260920-167562623.
-- **Third-Party License & Invariants Audit** (`THIRD_PARTY_LICENSES.md`): Re-audited Stand 2026-09-24 for Level 1 SBOM, unprivileged `RunAsInvoker` user mode, zero-copyleft core, and cross-reference to `NOTICE`.
-- **Documentation & LLM Context Synchronization**: Updated `README.md`, `README_de.md`, `llms.txt`, and `MARKETING-LOG.txt` to reflect test suite verification, audit date (2026-09-24), and welcome workflow automation.
+- **Multi-Host Cloud-Sync & Lock Defense** (`.gitignore`): Extended ignore patterns with IDEAPAD host tokens (`*-IDEAPAD*`, `*-IDEAPAD-GEI*`), task plan files (`TASKPLAN_*.md`, `*-TASKPLAN*`), desktop icons (`Desktop.ini`, `ehthumbs.db`), specific lock files (`LOCK.antigravity.*`, `LOCK.bugsearch.*`, `LOCK.dev.*`), pytest temporary directories (`.pytest_temp/`, `.pytest_tmp*/`), and patch rejection artifacts (`*.rej`).
+- **PEP 621 Alignment & Pytest Optimization** (`pyproject.toml`): Registered `Contributing`, `Level 1 SBOM`, `Level 1 SBOM (Text)`, `Plain-Text License`, and `Third-Party Licenses (Text)` in `[project.urls]`, saturated keywords to 20 sorted unique entries, included `THIRD_PARTY_LICENSES.txt` in `license-files`, and optimized pytest configuration (`addopts = "-ra -v --basetemp=.pytest_temp"`, expanded `norecursedirs`) while maintaining frozen version `0.1.3` per T-20260920-167562623.
+- **Third-Party License & Invariants Audit** (`THIRD_PARTY_LICENSES.md`): Re-audited Stand 2026-10-02 for Level 1 SBOM, cross-referencing `THIRD_PARTY_LICENSES.txt` and `CONTRIBUTING.md`.
+- **Documentation & LLM Context Synchronization**: Updated `README.md`, `README_de.md`, `llms.txt`, and `MARKETING-LOG.txt` to reflect test suite verification, audit date (2026-10-02), and contributing guidelines.
+
 
 ## [0.1.3] - 2026-09-18
 

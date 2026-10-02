@@ -1,0 +1,67 @@
+================================================================================
+THIRD-PARTY LICENSES & OPEN-SOURCE LEVEL 1 SBOM COMPANION
+================================================================================
+Project: ellmos-ai.github.io
+Repository: https://github.com/ellmos-ai/ellmos-ai.github.io
+Live Portal: https://ellmos-ai.github.io
+License: MIT License (see LICENSE)
+Attribution: Lukas Geiger / ellmos-ai / open-bricks (see NOTICE)
+Contributing: Guidelines & Invariants (see CONTRIBUTING.md)
+Detailed Markdown SBOM: see THIRD_PARTY_LICENSES.md
+Target Version: 0.1.3 (Strictly Frozen per T-20260920-167562623)
+Audit Date: 2026-10-02
+================================================================================
+
+1. RUNTIME CLIENT-SIDE WEB FRONTEND
+--------------------------------------------------------------------------------
+Zero External Runtime Dependencies (100% Self-Contained)
+  - Runtime Architecture: Pure Native HTML5, modern CSS3, Vanilla ECMAScript (JS).
+  - External CDN Calls: None (0 external script, stylesheet, or web font requests).
+  - Telemetry & Analytics: None (0 trackers, 0 beacons, 0 analytics scripts, 0 cookies).
+  - Privacy & Isolation: 100% Client-side local execution in user browser memory.
+  - Zero-Copyleft Contagion Risk: 0%.
+
+2. BUILD, MAINTENANCE & VERIFICATION TOOLING
+--------------------------------------------------------------------------------
+Python Standard Library (pathlib, json, subprocess, argparse, dataclasses, typing)
+  - Homepage: https://www.python.org/
+  - License: Python Software Foundation License (PSFL) Version 2
+  - Copyright: (c) 2001-2026 Python Software Foundation
+  - Usage: Powers _tools/pages_maintainer.py, leak-gate checks, and test runner.
+
+pytest
+  - Homepage: https://pytest.org/
+  - License: MIT License
+  - Copyright: (c) 2004-2026 Holger Krekel and pytest-dev contributors
+  - Usage: Automated unit and contract test suite execution.
+
+Ruff
+  - Homepage: https://astral.sh/ruff
+  - License: MIT License / Apache License 2.0
+  - Copyright: (c) 2023-2026 Astral Software Inc.
+  - Usage: Static Python linting, AST analysis, and formatting validation.
+
+3. GOVERNANCE & RUNTIME INVARIANTS MATRIX (INV-STATIC-01 .. INV-SLA-10)
+--------------------------------------------------------------------------------
+INV-STATIC-01: 100% Static & Zero Network Egress (0 CDNs, 0 telemetry)  [VERIFIED]
+INV-LEAK-02:   Fail-Closed Leak-Gates (blocks vis:priv & vis:cand)       [VERIFIED]
+INV-CATALOG-03: Canonical Catalog Parity (matched against .SKILLS)       [VERIFIED]
+INV-RUNAS-04:  Local-First & Non-Elevation (RunAsInvoker User Mode)      [VERIFIED]
+INV-WINDOW-05: Deterministic 7-Day Window Cadence (system-auditor)       [VERIFIED]
+INV-DIFF-06:   Atomic Content-Change Commits (gated by diffs)            [VERIFIED]
+INV-LOCK-07:   Fail-Closed Lock Discipline (LOCK.pages-maintainer.txt)   [VERIFIED]
+INV-OS-08:     Multi-OS Platform Parity & Smoke Integrity (Py 3.10-3.13) [VERIFIED]
+INV-CLIENT-09: Pure Client-Side Static Execution (offline browser JS)    [VERIFIED]
+INV-SLA-10:    48h Response & 5-Day Triage SLA (SECURITY.md)             [VERIFIED]
+
+4. STATUTORY NOTICE (§ 521 BGB) & SECURITY SLA
+--------------------------------------------------------------------------------
+This software is provided free of charge under the MIT License. In accordance
+with German statutory law (§ 521 BGB - Gefälligkeitsrecht), liability for
+defects in quality and title is strictly limited to intentional misconduct
+(Vorsatz) and gross negligence (grobe Fahrlässigkeit).
+
+Security vulnerabilities may be reported confidentially to security@ellmos.ai
+and lukas@open-bricks.org under our binding 48-hour response and 5-business-day
+triage SLA.
+================================================================================

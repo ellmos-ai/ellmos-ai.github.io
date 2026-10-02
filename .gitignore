@@ -19,6 +19,9 @@ LOCK.*
 LOCK.user.*
 LOCK.until.*
 LOCK.condition.*
+LOCK.antigravity.*
+LOCK.bugsearch.*
+LOCK.dev.*
 .automation-lock
 *.lock
 LOCK*.txt
@@ -45,9 +48,16 @@ _tools/.state/
 *-ASUS*
 *-ASUS-GEI*
 *-ASUS-GEI.*
+*-IDEAPAD*
+*-IDEAPAD-GEI*
+*-IDEAPAD-GEI.*
 *-LAPTOP*
 *-Mac Studio*
 *-MacBook*
+Desktop.ini
+ehthumbs.db
+TASKPLAN_*.md
+*-TASKPLAN*
 *.tmp
 *.bak
 *.swp

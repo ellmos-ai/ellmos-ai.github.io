@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://github.com/ellmos-ai/ellmos-ai.github.io"><img src="https://img.shields.io/badge/version-0.1.3-blue" alt="Version 0.1.3"></a>
   <a href="https://github.com/ellmos-ai/ellmos-ai.github.io/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-passing-brightgreen" alt="CI Status"></a>
-  <a href="tests/"><img src="https://img.shields.io/badge/tests-31%20passed%20%7C%20100%25%20green-brightgreen" alt="Tests 31 Passed"></a>
+  <a href="tests/"><img src="https://img.shields.io/badge/tests-38%20passed%20%7C%20100%25%20green-brightgreen" alt="Tests 38 Passed"></a>
   <a href="https://www.python.org"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue" alt="Python 3.10+"></a>
   <a href="https://github.com/ellmos-ai/ellmos-ai.github.io"><img src="https://img.shields.io/badge/platforms-Windows%20%7C%20Linux%20%7C%20macOS-blue" alt="Platforms"></a>
   <a href="https://ellmos-ai.github.io"><img src="https://img.shields.io/badge/web%20ui-Static%20HTML5%20%26%20Vanilla%20JS-informational" alt="Web UI"></a>
@@ -18,7 +18,9 @@
   <a href="https://github.com/ellmos-ai"><img src="https://img.shields.io/badge/ecosystem-ellmos--ai-informational" alt="Ecosystem: ellmos-ai"></a>
   <a href="https://github.com/open-bricks"><img src="https://img.shields.io/badge/umbrella-open--bricks-blueviolet" alt="Umbrella: open-bricks"></a>
   <a href="llms.txt"><img src="https://img.shields.io/badge/LLM--Ready-llms.txt-orange" alt="LLM Ready"></a>
-  <a href="https://github.com/ellmos-ai/ellmos-ai.github.io"><img src="https://img.shields.io/badge/last--checked-2026--09--24-blue" alt="Last Checked"></a>
+  <a href="https://github.com/ellmos-ai/ellmos-ai.github.io"><img src="https://img.shields.io/badge/last--checked-2026--10--02-blue" alt="Last Checked"></a>
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributing-guidelines-brightgreen" alt="Contributing: Guidelines"></a>
+  <a href="THIRD_PARTY_LICENSES.txt"><img src="https://img.shields.io/badge/Level%201%20SBOM-plain--text-blue" alt="Level 1 SBOM: Plain Text"></a>
   <a href="NOTICE"><img src="https://img.shields.io/badge/notice-attribution-blue" alt="Notice: Attribution"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
 </p>

@@ -7,8 +7,10 @@
 - **Organization**: https://github.com/ellmos-ai
 - **Umbrella Ecosystem**: https://github.com/open-bricks
 - **License**: MIT ([NOTICE](NOTICE) / [LICENSE](LICENSE))
+- **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Level 1 SBOM**: [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) / [THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt)
 - **Current Version**: 0.1.3
-- **Last Checked**: 2026-09-24
+- **Last Checked**: 2026-10-02
 
 ## Overview
 
@@ -39,6 +41,8 @@ The repository contains an idempotent, windowed site maintainer script that sync
   - `ci.yml`: Multi-OS CI matrix across Ubuntu, Windows, macOS on Python 3.10-3.13 (`timeout-minutes: 15`, `permissions: contents: read`).
   - `stale.yml`: Automated stale issue and pull request management (`timeout-minutes: 10`, `cancel-in-progress: true`).
   - `welcome.yml`: Contributor first-interaction greeting automation (`timeout-minutes: 5`, `cancel-in-progress: true`).
+  - `auto-assign.yml`: Pull request auto-assignment workflow (`timeout-minutes: 5`, `cancel-in-progress: true`).
+  - `label-sync.yml`: Standard label catalog synchronization workflow (`timeout-minutes: 5`, `cancel-in-progress: true`).
 
 ## Security & Governance Invariants
 

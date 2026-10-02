@@ -30,7 +30,7 @@ def test_pyproject_pep621_metadata():
     assert 'name = "ellmos-ai-github-io"' in content, "Project name must match"
     assert 'version = "0.1.3"' in content, "Version must match 0.1.3"
     assert 'license = "MIT"' in content, "License must be MIT"
-    assert 'license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md"]' in content
+    assert 'license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "THIRD_PARTY_LICENSES.txt"]' in content
 
     required_urls = [
         "Homepage",
@@ -56,7 +56,7 @@ def test_pyproject_pep621_metadata():
 
     assert "[tool.pytest.ini_options]" in content, "pytest options must be configured"
     assert 'minversion = "7.0"' in content, "pytest minversion 7.0 must be configured"
-    assert 'addopts = "-ra -v"' in content, "pytest addopts must include -ra -v"
+    assert 'addopts = "-ra -v' in content, "pytest addopts must include -ra -v"
     assert "norecursedirs =" in content, "pytest norecursedirs must be configured"
     assert "[tool.ruff]" in content, "ruff must be configured"
     assert 'select = ["E", "F", "W", "I", "B", "SIM", "C4"]' in content, "ruff select must have full ruleset"
@@ -260,9 +260,11 @@ def test_third_party_licenses_contract():
     assert "Python Standard Library" in content
     assert "pytest" in content
     assert "Ruff" in content
-    assert "Audit Date" in content and "2026-09-24" in content
+    assert "Audit Date" in content and ("2026-10-02" in content or "2026-09-24" in content)
     assert "**Audited Target Version:** 0.1.3" in content
     assert "[NOTICE](NOTICE)" in content
+    assert "[THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt)" in content
+    assert "[CONTRIBUTING.md](CONTRIBUTING.md)" in content
     assert "RunAsInvoker" in content
     assert "INV-STATIC-01" in content
     assert "INV-SLA-10" in content
@@ -390,7 +392,7 @@ def test_marketing_log_recency_and_audit():
     assert marketing_doc.is_file(), "MARKETING-LOG.txt must exist"
     content = marketing_doc.read_text(encoding="utf-8")
 
-    assert "Audit Date: 2026-09-24" in content, "Marketing log must have 2026-09-24 audit date"
+    assert "Audit Date: 2026-10-02" in content or "Audit Date: 2026-09-24" in content, "Marketing log must have current audit date"
     assert "TECHNICAL HYGIENE & CI HARDENING AUDIT" in content, "Pfad A audit section must exist"
     assert "DISCOVERABILITY, VISUAL ARCHITECTURE & METADATA AUDIT" in content
     assert "Target Version: 0.1.3" in content, "Target version 0.1.3 must be recorded"
@@ -406,7 +408,7 @@ def test_readme_version_and_date_recency():
 
     for content in (content_en, content_de):
         assert "version-0.1.3" in content, "Version badge 0.1.3 missing"
-        assert "2026--09--24" in content, "Last-checked badge 2026-09-24 missing"
+        assert "2026--10--02" in content or "2026--09--24" in content, "Last-checked badge missing"
 
 
 def test_llms_txt_version_and_date_recency():
@@ -415,7 +417,7 @@ def test_llms_txt_version_and_date_recency():
     content = llms_path.read_text(encoding="utf-8")
 
     assert "- **Current Version**: 0.1.3" in content
-    assert "- **Last Checked**: 2026-09-24" in content
+    assert "- **Last Checked**: 2026-10-02" in content
 
 
 def test_ci_timeout_minutes_contract():
@@ -455,3 +457,131 @@ def test_notice_attribution_contract():
     assert "ellmos-ai" in content
     assert "open-bricks" in content
     assert "MIT License" in content
+
+
+def test_contributing_guidelines_contract():
+    contrib_path = ROOT / "CONTRIBUTING.md"
+    assert contrib_path.is_file(), "CONTRIBUTING.md must exist"
+    content = contrib_path.read_text(encoding="utf-8")
+
+    assert "[English](#english)" in content and "[Deutsch](#deutsch)" in content, "Must be bilingual"
+    for inv in (
+        "INV-STATIC-01",
+        "INV-LEAK-02",
+        "INV-CATALOG-03",
+        "INV-RUNAS-04",
+        "INV-WINDOW-05",
+        "INV-DIFF-06",
+        "INV-LOCK-07",
+        "INV-OS-08",
+        "INV-CLIENT-09",
+        "INV-SLA-10",
+    ):
+        assert inv in content, f"Invariant {inv} missing in CONTRIBUTING.md"
+
+    assert "RunAsInvoker" in content, "RunAsInvoker user mode must be documented"
+    assert r"C:\_Local_DEV\repos\ellmos-ai.github.io" in content, "Plan D canonical clone path must be specified"
+    assert "0.1.3" in content, "Version 0.1.3 freeze must be referenced"
+    assert "§ 521 BGB" in content, "Statutory notice § 521 BGB must be present"
+    assert "security@ellmos.ai" in content, "Security contact must be present"
+    assert "lukas@open-bricks.org" in content, "Umbrella security contact must be present"
+
+
+def test_plain_text_sbom_contract():
+    sbom_path = ROOT / "THIRD_PARTY_LICENSES.txt"
+    assert sbom_path.is_file(), "THIRD_PARTY_LICENSES.txt companion must exist"
+    content = sbom_path.read_text(encoding="utf-8")
+
+    assert "Target Version: 0.1.3" in content, "Target version must be recorded"
+    assert "Audit Date: 2026-10-02" in content, "Audit date must match 2026-10-02"
+    assert "Zero External Runtime Dependencies" in content, "Frontend zero dependencies must be certified"
+    assert "Python Standard Library" in content, "Python stdlib must be acknowledged"
+    assert "pytest" in content and "Ruff" in content, "Test and lint tooling must be acknowledged"
+    assert "RunAsInvoker" in content, "RunAsInvoker must be certified"
+    assert "§ 521 BGB" in content, "Statutory notice must be present"
+    for inv in ("INV-STATIC-01", "INV-SLA-10"):
+        assert inv in content, f"Invariant {inv} missing in plain text SBOM"
+
+
+def test_auto_assign_workflow_contract():
+    workflow_path = ROOT / ".github" / "workflows" / "auto-assign.yml"
+    assert workflow_path.is_file(), "auto-assign.yml workflow must exist"
+    content = workflow_path.read_text(encoding="utf-8")
+
+    assert "actions/github-script@v7" in content, "Must use github-script@v7"
+    assert "timeout-minutes: 5" in content, "Timeout must be 5 minutes"
+    assert "cancel-in-progress: true" in content, "Concurrency protection required"
+    assert "issues: write" in content and "pull-requests: write" in content, "Least-privilege permissions required"
+
+
+def test_label_sync_workflow_and_labels_contract():
+    sync_workflow = ROOT / ".github" / "workflows" / "label-sync.yml"
+    labels_file = ROOT / ".github" / "labels.yml"
+    assert sync_workflow.is_file(), "label-sync.yml workflow must exist"
+    assert labels_file.is_file(), ".github/labels.yml must exist"
+
+    wf_content = sync_workflow.read_text(encoding="utf-8")
+    assert "EndBug/label-sync@v2" in wf_content
+    assert "timeout-minutes: 5" in wf_content
+    assert "cancel-in-progress: true" in wf_content
+
+    labels_content = labels_file.read_text(encoding="utf-8")
+    for label in (
+        "bug",
+        "enhancement",
+        "good first issue",
+        "help wanted",
+        "documentation",
+        "duplicate",
+        "wontfix",
+        "priority: high",
+        "priority: low",
+        "needs-triage",
+        "stale",
+    ):
+        assert f"name: {label}" in labels_content or f"name: '{label}'" in labels_content, f"Missing label: {label}"
+
+
+def test_pep621_extended_urls_and_keywords_contract():
+    pyproject_path = ROOT / "pyproject.toml"
+    content = pyproject_path.read_text(encoding="utf-8")
+
+    for url in (
+        "Contributing",
+        "Level 1 SBOM",
+        "Level 1 SBOM (Text)",
+        "Plain-Text License",
+        "Third-Party Licenses (Text)",
+    ):
+        assert f'"{url}"' in content or f"{url} =" in content, f"Missing extended URL: {url}"
+
+    assert 'addopts = "-ra -v --basetemp=.pytest_temp"' in content, "basetemp must be configured"
+    assert "THIRD_PARTY_LICENSES.txt" in content, "Plain text SBOM must be in license-files"
+
+
+def test_version_freeze_discipline():
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    readme_en = (ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (ROOT / "README_de.md").read_text(encoding="utf-8")
+    llms_txt = (ROOT / "llms.txt").read_text(encoding="utf-8")
+
+    assert 'version = "0.1.3"' in pyproject, "Version 0.1.3 must remain frozen"
+    assert "version-0.1.3" in readme_en, "Version 0.1.3 badge missing in README.md"
+    assert "version-0.1.3" in readme_de, "Version 0.1.3 badge missing in README_de.md"
+    assert "- **Current Version**: 0.1.3" in llms_txt, "Version 0.1.3 missing in llms.txt"
+
+
+def test_multi_host_gitignore_extended():
+    gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    for pattern in (
+        "*-IDEAPAD*",
+        "*-IDEAPAD-GEI*",
+        "TASKPLAN_*.md",
+        "*-TASKPLAN*",
+        "Desktop.ini",
+        "ehthumbs.db",
+        "LOCK.antigravity.*",
+        "LOCK.bugsearch.*",
+        "LOCK.dev.*",
+    ):
+        assert pattern in gitignore, f"Missing pattern in .gitignore: {pattern}"

@@ -9,20 +9,28 @@ description = "Interactive public site maps and public component explorer for th
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md"]
+license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "THIRD_PARTY_LICENSES.txt"]
 authors = [{ name = "Lukas Geiger" }]
 keywords = [
+    "agentic-workflows",
+    "ai-agents",
+    "bundles",
+    "circuit-diagram",
+    "developer-tools",
+    "documentation",
+    "ecosystem",
     "ellmos",
     "interactive-map",
-    "skills",
-    "bundles",
-    "stack-composer",
-    "static-site",
+    "local-first",
     "mcp",
     "mcp-servers",
-    "ai-agents",
-    "agentic-workflows",
     "open-bricks",
+    "public-catalog",
+    "python",
+    "skill-library",
+    "skills",
+    "stack-composer",
+    "static-site",
     "zero-egress",
 ]
 classifiers = [
@@ -51,10 +59,15 @@ Documentation = "https://github.com/ellmos-ai/ellmos-ai.github.io#readme"
 Repository = "https://github.com/ellmos-ai/ellmos-ai.github.io"
 Issues = "https://github.com/ellmos-ai/ellmos-ai.github.io/issues"
 "Bug Tracker" = "https://github.com/ellmos-ai/ellmos-ai.github.io/issues"
+Contributing = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/CONTRIBUTING.md"
 Changelog = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/CHANGELOG.md"
 Security = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/SECURITY.md"
 Notice = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/NOTICE"
+"Plain-Text License" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/LICENSE"
+"Level 1 SBOM" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/THIRD_PARTY_LICENSES.md"
+"Level 1 SBOM (Text)" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/THIRD_PARTY_LICENSES.txt"
 "Third-Party Licenses" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/THIRD_PARTY_LICENSES.md"
+"Third-Party Licenses (Text)" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/THIRD_PARTY_LICENSES.txt"
 "Marketing Log" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/MARKETING-LOG.txt"
 "LLM Context" = "https://github.com/ellmos-ai/ellmos-ai.github.io/blob/main/llms.txt"
 "LLM Ready" = "https://ellmos-ai.github.io/llms.txt"
@@ -71,8 +84,8 @@ dev = [
 minversion = "7.0"
 pythonpath = ["."]
 testpaths = ["tests"]
-addopts = "-ra -v"
-norecursedirs = [".git", ".pytest_cache", ".ruff_cache", "__pycache__", "build", "dist", ".venv"]
+addopts = "-ra -v --basetemp=.pytest_temp"
+norecursedirs = [".git", ".pytest_cache", ".pytest_temp", ".ruff_cache", "__pycache__", "build", "dist", ".venv", ".tox", ".turbo", ".nyc_output", ".hypothesis"]
 
 [tool.ruff]
 target-version = "py310"
