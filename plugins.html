@@ -42,10 +42,10 @@
 
 <h2 id="plugins">Plugins and the data they touch</h2>
 <table>
-  <tr><th>Plugin</th><th>What it does</th><th>Data it reads or writes (all local)</th></tr>
+  <tr><th>Plugin</th><th>What it does</th><th>Data it reads or writes (local unless noted)</th></tr>
   <tr><td><code>ellmos-lock-master</code><br><a href="https://github.com/ellmos-ai/lock-master">source</a></td>
       <td>Hooks deny edits and <code>git push</code> on paths that another agent has locked; commands to set and release locks.</td>
-      <td>Reads <code>LOCK*.txt</code> files in the target folder, its parents and a worktree's main clone; runs <code>git</code> to resolve worktrees. Writes lock files only when you run <code>/lock</code> or <code>/unlock</code>.</td></tr>
+      <td>Reads <code>LOCK*.txt</code> files in the target folder, its parents and a worktree's main clone; runs <code>git</code> to resolve worktrees. Writes lock files only when you run <code>/lock</code> or <code>/unlock</code>, and a team-lock message when you run <code>/message</code>. <strong>Optional leases</strong> (off unless you set <code>ELLMOS_LOCK_LEASES</code>): each edit sends the file's lease key (repository origin and path), host name, session id and tool name to the lease database <em>you</em> configure (a local SQLite file or your own Postgres server); nothing goes to ellmos-ai.</td></tr>
   <tr><td><code>workflowhooker</code><br><a href="https://github.com/ellmos-ai/workflowhooker">source</a></td>
       <td>Closing gate with one rework round, drift and scope warnings, configured per project.</td>
       <td>Reads the hook input, <code>workflowhooker.toml</code>, project files and <code>git status</code>. Stores per-session counters and hashes in <code>~/.workflowhooker/</code>. Does not read conversation transcripts.</td></tr>
@@ -59,7 +59,7 @@
 
 <h2 id="privacy">Privacy policy</h2>
 <ul>
-  <li>The plugins run entirely on your computer. They send nothing over the network, contain no analytics or telemetry, and we receive no data from them.</li>
+  <li>The plugins run entirely on your computer. They send nothing over the network (the one exception is the optional, opt-in leases of ellmos-lock-master, which go only to a database you run yourself), contain no analytics or telemetry, and we receive no data from them.</li>
   <li>Data they keep is listed in the table above and stays on your machine; delete it at any time (lock files, <code>~/.workflowhooker/</code>).</li>
   <li>The plugins do not read Claude's memory, chat history or conversation summaries and do not build user profiles.</li>
   <li>Your conversation with Claude is processed by Anthropic under Anthropic's own terms; the plugins add no further processing.</li>
@@ -78,9 +78,9 @@
 <h2 id="datenschutz">Datenschutzerklärung (Deutsch)</h2>
 <p class="dim">Stand: 31.10.2026. Anbieter: ellmos-ai (Lukas Geiger).</p>
 <ul>
-  <li>Die Plugins laufen vollständig auf deinem Rechner. Sie senden nichts ins Netz, enthalten keine Analyse oder Telemetrie, und wir erhalten keine Daten von ihnen.</li>
+  <li>Die Plugins laufen vollständig auf deinem Rechner. Sie senden nichts ins Netz (einzige Ausnahme: die optionalen, ausdrücklich einzuschaltenden Leases von ellmos-lock-master, und die gehen nur an eine Datenbank, die du selbst betreibst), enthalten keine Analyse oder Telemetrie, und wir erhalten keine Daten von ihnen.</li>
   <li>Welche Daten sie lokal lesen oder ablegen, steht in der Tabelle oben; alles bleibt auf deinem Gerät und lässt sich jederzeit löschen (Lock-Dateien, <code>~/.workflowhooker/</code>).</li>
-  <li><code>ellmos-lock-master</code> liest <code>LOCK*.txt</code> im Zielordner, in dessen Elternordnern und im Hauptklon eines Worktrees und schreibt Lock-Dateien nur bei <code>/lock</code> und <code>/unlock</code>. <code>workflowhooker</code> liest Hook-Eingabe, <code>workflowhooker.toml</code>, Projektdateien und <code>git status</code> und speichert je Sitzung nur Zähler und Hashes; Gesprächstranskripte liest es nicht. <code>ellmos-dev-quality</code> und <code>ellmos-decision-kit</code> bestehen nur aus Anleitungen.</li>
+  <li><code>ellmos-lock-master</code> liest <code>LOCK*.txt</code> im Zielordner, in dessen Elternordnern und im Hauptklon eines Worktrees und schreibt Lock-Dateien nur bei <code>/lock</code> und <code>/unlock</code> sowie eine Team-Lock-Nachricht bei <code>/message</code>. <strong>Optionale Leases</strong> (aus, solange <code>ELLMOS_LOCK_LEASES</code> nicht gesetzt ist): Jede Bearbeitung sendet den Lease-Schlüssel der Datei (Repository-Origin und Pfad), Rechnername, Sitzungs-ID und Werkzeugname an die Datenbank, die <em>du</em> selbst einstellst (lokale SQLite-Datei oder eigener Postgres-Server); an ellmos-ai geht nichts. <code>workflowhooker</code> liest Hook-Eingabe, <code>workflowhooker.toml</code>, Projektdateien und <code>git status</code> und speichert je Sitzung nur Zähler und Hashes; Gesprächstranskripte liest es nicht. <code>ellmos-dev-quality</code> und <code>ellmos-decision-kit</code> bestehen nur aus Anleitungen.</li>
   <li>Die Plugins lesen weder Claudes Gedächtnis noch Chatverläufe oder Gesprächszusammenfassungen und bilden keine Nutzerprofile.</li>
   <li>Dein Gespräch mit Claude verarbeitet Anthropic nach eigenen Bedingungen; die Plugins fügen keine weitere Verarbeitung hinzu.</li>
 </ul>
