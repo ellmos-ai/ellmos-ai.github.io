@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ellmos-ai — Claude Code plugins: privacy and support</title>
+<style>
+  :root{--bg:#0b1410;--board:#0e1a14;--zone-edge:#1f3a2c;--copper:#d8a05a;--ink:#d7e4da;--ink-dim:#8fa697;
+    --accent:#63d6a4;--panel:#0d1712;--panel-edge:#24402f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.5}
+  a{color:var(--accent)}
+  header{padding:22px 26px 14px;border-bottom:1px solid var(--zone-edge)}
+  header h1{font-size:24px;color:var(--copper)}
+  nav.pagenav{margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
+  main{max-width:920px;margin:0 auto;padding:22px 26px 60px}
+  h2{color:var(--copper);margin:28px 0 10px;font-size:20px}
+  h3{margin:18px 0 6px;font-size:16px}
+  p,ul{margin:6px 0}
+  ul{padding-left:22px}
+  table{width:100%;border-collapse:collapse;margin:10px 0;background:var(--panel)}
+  th,td{border:1px solid var(--panel-edge);padding:7px 9px;text-align:left;vertical-align:top}
+  th{color:var(--copper)}
+  code{background:var(--board);padding:1px 4px;border-radius:3px}
+  .dim{color:var(--ink-dim)}
+  hr{border:0;border-top:1px solid var(--zone-edge);margin:34px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>ellmos-ai — Claude Code plugins</h1>
+  <nav class="pagenav">
+    <a href="index.html">⌁ Circuit Map</a>
+    <a href="skills.html">✎ Skill Library</a>
+    <a href="#privacy">Privacy</a>
+    <a href="#support">Support</a>
+    <a href="#de">Deutsch</a>
+    <a href="https://github.com/ellmos-ai">GitHub ↗</a>
+  </nav>
+</header>
+<main>
+<p class="dim">Last updated: 2026-10-31. Publisher: ellmos-ai (Lukas Geiger).</p>
+
+<h2 id="plugins">Plugins and the data they touch</h2>
+<table>
+  <tr><th>Plugin</th><th>What it does</th><th>Data it reads or writes (all local)</th></tr>
+  <tr><td><code>ellmos-lock-master</code><br><a href="https://github.com/ellmos-ai/lock-master">source</a></td>
+      <td>Hooks deny edits and <code>git push</code> on paths that another agent has locked; commands to set and release locks.</td>
+      <td>Reads <code>LOCK*.txt</code> files in the target folder, its parents and a worktree's main clone; runs <code>git</code> to resolve worktrees. Writes lock files only when you run <code>/lock</code> or <code>/unlock</code>.</td></tr>
+  <tr><td><code>workflowhooker</code><br><a href="https://github.com/ellmos-ai/workflowhooker">source</a></td>
+      <td>Closing gate with one rework round, drift and scope warnings, configured per project.</td>
+      <td>Reads the hook input, <code>workflowhooker.toml</code>, project files and <code>git status</code>. Stores per-session counters and hashes in <code>~/.workflowhooker/</code>. Does not read conversation transcripts.</td></tr>
+  <tr><td><code>ellmos-dev-quality</code><br><a href="https://github.com/ellmos-ai/skills">source</a></td>
+      <td>Skills for bug sweeps, bug-fix protocol, merges, Mermaid checks, publish checks, renames, dev cycle.</td>
+      <td>Instructions only: no code, no hooks, no stored data.</td></tr>
+  <tr><td><code>ellmos-decision-kit</code><br><a href="https://github.com/ellmos-ai/skills">source</a></td>
+      <td>Skills for structured decisions and decision briefings.</td>
+      <td>Instructions only: no code, no hooks, no stored data.</td></tr>
+</table>
+
+<h2 id="privacy">Privacy policy</h2>
+<ul>
+  <li>The plugins run entirely on your computer. They send nothing over the network, contain no analytics or telemetry, and we receive no data from them.</li>
+  <li>Data they keep is listed in the table above and stays on your machine; delete it at any time (lock files, <code>~/.workflowhooker/</code>).</li>
+  <li>The plugins do not read Claude's memory, chat history or conversation summaries and do not build user profiles.</li>
+  <li>Your conversation with Claude is processed by Anthropic under Anthropic's own terms; the plugins add no further processing.</li>
+  <li>No personal data is collected, so there is nothing to share, sell or retain. Questions: see Support.</li>
+</ul>
+
+<h2 id="support">Support</h2>
+<ul>
+  <li>Bugs and questions: GitHub Issues of the plugin's source repository (links in the table).</li>
+  <li>Security reports: privately via GitHub Security Advisories of the repository or <a href="mailto:security@ellmos.ai">security@ellmos.ai</a>.</li>
+  <li>Other contact: <a href="mailto:support@lukasgeiger.com">support@lukasgeiger.com</a>.</li>
+</ul>
+
+<hr>
+<section id="de" lang="de">
+<h2 id="datenschutz">Datenschutzerklärung (Deutsch)</h2>
+<p class="dim">Stand: 31.10.2026. Anbieter: ellmos-ai (Lukas Geiger).</p>
+<ul>
+  <li>Die Plugins laufen vollständig auf deinem Rechner. Sie senden nichts ins Netz, enthalten keine Analyse oder Telemetrie, und wir erhalten keine Daten von ihnen.</li>
+  <li>Welche Daten sie lokal lesen oder ablegen, steht in der Tabelle oben; alles bleibt auf deinem Gerät und lässt sich jederzeit löschen (Lock-Dateien, <code>~/.workflowhooker/</code>).</li>
+  <li><code>ellmos-lock-master</code> liest <code>LOCK*.txt</code> im Zielordner, in dessen Elternordnern und im Hauptklon eines Worktrees und schreibt Lock-Dateien nur bei <code>/lock</code> und <code>/unlock</code>. <code>workflowhooker</code> liest Hook-Eingabe, <code>workflowhooker.toml</code>, Projektdateien und <code>git status</code> und speichert je Sitzung nur Zähler und Hashes; Gesprächstranskripte liest es nicht. <code>ellmos-dev-quality</code> und <code>ellmos-decision-kit</code> bestehen nur aus Anleitungen.</li>
+  <li>Die Plugins lesen weder Claudes Gedächtnis noch Chatverläufe oder Gesprächszusammenfassungen und bilden keine Nutzerprofile.</li>
+  <li>Dein Gespräch mit Claude verarbeitet Anthropic nach eigenen Bedingungen; die Plugins fügen keine weitere Verarbeitung hinzu.</li>
+</ul>
+<h2 id="support-de">Support (Deutsch)</h2>
+<ul>
+  <li>Fehler und Fragen: GitHub-Issues im Quell-Repository des Plugins.</li>
+  <li>Sicherheitsmeldungen vertraulich über GitHub Security Advisories oder <a href="mailto:security@ellmos.ai">security@ellmos.ai</a>.</li>
+  <li>Sonstiger Kontakt: <a href="mailto:support@lukasgeiger.com">support@lukasgeiger.com</a>.</li>
+</ul>
+</section>
+</main>
+</body>
+</html>
