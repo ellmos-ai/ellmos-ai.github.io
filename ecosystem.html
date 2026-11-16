@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ellmos-ai — Ecosystem Overview &amp; Public Repositories</title>
+<style>
+  :root{--bg:#0b1410;--board:#0e1a14;--zone:#12241b;--zone-edge:#1f3a2c;--copper:#d8a05a;
+    --copper-dim:#8a6a3e;--trace:#3f6b52;--trace-hot:#e8b96a;--ink:#d7e4da;--ink-dim:#8fa697;
+    --ink-faint:#5f7568;--ok:#5ad08a;--dev:#e0b45a;--plan:#7d8f84;--priv:#c97b7b;--chip:#0a120e;
+    --accent:#63d6a4;--panel:#0d1712;--panel-edge:#24402f;--surface:transparent}
+  html[data-theme="light"]{--bg:#f6f7fd;--board:#ffffff;--zone:#ffffff;--zone-edge:#e4e6f6;
+    --copper:#5f3dc4;--copper-dim:#9775fa;--trace:#b9bef0;--trace-hot:#e64980;
+    --ink:#272a4d;--ink-dim:#5d6083;--ink-faint:#9497bb;--ok:#0ca678;--dev:#f08c00;
+    --plan:#a9acce;--priv:#e64980;--chip:#f3f4fc;--accent:#4263eb;
+    --panel:#fbfbff;--panel-edge:#e4e6f6;--surface:#ffffff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.45}
+  a{color:var(--accent)}
+  header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;padding:22px 26px 14px;
+    border-bottom:1px solid var(--zone-edge);background:var(--surface)}
+  .brand h1{font-size:24px;color:var(--copper);font-weight:700}
+  html[data-theme="light"] .brand h1{font-weight:800;
+    background:linear-gradient(90deg,#4263eb 0%,#7048e8 45%,#e64980 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand .sub{color:var(--ink-dim);font-size:13.5px;margin-top:2px;max-width:76ch}
+  nav.pagenav{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 0}
+  nav.pagenav a{font-size:12.5px;color:var(--ink-dim);text-decoration:none;
+    border:1px solid var(--zone-edge);border-radius:50rem;padding:3px 11px}
+  nav.pagenav a.on{background:var(--copper);color:#181008;font-weight:700;border-color:var(--copper)}
+  html[data-theme="light"] nav.pagenav a.on{background:linear-gradient(90deg,#4263eb,#7048e8);color:#fff;border-color:transparent}
+  nav.pagenav a:hover{border-color:var(--copper)}
+  .controls{margin-left:auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .controls input[type=search]{background:var(--chip);color:var(--ink);border:1px solid var(--zone-edge);
+    border-radius:8px;padding:7px 12px;width:230px;font-size:14px}
+  .themebtn{background:var(--chip);border:1px solid var(--zone-edge);border-radius:8px;padding:6px 11px;font-size:15px;cursor:pointer;line-height:1}
+  .themebtn:hover{border-color:var(--copper)}
+  .langsw{display:flex;border:1px solid var(--zone-edge);border-radius:8px;overflow:hidden}
+  .langsw button{background:var(--chip);color:var(--ink-dim);border:0;padding:7px 12px;font-size:13px;cursor:pointer}
+  .langsw button.on{background:var(--copper);color:#181008;font-weight:700}
+  html[data-theme="light"] .langsw button.on{background:linear-gradient(90deg,#4263eb,#7048e8);color:#fff}
+  main{padding:20px 26px 36px;max-width:1600px;margin:0 auto}
+  h2.sec{font-size:17px;color:var(--copper);margin:14px 0 4px}
+  p.secsub{color:var(--ink-dim);font-size:13px;margin-bottom:12px;max-width:92ch}
+  .filterbar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:10px 0 16px}
+  .fpill{background:var(--chip);color:var(--ink-dim);border:1px solid var(--zone-edge);border-radius:50rem;
+    padding:4px 12px;font-size:12.5px;cursor:pointer}
+  .fpill:hover{border-color:var(--copper);color:var(--ink)}
+  .fpill.on{background:var(--copper);border-color:var(--copper);color:#181008;font-weight:700}
+  html[data-theme="light"] .fpill.on{background:linear-gradient(90deg,#4263eb,#7048e8);color:#fff;border-color:transparent}
+  .shown{font-size:12.5px;color:var(--ink-faint);margin-left:auto}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
+  .card{position:relative;background:var(--zone);border:1px solid var(--zone-edge);border-radius:12px;
+    padding:13px 15px;display:flex;flex-direction:column;justify-content:space-between;transition:.15s}
+  .card::before{content:"";position:absolute;left:12px;right:12px;top:-2px;height:2px;
+    background:repeating-linear-gradient(90deg,var(--copper-dim) 0 10px,transparent 10px 24px);opacity:.45}
+  html[data-theme="light"] .card{border-top:3px solid var(--copper-dim);box-shadow:0 6px 20px rgba(76,78,160,.07)}
+  html[data-theme="light"] .card::before{display:none}
+  .card:hover{border-color:var(--copper);transform:translateY(-2px)}
+  .chead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+  .cname{font-family:Consolas,monospace;font-size:14.5px;font-weight:700;color:var(--ink);word-break:break-word}
+  .cbadge{font-size:10.5px;padding:1px 8px;border-radius:50rem;border:1px solid var(--zone-edge);
+    background:var(--chip);color:var(--copper);white-space:nowrap}
+  .cdesc{font-size:13px;color:var(--ink-dim);line-height:1.45;margin-bottom:10px;flex:1}
+  .cfoot{border-top:1px solid var(--zone-edge);padding-top:8px;display:flex;justify-content:space-between;
+    align-items:center;font-size:12px;color:var(--ink-faint)}
+  .cfoot a{text-decoration:none;font-weight:600}
+  footer{padding:16px 26px 30px;color:var(--ink-faint);font-size:12px;border-top:1px solid var(--zone-edge);background:var(--surface)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>ellmos-ai · <span id="t-title">Ecosystem &amp; Repositories</span></h1>
+    <p class="sub" id="t-sub"></p>
+    <nav class="pagenav">
+      <a href="index.html">⌁ Circuit Map</a>
+      <a href="ecosystem.html" class="on">🌐 Ecosystem &amp; Repos</a>
+      <a href="bundles.html">▦ Bundle Recipes</a>
+      <a href="skills.html">✎ Skill Library</a>
+      <a href="stack-composer.html">⚡ Stack Composer</a>
+      <a href="plugins.html">🔌 Plugins</a>
+      <a href="https://github.com/ellmos-ai">GitHub ↗</a>
+    </nav>
+  </div>
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search repositories …">
+    <button id="themebtn" class="themebtn" type="button" title="light / dark">☀️</button>
+    <div class="langsw"><button id="lang-de" type="button">DE</button><button id="lang-en" class="on" type="button">EN</button></div>
+  </div>
+</header>
+<main>
+  <h2 class="sec" id="t-pil-h"></h2>
+  <p class="secsub" id="t-pil-sub"></p>
+  <div class="grid" id="pillars"></div>
+
+  <h2 class="sec" id="t-rep-h"></h2>
+  <p class="secsub" id="t-rep-sub"></p>
+  <div class="filterbar" id="fbar"></div>
+  <div class="grid" id="repos"></div>
+</main>
+<footer id="t-source"></footer>
+<script>
+"use strict";
+const PILLARS=[{"id": ".OS", "count_de": "BACH · rinnsal · Open Ocean", "count_en": "BACH · rinnsal · Open Ocean", "de": "Lokale KI-Betriebssystem-Stacks: BACH (SQLite-Memory, 113+ Handler, Scheduler), rinnsal (schlanker Nachfolger) und Open Ocean (deklarativer, SHA-256-gepinnter Community-Installer mit Rollback).", "en": "Local-first AI OS stacks: BACH (SQLite memory, 113+ handlers, scheduler), rinnsal (lean successor) and Open Ocean (declarative SHA-256-pinned community installer with rollback).", "link": "index.html"}, {"id": ".MODULES", "count_de": "54 öffentliche Bausteine", "count_en": "54 public modules", "de": "Eigenständige Bausteine mit ellmos-module.v2.json Verträgen in 11 Funktionsbereichen (Runtime, Connectors, Orchestration, Control, Tools, Memory, Knowledge, Sync, Domains, Quality, Meta).", "en": "Independent building blocks with ellmos-module.v2.json contracts across 11 functional areas (Runtime, Connectors, Orchestration, Control, Tools, Memory, Knowledge, Sync, Domains, Quality, Meta).", "link": "index.html"}, {"id": ".MCP", "count_de": "9 öffentliche MCP-Server", "count_en": "9 public MCP servers", "de": "Eigene Model-Context-Protocol-Server auf npm/GitHub: filecommander, codecommander, clatcher, controlcenter, homebase, servercommander, blender-use, n8n-manager und open-compute.", "en": "First-party Model Context Protocol servers on npm/GitHub: filecommander, codecommander, clatcher, controlcenter, homebase, servercommander, blender-use, n8n-manager and open-compute.", "link": "https://github.com/ellmos-ai"}, {"id": ".SKILLS", "count_de": "165 öffentliche Skills", "count_en": "165 public skills", "de": "Portable SKILL.md-Bibliothek (ellmos-ai/skills) zum direkten Lesen und Kopieren für Claude Code, Codex, Antigravity, BACH und Open Ocean.", "en": "Portable SKILL.md library (ellmos-ai/skills) ready to read in-place and copy for Claude Code, Codex, Antigravity, BACH and Open Ocean.", "link": "skills.html"}, {"id": ".BUNDLES", "count_de": "13 öffentliche Rezepte (Welle 1)", "count_en": "13 public recipes (wave 1)", "de": "Deklarative Funktionseinheiten zwischen Modul und Stack (ellmos-ai/bundles): Seed + Komponentenliste in den vier Säulen memory, control, uas und domain.", "en": "Declarative functional units between module and stack (ellmos-ai/bundles): seed + component list across the four pillars memory, control, uas and domain.", "link": "bundles.html"}, {"id": ".STACKS", "count_de": "ellmos-stack · agent-ops-stack", "count_en": "ellmos-stack · agent-ops-stack", "de": "Manifest-getriebene Stack-Kompositionen plus interaktiver Browser-Stack-Composer mit Live-Regelprüfung und stack.v2.json-Export.", "en": "Manifest-driven stack compositions plus interactive browser Stack Composer with live composition-rule checks and stack.v2.json export.", "link": "stack-composer.html"}, {"id": ".SYSTEMS", "count_de": "Deklarative Projektionsschicht", "count_en": "Declarative projection layer", "de": "System-Ontologie, Verträge und Deployment-Projektionen (runtime_authority: false), die Module, Bundles und Software ohne Kopien verbinden.", "en": "System ontology, contracts and deployment projections (runtime_authority: false) wiring modules, bundles and software without code copies.", "link": "bundles.html"}, {"id": ".PLUGINS", "count_de": "ellmos-plugins Marketplace", "count_en": "ellmos-plugins marketplace", "de": "Öffentlicher Plugin-Marketplace für Agenten-Teams (ellmos-lock-master, workflowhooker, ellmos-dev-quality, ellmos-decision-kit) — 100 % lokal ohne Telemetrie.", "en": "Public plugin marketplace for agent teams (ellmos-lock-master, workflowhooker, ellmos-dev-quality, ellmos-decision-kit) — 100% local, zero telemetry.", "link": "plugins.html"}, {"id": ".TESTS", "count_de": "Auflösungs- & Vertragsprüfung", "count_en": "Resolution & contract checks", "de": "Deterministische Manifest-, Schema- und Leak-Gate-Prüfungen über gepinnte Quell-Commits ohne Laufzeit-Seiteneffekte.", "en": "Deterministic manifest, schema and leak-gate verification against pinned source commits with zero runtime side effects.", "link": "https://github.com/ellmos-ai/ellmos-tests"}, {"id": ".TOKEN_WATCHER", "count_de": "Budget- & Quota-Governance", "count_en": "Budget & quota governance", "de": "Sparsame Modellwahl und lokale Token-/Kontingent-Beobachtung über Anbieter und Sitzungen hinweg.", "en": "Frugal model routing and local token/quota observability across providers and sessions.", "link": "https://github.com/ellmos-ai/clutch"}, {"id": ".AI-LAB", "count_de": "compare-race Arena", "count_en": "compare-race arena", "de": "Reproduzierbares Benchmark- und Vergleichslabor (compare-race), in dem BACH und Open Ocean gegen externe Agenten-Frameworks antreten.", "en": "Reproducible benchmark and comparison lab (compare-race) testing BACH and Open Ocean head-to-head against external agent frameworks.", "link": "https://github.com/ellmos-ai/compare-race"}];
+const REPOS=[{"name": ".github", "group": "pillars", "category": "pillars", "archived": false, "description": "ellmos-ai org profile and public repo index for local-first LLM OS, MCP servers, agent modules, connectors and AI media workflows", "url": "https://github.com/ellmos-ai/.github"}, {"name": "accounts-core", "group": "modules", "category": "runtime", "archived": false, "description": "Neutral domain core for the account/bank-balance domain: bank account CRUD, CAMT balance import, privacy-safe read-only transit projection (wave 1, D-20260903-003)", "url": "https://github.com/ellmos-ai/accounts-core"}, {"name": "agent-ops-stack", "group": "pillars", "category": "pillars", "archived": false, "description": "Manifest-based Git fetcher for seven agent-operations repositories; reports declared wiring labels.", "url": "https://github.com/ellmos-ai/agent-ops-stack"}, {"name": "anonymizer", "group": "modules", "category": "domains", "archived": false, "description": "Fail-closed pseudonymization service for sensitive local documents.", "url": "https://github.com/ellmos-ai/anonymizer"}, {"name": "bach", "group": "os", "category": "os", "archived": false, "description": "BACH v3.15.0: local-first text-based OS for LLM agents with SQLite memory, 113+ handlers, 550+ tools, MCP servers, scheduler and multi-agent orchestration", "url": "https://github.com/ellmos-ai/bach"}, {"name": "build-your-users-mind", "group": "modules", "category": "memory", "archived": false, "description": "Local-first, evidence-backed user preference and decision-support workflow with deterministic private-log adapters.", "url": "https://github.com/ellmos-ai/build-your-users-mind"}, {"name": "bundles", "group": "pillars", "category": "pillars", "archived": false, "description": "Recipe layer of the ellmos ecosystem — bundle manifests, catalogs, and composition knowledge. Private build; opens wave by wave.", "url": "https://github.com/ellmos-ai/bundles"}, {"name": "clearance-skill", "group": "pillars", "category": "pillars", "archived": false, "description": "Clearance MCP skill and app-specific data handling notice for Jira agents", "url": "https://github.com/ellmos-ai/clearance-skill"}, {"name": "clip-storyboard-director", "group": "modules", "category": "domains", "archived": false, "description": "Local-first AI storyboard director, scene continuity orchestrator and video pipeline controller with Edge CDP automation and interactive dual-pane cockpit.", "url": "https://github.com/ellmos-ai/clip-storyboard-director"}, {"name": "clirec", "group": "modules", "category": "tools", "archived": false, "description": "Human-readable GUI demonstration recordings for CLI and agent workflows.", "url": "https://github.com/ellmos-ai/clirec"}, {"name": "clutch", "group": "modules", "category": "orchestration", "archived": false, "description": "Provider-neutral LLM router and model orchestration engine with auto-learning and budget zones", "url": "https://github.com/ellmos-ai/clutch"}, {"name": "coma", "group": "modules", "category": "orchestration", "archived": false, "description": "Provider-unabhängige Orchestrierungs- und Lebenszyklus-Schicht für Agentenprozesse. COMA konstruiert CLI-Aufrufe für Claude, Codex und AGY; historische Kompatibilitätschecks sind keine aktuellen Live-Garantien. Der Kimi-Adapter ist unverifiziert und nur über Spawner/Session opt-in ausführbar. Aufrufer müssen Kanal-Schreiber eigenständig zuordnen und parallele Zugriffe koordinieren. Die Netzwerkgrenze beschreibt COMA selbst; gestartete Anbieter-CLIs können Netzwerkzugriff haben. COMA ist kein Scheduler, sperrt nichts, verwaltet keine Rechte und hält kein Gedächtnis.", "url": "https://github.com/ellmos-ai/coma"}, {"name": "compare-race", "group": "modules", "category": "orchestration", "archived": false, "description": "Same prompt, several models -- stopwatch or true race; the starting model judges (time is only one dimension)", "url": "https://github.com/ellmos-ai/compare-race"}, {"name": "connectors", "group": "modules", "category": "connectors", "archived": false, "description": "Portable messaging connectors for AI agents — Telegram, Discord, Signal, WhatsApp, Home Assistant, Webhook; framework-decoupled via a SecretAdapter, no hard dependencies.", "url": "https://github.com/ellmos-ai/connectors"}, {"name": "cowork-protocol", "group": "modules", "category": "connectors", "archived": false, "description": "Reusable human-agent collaboration protocol and adaptive WebMCP bridge with bounded attention, inert offers, trusted-click approval, and SHA-256 receipts.", "url": "https://github.com/ellmos-ai/cowork-protocol"}, {"name": "decision-clicker", "group": "modules", "category": "control", "archived": false, "description": "Local-first library, CLI, and web UI for file-based decision chains with audit trails and undo capabilities", "url": "https://github.com/ellmos-ai/decision-clicker"}, {"name": "doc-keeper", "group": "modules", "category": "control", "archived": false, "description": "Deterministic 3-Cause Documentation Audit & Terraforming Machine for Ocean, BACH, and any repository", "url": "https://github.com/ellmos-ai/doc-keeper"}, {"name": "doc-services", "group": "modules", "category": "domains", "archived": false, "description": "Document extraction to text/Markdown with a learning backend preference and honest fallback, AGPL-free OCR, and content-based privacy screening.", "url": "https://github.com/ellmos-ai/doc-services"}, {"name": "ellmos", "group": "os", "category": "os", "archived": false, "description": "Local-first LLM operating-system hub for BACH, Rinnsal, gardener, SQLite agent memory, MCP servers, skills, and multi-agent orchestration", "url": "https://github.com/ellmos-ai/ellmos"}, {"name": "ellmos-ai.github.io", "group": "pillars", "category": "pillars", "archived": false, "description": "Interactive maps of the ellmos-ai ecosystem: module circuit map, skill library, stack composer", "url": "https://github.com/ellmos-ai/ellmos-ai.github.io"}, {"name": "ellmos-blender-use-mcp", "group": "mcp", "category": "mcp", "archived": false, "description": "Local-first MCP server for headless Blender asset QA: background script runs and FBX reimport verification. No add-on, no TCP port.", "url": "https://github.com/ellmos-ai/ellmos-blender-use-mcp"}, {"name": "ellmos-clatcher-mcp", "group": "mcp", "category": "mcp", "archived": false, "description": "MCP utility toolkit for JSON repair, encoding fixes, format conversion, duplicate detection, batch rename, ZIP archives, checksums, and regex testing", "url": "https://github.com/ellmos-ai/ellmos-clatcher-mcp"}, {"name": "ellmos-codecommander-mcp", "group": "mcp", "category": "mcp", "archived": false, "description": "Developer-focused MCP server with 23 tools for Python code analysis, structural editing, JSON repair, imports, encoding, Markdown/PDF export, diffs, and regex testing", "url": "https://github.com/ellmos-ai/ellmos-codecommander-mcp"}, {"name": "ellmos-controlcenter-mcp", "group": "mcp", "category": "mcp", "archived": false, "description": "Policy-gated MCP control plane for local discovery, profiles, capability bundles, dashboard, and audited tool gateway", "url": "https://github.com/ellmos-ai/ellmos-controlcenter-mcp"}, {"name": "ellmos-filecommander-mcp", "group": "mcp", "category": "mcp", "archived": false, "description": "Local filesystem MCP server with 50 tools: safe delete, process management, interactive sessions, async search, OCR, ZIP, Markdown/PDF export, and cloud-lock-safe operations.", "url": "https://github.com/ellmos-ai/ellmos-filecommander-mcp"}, {"name": "ellmos-homebase-mcp", "group": "mcp", "category": "mcp", "archived": false, "description": "Alpha MCP server for local-first LLM orchestration: memory, knowledge, state, routing, swarm planning, API discovery, tests, automation, and plugins.", "url": "https://github.com/ellmos-ai/ellmos-homebase-mcp"}, {"name": "ellmos-homecontrol", "group": "modules", "category": "domains", "archived": false, "description": "Smart-home and household appliance control hub (FritzBox TR-064, Home Assistant, Matter, MQTT/Shelly) with a confirmation gate for high-load devices.", "url": "https://github.com/ellmos-ai/ellmos-homecontrol"}, {"name": "ellmos-plugins", "group": "pillars", "category": "pillars", "archived": false, "description": "Claude Code plugin marketplace of ellmos-ai: skill plugins for decisions and development quality", "url": "https://github.com/ellmos-ai/ellmos-plugins"}, {"name": "ellmos-robotics", "group": "modules", "category": "domains", "archived": false, "description": "Robotics tool standard ellmos.robotics.mcp.v1 with a safety envelope, persistent E-Stop, and driver adapters for ROS 2, ESP32, LeRobot, and MAVLink.", "url": "https://github.com/ellmos-ai/ellmos-robotics"}, {"name": "ellmos-scheduler", "group": "modules", "category": "control", "archived": false, "description": "Eigenständiger Zeitgeber, Lease-/Claim-Manager und Run-Recorder für ellmos-Stacks mit BACH-Consumer- und Executor-Adaptern.", "url": "https://github.com/ellmos-ai/ellmos-scheduler"}, {"name": "ellmos-sensation", "group": "modules", "category": "tools", "archived": false, "description": "Permission-gated device sensing (camera presence, microphone ambient level, sound cues) and a presence gate for open-compute; fail-closed, zero-egress by design.", "url": "https://github.com/ellmos-ai/ellmos-sensation"}, {"name": "ellmos-servercommander-mcp", "group": "mcp", "category": "mcp", "archived": false, "description": "Local-first MCP server for server operations: HTTP health checks, Apache/Nginx log analysis, dry-run deploy manifests and mail diagnostics", "url": "https://github.com/ellmos-ai/ellmos-servercommander-mcp"}, {"name": "ellmos-stack", "group": "pillars", "category": "pillars", "archived": false, "description": "Self-hosted local-first AI research stack with Ollama, n8n, USMC & GARDENER memory, task orchestration, KnowledgeDigest, and Docker Compose", "url": "https://github.com/ellmos-ai/ellmos-stack"}, {"name": "ellmos-system-gui", "group": "modules", "category": "runtime", "archived": false, "description": "Static shared operator UI distribution. Backend adapters, auth, state and actions belong to the consumer.", "url": "https://github.com/ellmos-ai/ellmos-system-gui"}, {"name": "ellmos-talk", "group": "modules", "category": "runtime", "archived": false, "description": "Dual-loop live speech and visual companion engine for BACH and Open Ocean: fast reflex turn-taking plus streaming model replies driven by talk_control directives.", "url": "https://github.com/ellmos-ai/ellmos-talk"}, {"name": "ellmos-tests", "group": "modules", "category": "quality", "archived": false, "description": "B/O/E evaluation framework for SKILL.md-based LLM operating systems and agent hubs", "url": "https://github.com/ellmos-ai/ellmos-tests"}, {"name": "ellmos-tray", "group": "modules", "category": "runtime", "archived": false, "description": "Pluggable, modular system tray and quick control client for ELLMOS and BACH desktop environments.", "url": "https://github.com/ellmos-ai/ellmos-tray"}, {"name": "FolderHome", "group": "apps", "category": "apps", "archived": false, "description": "Local-first Strands agent for safe household document workflows", "url": "https://github.com/ellmos-ai/FolderHome"}, {"name": "gardener", "group": "modules", "category": "memory", "archived": false, "description": "Gardener -- curated memory for agentic systems. Tames wild systems, knows what belongs to the garden, makes it searchable. Four functions, two databases, one search.", "url": "https://github.com/ellmos-ai/gardener"}, {"name": "grounding-seed", "group": "modules", "category": "control", "archived": false, "description": "Standalone template and minimal runtime kernel for self-contained, offline-runnable agent skills and modules", "url": "https://github.com/ellmos-ai/grounding-seed"}, {"name": "hook-master", "group": "modules", "category": "control", "archived": false, "description": "Local-first pointer registry and materialization for agent hooks (sibling to policy-registry)", "url": "https://github.com/ellmos-ai/hook-master"}, {"name": "hungrycall", "group": "apps", "category": "apps", "archived": false, "description": "Sequential voice-agent cascade on CALL-E: calls restaurants one at a time until one meets your terms — delivery, pickup or a table.", "url": "https://github.com/ellmos-ai/hungrycall"}, {"name": "lock-master", "group": "modules", "category": "control", "archived": false, "description": "Portable, zero-dependency multi-agent file-lock system — Exclusive and Team Locks (LOCK*.txt) with scopes, expiry, stale-cleanup, cloud-sync support, and a fast overview cache.", "url": "https://github.com/ellmos-ai/lock-master"}, {"name": "marblerun", "group": "modules", "category": "control", "archived": false, "description": "MarbleRun / llmauto: local-first Claude Code automation for autonomous LLM agent chains", "url": "https://github.com/ellmos-ai/marblerun"}, {"name": "memoryhooker", "group": "modules", "category": "control", "archived": false, "description": "Connects local memory sources to coding-agent lifecycle hooks: remind, clue, or local search with selected hits. No network requests, no host config changes.", "url": "https://github.com/ellmos-ai/memoryhooker"}, {"name": "n8n-manager-mcp", "group": "mcp", "category": "mcp", "archived": false, "description": "MCP server for n8n workflow management -- view, create, sync, and manage n8n workflows via AI assistants", "url": "https://github.com/ellmos-ai/n8n-manager-mcp"}, {"name": "n8n-workflow-manager", "group": "modules", "category": "orchestration", "archived": false, "description": "Local-first n8n workflow manager with visual graph viewer, REST API, CLI, and multi-server sync", "url": "https://github.com/ellmos-ai/n8n-workflow-manager"}, {"name": "NemoFold", "group": "apps", "category": "apps", "archived": false, "description": "Private, evidence-first document agent with persistent local memory, exact citations, reversible actions, and bounded Nemotron reasoning.", "url": "https://github.com/ellmos-ai/NemoFold"}, {"name": "open-compute", "group": "modules", "category": "tools", "archived": false, "description": "Model-agnostic computer-use core: one agent loop for Claude, OpenAI CUA, and a mock backend — normalized coordinates, canonical action schema, central safety gate.", "url": "https://github.com/ellmos-ai/open-compute"}, {"name": "open-compute-mcp", "group": "mcp", "category": "mcp", "archived": false, "description": "npm launcher for the open-compute MCP server: model-agnostic computer-use (screenshot, safety-gated actions, Windows UIA) over MCP; spawns the Python open-compute server from GitHub.", "url": "https://github.com/ellmos-ai/open-compute-mcp"}, {"name": "open-ocean", "group": "os", "category": "os", "archived": false, "description": "The public free community system of the ellmos ecosystem — verifiable, local-first composition and lifecycle tooling.", "url": "https://github.com/ellmos-ai/open-ocean"}, {"name": "pasta-press", "group": "modules", "category": "tools", "archived": false, "description": "Local AI text press for Ollama: refine style, translate, and free text from unintended AI-typical markers with lossless chunking, batch queue, and explicit AI disclosure.", "url": "https://github.com/ellmos-ai/pasta-press"}, {"name": "policy-registry", "group": "modules", "category": "control", "archived": false, "description": "Local-first pointer registry for policies, rules, and decisions using cryptographic SHA-256 source references", "url": "https://github.com/ellmos-ai/policy-registry"}, {"name": "project-docs-template", "group": "modules", "category": "quality", "archived": false, "description": "Agent-ready project documentation profiles with safe local generation and maintenance tools.", "url": "https://github.com/ellmos-ai/project-docs-template"}, {"name": "prompt-listener", "group": "modules", "category": "quality", "archived": false, "description": "Versioned fork-master template: 5-stage prompt/session analysis pipeline + AgentEvent v2 provenance schema for human-AI interaction research", "url": "https://github.com/ellmos-ai/prompt-listener"}, {"name": "rechtsabteilung", "group": "modules", "category": "domains", "archived": false, "description": "Source-grounded AI first-look legal assessments for German law (Erstorientierung, kein Anwaltsersatz) — statute registry, embodiment agents, web-verified case law", "url": "https://github.com/ellmos-ai/rechtsabteilung"}, {"name": "recludos-legacy", "group": "os", "category": "os", "archived": false, "description": "recludOS Legacy Museum - An experimental AI operating system (2025-2026). Deprecated in favor of BACH v2.", "url": "https://github.com/ellmos-ai/recludos-legacy"}, {"name": "report-forge", "group": "modules", "category": "domains", "archived": false, "description": "Domain-neutral core for anonymizable report pipelines: extract source documents, build a schema-bound LLM prompt, fill a Word template with the result", "url": "https://github.com/ellmos-ai/report-forge"}, {"name": "researchcall", "group": "apps", "category": "apps", "archived": false, "description": "Dry-run-first Python toolkit for standardized scientific telephone surveys with a bilingual local workbench.", "url": "https://github.com/ellmos-ai/researchcall"}, {"name": "ringedingeding", "group": "apps", "category": "apps", "archived": false, "description": "Ask everyone, get one answer: CALL-E voice-agent rounds that phone a group one by one to find a date or gather opinions.", "url": "https://github.com/ellmos-ai/ringedingeding"}, {"name": "rinnsal", "group": "os", "category": "os", "archived": false, "description": "Lightweight local-first LLM agent infrastructure: SQLite memory, tasks, connectors, and chain automation", "url": "https://github.com/ellmos-ai/rinnsal"}, {"name": "sentinel-fleet", "group": "apps", "category": "apps", "archived": false, "description": "Hackathon demo of an enterprise agent control plane with a document-reconciliation taskmaster on Google Cloud Run and Gemini.", "url": "https://github.com/ellmos-ai/sentinel-fleet"}, {"name": "skills", "group": "pillars", "category": "pillars", "archived": false, "description": "Portable SKILL.md library for Claude Code, Codex-compatible agents, BACH, and local-first LLM workflows", "url": "https://github.com/ellmos-ai/skills"}, {"name": "source-resolver", "group": "modules", "category": "control", "archived": false, "description": "Role-based source resolution connecting agent skills to local policies, decisions, and system information sources", "url": "https://github.com/ellmos-ai/source-resolver"}, {"name": "stacks", "group": "pillars", "category": "pillars", "archived": false, "description": "Catalog and composition-principle overview for the ellmos-ai stack family (manifest-driven, no code copies)", "url": "https://github.com/ellmos-ai/stacks"}, {"name": "steuer-assistent", "group": "modules", "category": "domains", "archived": false, "description": "Offline-first local worksheet for German employee income-related expenses (Werbungskosten): collect receipts, categorize, sum — not tax advice, no tax filing", "url": "https://github.com/ellmos-ai/steuer-assistent"}, {"name": "swarm_ai", "group": "modules", "category": "orchestration", "archived": false, "description": "Local-first Python toolkit for inspectable LLM swarm coordination patterns.", "url": "https://github.com/ellmos-ai/swarm_ai"}, {"name": "system-auditor", "group": "modules", "category": "control", "archived": false, "description": "Evidence-based system audits across machines with meta-audit bundling -- four tokens, aggregation ladder, model-manual meta reports", "url": "https://github.com/ellmos-ai/system-auditor"}, {"name": "system-explorer", "group": "modules", "category": "control", "archived": false, "description": "Evidence-backed maps of desired functions, carriers, actual use, and architecture drift.", "url": "https://github.com/ellmos-ai/system-explorer"}, {"name": "system-gap-master", "group": "modules", "category": "control", "archived": false, "description": "Serverless sync yard for multi-machine, multi-agent AI setups — slot rule, gated daily ritual, bootstrap runbook. Family: lock-master, ticket-master.", "url": "https://github.com/ellmos-ai/system-gap-master"}, {"name": "ticket-master", "group": "modules", "category": "control", "archived": false, "description": "Cross-platform multi-provider LLM ticket router & AI coding agent triage console. Files structured tickets, scores, and routes to Claude Code, Codex, and Gemini.", "url": "https://github.com/ellmos-ai/ticket-master"}, {"name": "usmc", "group": "modules", "category": "memory", "archived": false, "description": "Local SQLite memory for LLM agents and cross-agent context sharing", "url": "https://github.com/ellmos-ai/usmc"}, {"name": "VisionFlow", "group": "apps", "category": "apps", "archived": false, "description": "Configurable OpenCV 5 image, video and camera workflows with evidence clips, bounded follow-up observation and human review.", "url": "https://github.com/ellmos-ai/VisionFlow"}, {"name": "web-scraper", "group": "modules", "category": "tools", "archived": false, "description": "Standalone web scraper (get/links/forms/headers/extract/screenshot), extracted from the BACH system. Python stdlib core + optional extras, with SSRF guard.", "url": "https://github.com/ellmos-ai/web-scraper"}, {"name": "workflowhooker", "group": "modules", "category": "control", "archived": false, "description": "Small, configurable workflow checks at coding-agent lifecycle events. Local-first, zero runtime dependencies, no network requests, silent until checks are explicitly enabled.", "url": "https://github.com/ellmos-ai/workflowhooker"}, {"name": "worksheet-generator", "group": "modules", "category": "domains", "archived": false, "description": "Individualized worksheets for educational and therapeutic professionals - from a support goal, level and age (ICF-aware) or from subject, grade and topic. Local LLM agent workflow, bring-your-own ICF references; a material generator, not a therapy program", "url": "https://github.com/ellmos-ai/worksheet-generator"}];
+const UI={
+  de:{
+    title:"Ökosystem & öffentliche Repositories",
+    sub:"Gesamtschaltplan des öffentlichen ellmos-ai Ökosystems: alle 11 Architekturbereiche vom OS-Stack (BACH, rinnsal, Open Ocean) über Module, MCP-Server, Skills, Bundles und Stacks bis zum AI-Lab.",
+    search:"Repository suchen …",
+    pilH:"Die 11 Architekturbereiche des KI-Baukastens",
+    pilSub:"Jede Schicht erfüllt genau eine Aufgabe und greift über dokumentierte Verträge in die anderen — ohne Code-Kopien und ohne Cloud-Zwang.",
+    repH:"Öffentliches GitHub-Repository-Verzeichnis ("+String(REPOS.length)+" Repositories)",
+    repSub:"Alle veröffentlichten Repositories unter github.com/ellmos-ai, filterbar nach Rolle im Gesamtsystem.",
+    openMap:"Öffnen →", openRepo:"GitHub ↗",
+    shown:(a,b)=>a+" von "+b+" angezeigt",
+    groups:{all:"Alle",os:"OS & Kern",mcp:"MCP-Server",modules:"Module",pillars:"Skills · Bundles · Stacks · Plugins",apps:"Domänen & Apps"},
+    source:"ellmos-ai · öffentlicher Gesamtauszug: 11 Architekturbereiche · "+String(REPOS.length)+" öffentliche GitHub-Repos · Stand 2026-11-16"
+  },
+  en:{
+    title:"Ecosystem & Public Repositories",
+    sub:"Master overview of the public ellmos-ai ecosystem: all 11 architectural pillars from OS stacks (BACH, rinnsal, Open Ocean) through modules, MCP servers, skills, bundles and stacks to AI-Lab.",
+    search:"Search repositories …",
+    pilH:"The 11 Architectural Pillars of the AI Kit",
+    pilSub:"Every layer owns one clear responsibility and connects through documented contracts — zero code copies, zero forced cloud.",
+    repH:"Public GitHub Repository Directory ("+String(REPOS.length)+" repositories)",
+    repSub:"Every public repository published under github.com/ellmos-ai, filterable by role in the ecosystem.",
+    openMap:"Open →", openRepo:"GitHub ↗",
+    shown:(a,b)=>a+" of "+b+" shown",
+    groups:{all:"All",os:"OS & Core",mcp:"MCP Servers",modules:"Modules",pillars:"Skills · Bundles · Stacks · Plugins",apps:"Domains & Apps"},
+    source:"ellmos-ai · public ecosystem excerpt: 11 architectural pillars · "+String(REPOS.length)+" public GitHub repos · as of 2026-11-16"
+  }
+};
+let lang="en", grp="all";
+const $=s=>document.querySelector(s);
+function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;}
+function render(){
+  const T=UI[lang];
+  $("#t-title").textContent=T.title; $("#t-sub").textContent=T.sub; $("#q").placeholder=T.search;
+  $("#t-pil-h").textContent=T.pilH; $("#t-pil-sub").textContent=T.pilSub;
+  $("#t-rep-h").textContent=T.repH; $("#t-rep-sub").textContent=T.repSub;
+  $("#t-source").textContent=T.source;
+  $("#lang-de").classList.toggle("on",lang==="de");
+  $("#lang-en").classList.toggle("on",lang==="en");
+  document.documentElement.lang=lang;
+
+  const pgrid=$("#pillars"); pgrid.replaceChildren();
+  for(const p of PILLARS){
+    const c=el("div","card"), top=el("div"), hd=el("div","chead");
+    hd.appendChild(el("span","cname",p.id));
+    hd.appendChild(el("span","cbadge",lang==="de"?p.count_de:p.count_en));
+    top.appendChild(hd);
+    top.appendChild(el("p","cdesc",lang==="de"?p.de:p.en));
+    const ft=el("div","cfoot");
+    ft.appendChild(el("span","","ellmos-ai"));
+    const a=el("a","",T.openMap); a.href=p.link;
+    if(p.link.startsWith("https://")){a.target="_blank";a.rel="noopener noreferrer";}
+    ft.appendChild(a);
+    c.appendChild(top); c.appendChild(ft); pgrid.appendChild(c);
+  }
+
+  const fbar=$("#fbar"); fbar.replaceChildren();
+  for(const k of ["all","os","mcp","modules","pillars","apps"]){
+    const cnt=k==="all"?REPOS.length:REPOS.filter(r=>r.group===k).length;
+    const b=el("button","fpill"+(grp===k?" on":""),T.groups[k]+" ("+cnt+")");
+    b.type="button"; b.dataset.grp=k;
+    b.addEventListener("click",()=>{grp=k;render();});
+    fbar.appendChild(b);
+  }
+  const shownEl=el("span","shown",""); shownEl.id="shown-cnt"; fbar.appendChild(shownEl);
+  renderRepos();
+}
+function renderRepos(){
+  const T=UI[lang], q=$("#q").value.trim().toLowerCase();
+  const list=REPOS.filter(r=>(grp==="all"||r.group===grp)&&(!q||(r.name+" "+r.description+" "+r.category).toLowerCase().includes(q)));
+  const rgrid=$("#repos"); rgrid.replaceChildren();
+  for(const r of list){
+    const c=el("div","card"), top=el("div"), hd=el("div","chead");
+    hd.appendChild(el("span","cname",r.name));
+    hd.appendChild(el("span","cbadge",r.archived?"archived":r.category));
+    top.appendChild(hd);
+    top.appendChild(el("p","cdesc",r.description));
+    const ft=el("div","cfoot");
+    ft.appendChild(el("span","","ellmos-ai/"+r.name));
+    const a=el("a","",T.openRepo); a.href=r.url; a.target="_blank"; a.rel="noopener noreferrer";
+    ft.appendChild(a);
+    c.appendChild(top); c.appendChild(ft); rgrid.appendChild(c);
+  }
+  const sc=$("#shown-cnt"); if(sc) sc.textContent=T.shown(list.length,REPOS.length);
+}
+$("#q").addEventListener("input",renderRepos);
+$("#lang-de").addEventListener("click",()=>{lang="de";render();});
+$("#lang-en").addEventListener("click",()=>{lang="en";render();});
+const THEME_KEY="ellmos-theme";
+function applyTheme(t){
+  document.documentElement.dataset.theme=t;
+  const b=document.getElementById("themebtn");
+  if(b) b.textContent=(t==="light"?"🌙":"☀️");
+}
+let savedTheme="dark";
+try{ if(localStorage.getItem(THEME_KEY)==="light") savedTheme="light"; }catch(e){}
+applyTheme(savedTheme);
+document.getElementById("themebtn").addEventListener("click",()=>{
+  const t=document.documentElement.dataset.theme==="light"?"dark":"light";
+  try{ localStorage.setItem(THEME_KEY,t); }catch(e){}
+  applyTheme(t);
+});
+render();
+</script>
+</body>
+</html>

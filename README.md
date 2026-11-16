@@ -69,11 +69,12 @@ Live at **https://ellmos-ai.github.io**
 `ellmos-ai.github.io` serves as the public graphical surface of the ellmos modular construction kit. It translates internal module registries, composition recipes, and AI agent skills into human- and machine-readable static web experiences:
 
 1. **Module Circuit Map** ([`index.html`](https://ellmos-ai.github.io)): Visual, categorized circuit diagram illustrating how modules (MCP servers, proxies, runners, tools) connect and exchange information.
-2. **Bundle Recipes** ([`bundles.html`](https://ellmos-ai.github.io/bundles.html)): Interactive walkthrough of 13 curated deployment recipes, detailing required and optional components for specific agent profiles.
-3. **Skill Library** ([`skills.html`](https://ellmos-ai.github.io/skills.html)): Searchable, live catalog of public agent skills (`SKILL.md`) with built-in viewer and clipboard integration.
-4. **Stack Composer** ([`stack-composer.html`](https://ellmos-ai.github.io/stack-composer.html)): Interactive visual assembly tool enabling developers to compose valid module stacks with live rule enforcement and export to standard `stack.v2.json`.
-5. **Zero-Egress Static Privacy**: Pure HTML5/CSS3/Vanilla JS execution in the user's browser with 0 external requests and 0 third-party CDNs.
-6. **Bilingual Navigation Parity**: Symmetrical documentation and reciprocal HTML anchor aliases across English and German.
+2. **Ecosystem & 11 Architecture Pillars** ([`ecosystem.html`](https://ellmos-ai.github.io/ecosystem.html)): Unified overview of all 11 `.AI` architecture pillars and verified public `ellmos-ai` repositories.
+3. **Bundle Recipes** ([`bundles.html`](https://ellmos-ai.github.io/bundles.html)): Interactive walkthrough of 13 curated deployment recipes, detailing required and optional components for specific agent profiles.
+4. **Skill Library** ([`skills.html`](https://ellmos-ai.github.io/skills.html)): Searchable, live catalog of public agent skills (`SKILL.md`) with built-in viewer and clipboard integration.
+5. **Stack Composer & Plugin Directory** ([`stack-composer.html`](https://ellmos-ai.github.io/stack-composer.html), [`plugins.html`](https://ellmos-ai.github.io/plugins.html)): Interactive visual assembly tool enabling developers to compose valid module stacks with live rule enforcement and export to standard `stack.v2.json`.
+6. **Zero-Egress Static Privacy**: Pure HTML5/CSS3/Vanilla JS execution in the user's browser with 0 external requests and 0 third-party CDNs.
+7. **Bilingual Navigation Parity**: Symmetrical documentation and reciprocal HTML anchor aliases across English and German.
 
 ---
 

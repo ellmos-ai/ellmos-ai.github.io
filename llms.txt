@@ -20,7 +20,7 @@
 
 | File | Title | Description |
 |---|---|---|
-| [`index.html`](https://ellmos-ai.github.io) | Module Circuit Map | Visual circuit diagram of all public modules categorized by functional domain (DE/EN, dark/light modes). |
+| [`index.html, ecosystem.html`](https://ellmos-ai.github.io) | Module Circuit Map | Visual circuit diagram of all public modules categorized by functional domain (DE/EN, dark/light modes). |
 | [`bundles.html`](https://ellmos-ai.github.io/bundles.html) | Bundle Recipes | 13 curated composition recipes detailing which modules, skills, and tools form each functional bundle. |
 | [`skills.html`](https://ellmos-ai.github.io/skills.html) | Skill Library | Full public skill catalog with inline reader and copy-to-clipboard functionality. |
 | [`stack-composer.html`](https://ellmos-ai.github.io/stack-composer.html) | Stack Composer | Interactive canvas to compose custom module stacks with live rule validation and `stack.v2.json` export. |
