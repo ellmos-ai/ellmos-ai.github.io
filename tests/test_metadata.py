@@ -92,7 +92,7 @@ def test_security_policy_contract():
 
 
 def test_site_artifacts_integrity():
-    content_files = ["index.html", "bundles.html", "skills.html", "stack-composer.html"]
+    content_files = ["index.html", "ecosystem.html", "bundles.html", "skills.html", "stack-composer.html"]
     for name in content_files:
         path = ROOT / name
         assert path.is_file(), f"Public artifact {name} missing"

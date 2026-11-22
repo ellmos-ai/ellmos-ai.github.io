@@ -69,11 +69,12 @@ Live erreichbar unter **https://ellmos-ai.github.io**
 `ellmos-ai.github.io` dient als öffentliche visuelle Oberfläche des modularen ellmos-Baukastens. Es überführt interne Modulregister, Kompositionsrezepte und KI-Agenten-Skills in benutzer- und maschinenlesbare statische Weboberflächen:
 
 1. **Modul-Schaltplan** ([`index.html`](https://ellmos-ai.github.io)): Visuelles, domänenspezifisch gegliedertes Schaltbild, das Interaktionen und Protokolle zwischen Modulen (MCP-Server, Proxys, Runner, Werkzeuge) darstellt.
-2. **Bundle-Rezepte** ([`bundles.html`](https://ellmos-ai.github.io/bundles.html)): Interaktive Übersicht über 13 kuratierte Bereitstellungsrezepte mit klaren Pflicht- und Optionskomponenten für spezifische Agentenprofile.
-3. **Skill-Bibliothek** ([`skills.html`](https://ellmos-ai.github.io/skills.html)): Durchsuchbarer Katalog aller öffentlichen Agenten-Skills (`SKILL.md`) mit integriertem Betrachter und Zwischenablage-Funktion.
-4. **Stack-Composer** ([`stack-composer.html`](https://ellmos-ai.github.io/stack-composer.html)): Interaktive visuelle Arbeitsfläche zur Zusammenstellung valider Modul-Stacks mit Live-Regelprüfung und Export nach `stack.v2.json`.
-5. **Zero-Egress Datenschutz**: Reine Ausführung in HTML5/CSS3/Vanilla JS im Browser des Nutzers ohne externe Netzwerkanfragen und ohne Drittanbieter-CDNs.
-6. **Bilinguale Navigationsparität**: Vollständig symmetrische Struktur und reziproke HTML-Anker-Aliasse zwischen Deutsch und Englisch.
+2. **Ökosystem & 11 Architektur-Säulen** ([`ecosystem.html`](https://ellmos-ai.github.io/ecosystem.html)): Einheitliche Übersicht aller 11 `.AI`-Architektur-Säulen und sämtlicher freigegebener öffentlicher `ellmos-ai`-Repositories.
+3. **Bundle-Rezepte** ([`bundles.html`](https://ellmos-ai.github.io/bundles.html)): Interaktive Übersicht über 13 kuratierte Bereitstellungsrezepte mit klaren Pflicht- und Optionskomponenten für spezifische Agentenprofile.
+4. **Skill-Bibliothek** ([`skills.html`](https://ellmos-ai.github.io/skills.html)): Durchsuchbarer Katalog aller öffentlichen Agenten-Skills (`SKILL.md`) mit integriertem Betrachter und Zwischenablage-Funktion.
+5. **Stack-Composer & Plugin-Verzeichnis** ([`stack-composer.html`](https://ellmos-ai.github.io/stack-composer.html), [`plugins.html`](https://ellmos-ai.github.io/plugins.html)): Interaktive visuelle Arbeitsfläche zur Zusammenstellung valider Modul-Stacks mit Live-Regelprüfung und Export nach `stack.v2.json`.
+6. **Zero-Egress Datenschutz**: Reine Ausführung in HTML5/CSS3/Vanilla JS im Browser des Nutzers ohne externe Netzwerkanfragen und ohne Drittanbieter-CDNs.
+7. **Bilinguale Navigationsparität**: Vollständig symmetrische Struktur und reziproke HTML-Anker-Aliasse zwischen Deutsch und Englisch.
 
 ---
 

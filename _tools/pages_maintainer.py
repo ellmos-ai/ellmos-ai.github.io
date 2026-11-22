@@ -16,8 +16,8 @@ from pathlib import Path
 
 WINDOW_DAYS = 7
 WINDOW_ANCHOR = dt.datetime(2026, 1, 5, tzinfo=dt.timezone.utc)
-SITE_FILES = (".nojekyll", "index.html", "skills.html", "bundles.html", "stack-composer.html")
-CONTENT_FILES = ("index.html", "skills.html", "bundles.html", "stack-composer.html")
+SITE_FILES = (".nojekyll", "index.html", "ecosystem.html", "skills.html", "bundles.html", "stack-composer.html")
+CONTENT_FILES = ("index.html", "ecosystem.html", "skills.html", "bundles.html", "stack-composer.html")
 
 
 class MaintainerError(RuntimeError):
@@ -226,9 +226,10 @@ def verify_leak_gates(repo: Path, ai_root: Path) -> dict:
     private_ids = sorted(
         module["id"] for module in modules if module.get("visibility") != "public"
     )
-    leaks = [module_id for module_id in private_ids if module_id in index]
+    eco = (repo / "ecosystem.html").read_text(encoding="utf-8")
+    leaks = [module_id for module_id in private_ids if module_id in index or module_id in eco]
     if leaks:
-        raise MaintainerError(f"Leak-Gate: nichtöffentliche Modul-IDs in index.html: {leaks}")
+        raise MaintainerError(f"Leak-Gate: nichtöffentliche Modul-IDs in index.html/ecosystem.html: {leaks}")
     forbidden = [token for token in ('vis:"priv"', 'vis:"cand"') if token in index]
     if forbidden:
         raise MaintainerError(f"Leak-Gate: private Sichtbarkeitsmarker in index.html: {forbidden}")
